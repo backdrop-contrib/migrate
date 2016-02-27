@@ -212,13 +212,13 @@ class MigrateDestinationCustomBlock extends MigrateDestination {
   }
 
   public function saveCustomBlock($block) {
-    drupal_alter('block_custom', $block);
+    backdrop_alter('block_custom', $block);
     if (!empty($block['bid'])) {
-      drupal_write_record('block_custom', $block, array('bid'));
+      backdrop_write_record('block_custom', $block, array('bid'));
       module_invoke_all('block_custom_update', $block);
     }
     else {
-      drupal_write_record('block_custom', $block);
+      backdrop_write_record('block_custom', $block);
       module_invoke_all('block_custom_insert', $block);
     }
     return $block['bid'];

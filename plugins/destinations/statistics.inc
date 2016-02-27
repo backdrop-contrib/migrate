@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Support for node_counter statistics in core Drupal nodes.
+ * Support for node_counter statistics in core Backdrop nodes.
  */
 
 class MigrateStatisticsEntityHandler extends MigrateDestinationHandler {

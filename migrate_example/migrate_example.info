@@ -1,7 +1,9 @@
 name = "Migrate Example"
 description = "Example migration data."
 package = "Migration"
-core = 7.x
+backdrop = 1.x
+version = 1.x-1.1
+type = module
 dependencies[] = taxonomy
 dependencies[] = image
 dependencies[] = comment
@@ -12,8 +14,6 @@ dependencies[] = number
 ;node_reference is useful but not required
 ;dependencies[] = node_reference
 
-files[] = beer.inc
-files[] = wine.inc
-
 ; For testing table_copy plugin. Since is infrequently used, we comment it out.
 ; files[] = example.table_copy.inc
+

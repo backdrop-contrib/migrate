@@ -8,7 +8,7 @@
 /**
  * Test node migration.
  */
-class MigrateXMLUnitTest extends DrupalWebTestCase {
+class MigrateXMLUnitTest extends BackdropWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'XML migration',

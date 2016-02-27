@@ -11,7 +11,7 @@
  * NOTE: Test won't run correctly due to http://drupal.org/node/362373, enable
  * when that is fixed.
  */
-class MigrateOracleUnitTest extends DrupalWebTestCase {
+class MigrateOracleUnitTest extends BackdropWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Oracle migration',

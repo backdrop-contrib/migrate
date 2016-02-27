@@ -10,7 +10,7 @@ class MigrateMailIgnore extends DefaultMailSystem {
    * On an email request, do nothing and say we did.
    *
    * @see http://php.net/manual/en/function.mail.php
-   * @see drupal_mail()
+   * @see backdrop_mail()
    *
    * @param $message
    *   A message array, as described in hook_mail_alter().

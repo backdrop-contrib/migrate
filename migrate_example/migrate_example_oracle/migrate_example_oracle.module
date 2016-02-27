@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Implements hook_config_info().
+ */
+function migrate_example_oracle_config_info() {
+  $prefixes['migrate.settings'] = array(
+    'label' => t('migrate settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
 include_once('migrate_example_oracle.features.inc');
 
 /**

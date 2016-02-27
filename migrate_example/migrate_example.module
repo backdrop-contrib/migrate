@@ -12,3 +12,24 @@
  * hook_hook_info, by defining your implementation of that hook in
  * example.migrate.inc, it is automatically invoked only when needed.
  */
+
+/**
+ * Implements hook_config_info().
+ */
+function migrate_example_config_info() {
+  $prefixes['migrate.settings'] = array(
+    'label' => t('migrate settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
+ * Implements hook_autoload_info.
+ */
+function migrate_example_autoload_info() {
+  return array(
+    'BasicExampleMigration' => 'beer.inc',
+    'AdvancedExampleMigration' => 'wine.inc',
+  );
+}

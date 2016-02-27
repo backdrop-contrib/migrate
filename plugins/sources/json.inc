@@ -45,12 +45,12 @@ class MigrateListJSON extends MigrateList {
       $json = file_get_contents($this->listUrl);
     }
     else {
-      $response = drupal_http_request($this->listUrl, $this->httpOptions);
+      $response = backdrop_http_request($this->listUrl, $this->httpOptions);
       $json = $response->data;
     }
     migrate_instrument_stop("Retrieve $this->listUrl");
     if ($json) {
-      $data = drupal_json_decode($json);
+      $data = backdrop_json_decode($json);
       if ($data) {
         return $this->getIDsFromJSON($data);
       }
@@ -86,11 +86,11 @@ class MigrateListJSON extends MigrateList {
       $json = file_get_contents($this->listUrl);
     }
     else {
-      $response = drupal_http_request($this->listUrl, $this->httpOptions);
+      $response = backdrop_http_request($this->listUrl, $this->httpOptions);
       $json = $response->data;
     }
     if ($json) {
-      $data = drupal_json_decode($json);
+      $data = backdrop_json_decode($json);
       if ($data) {
         $count = count($this->getIDsFromJSON($data));
       }
@@ -164,7 +164,7 @@ class MigrateItemJSON extends MigrateItem {
       $json = file_get_contents($item_url);
     }
     else {
-      $response = drupal_http_request($item_url, $this->httpOptions);
+      $response = backdrop_http_request($item_url, $this->httpOptions);
       $json = $response->data;
     }
     return json_decode($json);

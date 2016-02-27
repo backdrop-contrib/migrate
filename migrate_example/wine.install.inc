@@ -586,7 +586,7 @@ function migrate_example_wine_schema_files() {
 
 function migrate_example_wine_schema_table_source() {
   return array(
-    'description' => 'Source data to go into a custom Drupal table',
+    'description' => 'Source data to go into a custom backdrop table',
     'fields' => array(
       'fooid'  => array(
         'type' => 'int',
@@ -613,7 +613,7 @@ function migrate_example_wine_schema_table_source() {
 
 function migrate_example_wine_schema_table_dest() {
   return array(
-    'description' => 'Custom Drupal table to receive source data directly',
+    'description' => 'Custom backdrop table to receive source data directly',
     'fields' => array(
       'recordid'  => array(
         'type' => 'serial',
@@ -621,13 +621,13 @@ function migrate_example_wine_schema_table_dest() {
         'not null' => TRUE,
         'description' => 'Primary key',
       ),
-      'drupal_text'  => array(
+      'backdrop_text'  => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'First field',
       ),
-      'drupal_int'  => array(
+      'backdrop_int'  => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Copies data_row into a table using drupal_write_record()
+ * Copies data_row into a table using backdrop_write_record()
  */
 
 /**

@@ -1,4 +1,4 @@
-An example migration from comma separated value files into Drupal nodes. Also a
+An example migration from comma separated value files into backdrop nodes. Also a
 good example of a DynamicMigration (i.e. the same migration class handles
 multiple migrations).
 

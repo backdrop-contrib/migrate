@@ -67,11 +67,11 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
     // First the core (comment table) properties
     $fields['cid'] = t('<a href="@doc">Existing comment ID</a>',
                 array('@doc' => 'http://drupal.org/node/1349714#cid'));
-    $fields['nid'] = t('<a href="@doc">Node (by Drupal ID)</a>',
+    $fields['nid'] = t('<a href="@doc">Node (by Backdrop ID)</a>',
                 array('@doc' => 'http://drupal.org/node/1349714#nid'));
-    $fields['uid'] = t('<a href="@doc">User (by Drupal ID)</a>',
+    $fields['uid'] = t('<a href="@doc">User (by Backdrop ID)</a>',
                 array('@doc' => 'http://drupal.org/node/1349714#uid'));
-    $fields['pid'] = t('<a href="@doc">Parent (by Drupal ID)</a>',
+    $fields['pid'] = t('<a href="@doc">Parent (by Backdrop ID)</a>',
                 array('@doc' => 'http://drupal.org/node/1349714#pid'));
     $fields['subject'] = t('<a href="@doc">Subject</a>',
                 array('@doc' => 'http://drupal.org/node/1349714#subject'));
@@ -278,8 +278,7 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    */
   protected function disableStatistics() {
     // If maintaining node statistics is enabled, temporarily disable it
-    $this->maintainNodeStatistics =
-      variable_get('comment_maintain_node_statistics', TRUE);
+    $this->maintainNodeStatistics = state_get('comment_maintain_node_statistics');
     if ($this->maintainNodeStatistics) {
       $GLOBALS['conf']['comment_maintain_node_statistics'] = FALSE;
     }

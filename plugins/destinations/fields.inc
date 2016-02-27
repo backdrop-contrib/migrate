@@ -27,9 +27,9 @@ class MigrateFieldsEntityHandler extends MigrateDestinationHandler {
         $fields[$machine_name] = $instance['label'];
       }
 
-      // Look for subfields
-      $class_list = _migrate_class_list('MigrateFieldHandler');
-      $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
+      // Look for subfields 
+      $class_list = _migrate_class_list('MigrateFieldHandler'); 
+      $disabled = config_get('migrate.settings', 'migrate_disabled_handlers');
       $fields_found = FALSE;
       foreach ($class_list as $class_name => $handler) {
         if (!in_array($class_name, $disabled) && $handler->handlesType($type)
@@ -395,9 +395,9 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
       $item['format'] = $item['value_format'] = $format;
       // Make sure the value will fit
       if ($max_length) {
-        $item['value'] = drupal_substr($value, 0, $max_length);
+        $item['value'] = backdrop_substr($value, 0, $max_length);
         if (!empty($arguments['track_overflow'])) {
-          $value_length = drupal_strlen($value);
+          $value_length = backdrop_strlen($value);
           if ($value_length > $max_length) {
             $migration->saveMessage(
               t('Value for field !field exceeds max length of !max_length, actual length is !length',
@@ -647,7 +647,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
       $file_class = 'MigrateFileUri';
     }
 
-    // If a destination directory (relative to the Drupal public files directory)
+    // If a destination directory (relative to the Backdrop public files directory)
     // is not explicitly provided, use the default for the field.
     if (empty($arguments['destination_dir'])) {
       $arguments['destination_dir'] = $this->destinationDir($field_info, $instance);
@@ -711,7 +711,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
    * @param $instance
    *  Field API info on the field instance for this entity type.
    * @return string
-   *  Directory relative to the Drupal public files directory.
+   *  Directory relative to the Backdrop public files directory.
    */
   protected function destinationDir($field_info, $instance) {
     // Only apply for file/image types

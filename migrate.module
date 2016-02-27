@@ -3,7 +3,7 @@
 /**
  * @file
  * API and drush commands to support migration of data from external sources
- * into a Drupal installation.
+ * into a backdrop installation.
  */
 
 // TODO:
@@ -17,6 +17,74 @@ define('MIGRATE_API_VERSION', 2);
 
 define('MIGRATE_ACCESS_BASIC', 'migration information');
 define('MIGRATE_ACCESS_ADVANCED', 'advanced migration information');
+
+/**
+ * Implements hook_config_info().
+ */
+function migrate_config_info() {
+  $prefixes['migrate.settings'] = array(
+    'label' => t('migrate settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
+ * Implements hook_autoload_info.
+ */
+function migrate_autoload_info() {
+  return array(
+    'MigrationBase' => 'includes/base.inc',
+    'MigrateFieldMapping' => 'includes/field_mapping.inc',
+    'migration' => 'includes/migration.inc',
+    'MigrateDestination' => 'includes/destination.inc',
+    'MigrateException' => 'includes/exception.inc',
+    'MigrateGroup' => 'includes/group.inc',
+    'MigrateHandler' => 'includes/handler.inc',
+    'MigrateMap' => 'includes/map.inc',
+    'MigrateSource' => 'includes/source.inc',
+    'MigrateTeamMember' => 'includes/team.inc',
+    'MigrateMailIgnore' => 'migrate.mail.inc',
+    'MigrateDestinationCustomBlock' => 'plugins/destinations/block_custom.inc',
+    'MigrateDestinationEntity' => 'plugins/destinations/entity.inc',
+    'MigrateDestinationTerm' => 'plugins/destinations/term.inc',
+    'MigrateDestinationUser' => 'plugins/destinations/user.inc',
+    'MigrateDestinationNode' => 'plugins/destinations/node.inc',
+    'MigrateDestinationComment' => 'plugins/destinations/comment.inc',
+    'MigrateCommentNodeHandler' => 'plugins/destinations/comment.inc',
+    'MigrateFileBase' => 'plugins/destinations/file.inc',
+    'MigratePathEntityHandler' => 'plugins/destinations/path.inc',
+    'MigrateFieldsEntityHandler' => 'plugins/destinations/fields.inc',
+    'MigratePollEntityHandler' => 'plugins/destinations/poll.inc',
+    'MigrateDestinationTable' => 'plugins/destinations/table.inc',
+    'MigrateDestinationTableCopy' => 'plugins/destinations/table_copy.inc',
+    'MigrateDestinationMenu' => 'plugins/destinations/menu.inc',
+    'MigrateDestinationMenuLinks' => 'plugins/destinations/menu_links.inc',
+    'MigrateStatisticsEntityHandler' => 'plugins/destinations/statistics.inc',
+    'MigrateDestinationVariable' => 'plugins/destinations/variable.inc',
+    'MigrateSourceCSV' => 'plugins/sources/csv.inc',
+    'MigrateSourceDB2' => 'plugins/sources/db2.inc',
+    'MigrateContentParser' => 'plugins/sources/files.inc',
+    'MigrateList' => 'plugins/sources/list.inc',
+    'MigrateListJSON' => 'plugins/sources/json.inc',
+    'MigrateSourceMongoDB' => 'plugins/sources/mongodb.inc',
+    'MigrateItems' => 'plugins/sources/multiitems.inc',
+    'MigrateSourceSQL' => 'plugins/sources/sql.inc',
+    'MigrateSQLMap' => 'plugins/sources/sqlmap.inc',
+    'MigrateSourceMSSQL' => 'plugins/sources/mssql.inc',
+    'MigrateSourceOracle' => 'plugins/sources/oracle.inc',
+    'MigrateSourceSpreadsheet' => 'plugins/sources/spreadsheet.inc',
+    'MigrateListXML' => 'plugins/sources/xml.inc',
+    'MigrateImportOptionsTest' => 'tests/import/options.test',
+    'MigrateCommentUnitTest' => 'tests/plugins/destinations/comment.test',
+    'MigrateNodeUnitTest' => 'tests/plugins/destinations/node.test',
+    'MigrateTableUnitTest' => 'tests/plugins/destinations/table.test',
+    'MigrateTaxonomyUnitTest' => 'tests/plugins/destinations/term.test',
+    'MigrateUserUnitTest' => 'tests/plugins/destinations/user.test',
+    'MigrateXMLUnitTest' => 'tests/plugins/sources/xml.test',
+  );
+}
+
 
 /**
  * Retrieve a list of all active migrations, ordered by dependencies. To be
@@ -135,7 +203,7 @@ function migrate_handler_invoke_all($destination, $method) {
   array_shift($args);
   $return = array();
   $class_list = _migrate_class_list('MigrateDestinationHandler');
-  $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
+  $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled) && $handler->handlesType($destination)
         && method_exists($handler, $method)) {
@@ -173,8 +241,7 @@ function migrate_field_handler_invoke_all($entity, array $field_info,
   $return = array();
   $type = $field_info['type'];
   $class_list = _migrate_class_list('MigrateFieldHandler');
-  $disabled = unserialize(variable_get('migrate_disabled_handlers',
-                                       serialize(array())));
+  $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
   $handler_called = FALSE;
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled) && $handler->handlesType($type)
@@ -293,7 +360,7 @@ function migrate_get_module_apis($reset = FALSE) {
         $cache[$module] = $info;
       }
       else {
-        drupal_set_message(t('%function supports Migrate API version %modversion,
+        backdrop_set_message(t('%function supports Migrate API version %modversion,
           Migrate module API version is %version - migration support not loaded.',
           array('%function' => $function, '%modversion' => $info['api'],
                 '%version' => MIGRATE_API_VERSION)));
@@ -301,7 +368,7 @@ function migrate_get_module_apis($reset = FALSE) {
     }
 
     // Allow modules to alter the migration information.
-    drupal_alter('migrate_api', $cache);
+    backdrop_alter('migrate_api', $cache);
   }
 
   return $cache;
@@ -425,7 +492,7 @@ function migrate_watchdog($log_entry) {
 }
 
 /**
- * Resource functions modeled on Drupal's timer functions
+ * Resource functions modeled on backdrop's timer functions
  */
 
 /**

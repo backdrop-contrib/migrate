@@ -8,7 +8,7 @@
 /**
  * Test user migration.
  */
-class MigrateUserUnitTest extends DrupalWebTestCase {
+class MigrateUserUnitTest extends BackdropWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'User migration',

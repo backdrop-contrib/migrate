@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Support for paths in core Drupal objects
+ * Support for paths in core Backdrop objects
  */
 
 class MigratePathEntityHandler extends MigrateDestinationHandler {

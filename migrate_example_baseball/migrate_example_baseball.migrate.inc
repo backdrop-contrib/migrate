@@ -123,7 +123,7 @@ class GameBaseball extends Migration {
    * Construct the machine name from the source file name.
    */
   protected function generateMachineName($class_name = NULL) {
-    return drupal_strtolower(pathinfo($this->arguments['source_file'],
+    return backdrop_strtolower(pathinfo($this->arguments['source_file'],
                                       PATHINFO_FILENAME));
   }
 

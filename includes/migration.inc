@@ -54,9 +54,9 @@ abstract class Migration extends MigrationBase {
 
   /**
    * Indicate whether the primary system of record for this migration is the
-   * source, or the destination (Drupal). In the source case, migration of
-   * an existing object will completely replace the Drupal object with data from
-   * the source side. In the destination case, the existing Drupal object will
+   * source, or the destination (backdrop). In the source case, migration of
+   * an existing object will completely replace the backdrop object with data from
+   * the source side. In the destination case, the existing backdrop object will
    * be loaded, then changes from the source applied; also, rollback will not be
    * supported.
    *
@@ -1456,7 +1456,7 @@ abstract class Migration extends MigrationBase {
    * For fields which require uniqueness, assign a new unique value if necessary.
    *
    * @param array $dedupe
-   *  An array with two keys, 'table' the name of the Drupal table and 'column'
+   *  An array with two keys, 'table' the name of the backdrop table and 'column'
    *  the column within that table where uniqueness must be maintained.
    * @param $original
    *  The value coming in, which must be checked for uniqueness.
@@ -1585,8 +1585,7 @@ abstract class DynamicMigration extends Migration {
   static $deprecationWarning = FALSE;
   public function __construct($arguments) {
     parent::__construct($arguments);
-    if (variable_get('migrate_deprecation_warnings', 1) &&
-        !self::$deprecationWarning) {
+    if (config_get('migrate.settings', 'migrate_deprecation_warnings') && !self::$deprecationWarning) {
       self::displayMessage(t('The DynamicMigration class is no longer necessary and is now deprecated - please derive your migration classes directly from Migration.'));
       self::$deprecationWarning = TRUE;
     }

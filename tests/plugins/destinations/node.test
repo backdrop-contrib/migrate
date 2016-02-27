@@ -8,7 +8,7 @@
 /**
  * Test node migration.
  */
-class MigrateNodeUnitTest extends DrupalWebTestCase {
+class MigrateNodeUnitTest extends BackdropWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Node migration',
@@ -127,7 +127,7 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     // Test Field API fields of all types
     // body_with_summary
     $body = field_get_items('node', $wine_node, 'body');
-    $this->assertEqual($body[0]['value'], 'REVIEW: ' . drupal_strtoupper($wine_row->body),
+    $this->assertEqual($body[0]['value'], 'REVIEW: ' . backdrop_strtoupper($wine_row->body),
       t('body properly migrated'));
     $this->assertEqual($body[0]['summary'], $wine_row->excerpt,
       t('summary properly migrated'));
@@ -398,11 +398,11 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     // This is not necessarily node-related, but it was shoved in the node test.
     $migration->saveMailSystem();
     $migration->disableMailSystem();
-    $ms = variable_get('mail_system', NULL);
+    $ms = config_get('system.mail', 'mail_system');
     $this->assertTrue(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration has disabled mail system'));
     $migration->restoreMailSystem();
-    $ms = variable_get('mail_system', NULL);
+    $ms = config_get('system.mail', 'mail_system');
     $this->assertFalse(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration::restoreMailSystem restored mail system'));
   }

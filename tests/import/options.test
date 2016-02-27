@@ -8,7 +8,7 @@
 /**
  * Test node migration.
  */
-class MigrateImportOptionsTest extends DrupalWebTestCase {
+class MigrateImportOptionsTest extends BackdropWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Import options',

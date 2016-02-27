@@ -47,7 +47,7 @@ abstract class AdvancedExampleMigration extends Migration {
 
 /**
  * TIP: While usually you'll create true migrations - processes that copy data
- * from some source into Drupal - you can also define processing steps for
+ * from some source into backdrop - you can also define processing steps for
  * either the import or rollback stages that take other actions. In this case,
  * we want to disable auto_nodetitle while the migration steps run. We'll
  * re-enable it over in WineFinishMigration.
@@ -169,7 +169,7 @@ class WineBestWithMigration extends WineTermMigration {
 /**
  * TIP: Files can be migrated directly by themselves, by using the
  * MigrateDestinationFile class. This will copy the files themselves from the
- * source, and set up the Drupal file tables appropriately. Referencing them
+ * source, and set up the backdrop file tables appropriately. Referencing them
  * in, say, a node field later is then simple.
  */
 class WineFileCopyMigration extends AdvancedExampleMigration {
@@ -287,8 +287,8 @@ class WineRoleMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a local file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-                  drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+                  backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'positions.xml';
     // This is the xpath identifying the items to be migrated, relative to the
     // document.
@@ -347,7 +347,7 @@ class WineUserMigration extends AdvancedExampleMigration {
     // Mapped fields
     $this->addSimpleMappings(array('name', 'status', 'mail'));
     // Note that these date/time values are coming in as ISO strings, but
-    // Drupal uses UNIX timestamps. The user destination automatically
+    // backdrop uses UNIX timestamps. The user destination automatically
     // translates them as necessary.
     $this->addFieldMapping('created', 'posted');
     $this->addFieldMapping('access', 'last_access');
@@ -504,8 +504,8 @@ class WineProducerXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-                  drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+                  backdrop_get_path('module', 'migrate_example') . '/xml/';
     $list_url = $xml_folder . 'index.xml';
     // Each ID retrieved from the list URL will be plugged into :id in the
     // item URL to fetch the specific objects.
@@ -616,8 +616,8 @@ class WineProducerNamespaceXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-                  drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+                  backdrop_get_path('module', 'migrate_example') . '/xml/';
     $list_url = $xml_folder . 'index2.xml';
     // Each ID retrieved from the list URL will be plugged into :id in the
     // item URL to fetch the specific objects.
@@ -731,7 +731,7 @@ class WineProducerMultiXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' . drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers.xml';
 
     // We use the MigrateSourceMultiItems class for any source where we obtain
@@ -852,7 +852,7 @@ class WineProducerMultiNamespaceXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' . drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers3.xml';
 
     // We use the MigrateSourceMultiItems class for any source where we obtain
@@ -970,8 +970,8 @@ class WineProducerXMLPullMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a local file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-                  drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+                  backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers2.xml';
 
     // As with MigrateSourceMultiItems, this applies where there is not a
@@ -1075,8 +1075,8 @@ class WineProducerNamespaceXMLPullMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a local file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-                  drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+                  backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers4.xml';
 
     // As with MigrateSourceMultiItems, this applies where there is not a
@@ -1263,11 +1263,11 @@ class WineWineMigration extends AdvancedExampleMigration {
     // value which is a transformation of the argument. As this example shows,
     // you can have multiple callbacks, and they can either be straight
     // functions or class methods. In this case, our custom method prepends
-    // 'review: ' to the body, and then we call a standard Drupal function to
+    // 'review: ' to the body, and then we call a standard backdrop function to
     // uppercase the whole body. You can also use ->callback() to pass
     // additional arguments.
     $this->addFieldMapping('body', 'body')
-         ->callbacks(array($this, 'addTitlePrefix'), 'drupal_strtoupper')
+         ->callbacks(array($this, 'addTitlePrefix'), 'backdrop_strtoupper')
          ->callback('html_entity_decode', ENT_QUOTES, 'ISO8859-1');
     $this->addFieldMapping('body:summary', 'excerpt');
 
@@ -1428,7 +1428,7 @@ class WineCommentMigration extends AdvancedExampleMigration {
   }
 }
 
-// TIP: An easy way to simply migrate into a Drupal table (i.e., one defined
+// TIP: An easy way to simply migrate into a backdrop table (i.e., one defined
 // through the Schema API) is to use the MigrateDestinationTable destination.
 // Just pass the table name to getKeySchema and the MigrateDestinationTable
 // constructor.
@@ -1454,8 +1454,8 @@ class WineTableMigration extends AdvancedExampleMigration {
       );
 
     // Mapped fields
-    $this->addFieldMapping('drupal_text', 'field1');
-    $this->addFieldMapping('drupal_int', 'field2');
+    $this->addFieldMapping('backdrop_text', 'field1');
+    $this->addFieldMapping('backdrop_int', 'field2');
 
     $this->addUnmigratedDestinations(array('recordid'));
     $this->removeFieldMapping('path');

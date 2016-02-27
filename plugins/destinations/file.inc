@@ -9,7 +9,7 @@
 
 /**
  * Interface for taking some value representing a file and returning
- * a Drupal file entity (creating the entity if necessary).
+ * a Backdrop file entity (creating the entity if necessary).
  */
 interface MigrateFileInterface {
   /**
@@ -19,7 +19,7 @@ interface MigrateFileInterface {
   public static function fields();
 
   /**
-   * Create or link to a Drupal file entity.
+   * Create or link to a Backdrop file entity.
    *
    * @param $value
    *  A class-specific value (URI, pre-existing file ID, file blob, ...)
@@ -96,7 +96,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
    * Setup a file entity object suitable for saving.
    *
    * @param $destination
-   *  Path to the Drupal copy of the file.
+   *  Path to the Backdrop copy of the file.
    * @param $owner
    *  Uid of the file owner.
    * @return stdClass
@@ -107,7 +107,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
     $file->uri = $destination;
     $file->uid = $owner;
     if (!isset($file->filename)) {
-      $file->filename = drupal_basename($destination);
+      $file->filename = backdrop_basename($destination);
     }
     if (!isset($file->filemime)) {
       $file->filemime = file_get_mimetype(urldecode($destination));
@@ -202,7 +202,7 @@ class MigrateFileFid extends MigrateFileBase {
  */
 abstract class MigrateFile extends MigrateFileBase {
   /**
-   * The destination directory within Drupal.
+   * The destination directory within Backdrop.
    *
    * @var string
    */
@@ -232,7 +232,7 @@ abstract class MigrateFile extends MigrateFileBase {
    */
   static public function fields() {
     return parent::fields() + array(
-      'destination_dir' => t('Subfield: <a href="@doc">Path within Drupal files directory to store file</a>',
+      'destination_dir' => t('Subfield: <a href="@doc">Path within Backdrop files directory to store file</a>',
         array('@doc' => 'http://drupal.org/node/1540106#destination_dir')),
       'destination_file' => t('Subfield: <a href="@doc">Path within destination_dir to store the file.</a>',
         array('@doc' => 'http://drupal.org/node/1540106#destination_file')),
@@ -245,7 +245,7 @@ abstract class MigrateFile extends MigrateFileBase {
    * By whatever appropriate means, put the file in the right place.
    *
    * @param $destination
-   *  Destination path within Drupal.
+   *  Destination path within Backdrop.
    * @return bool
    *  TRUE if the file is successfully saved, FALSE otherwise.
    */
@@ -264,7 +264,7 @@ abstract class MigrateFile extends MigrateFileBase {
   public function processFile($value, $owner) {
     $migration = Migration::currentMigration();
 
-    // Determine the final path we want in Drupal - start with our preferred path.
+    // Determine the final path we want in Backdrop - start with our preferred path.
     $destination = file_stream_wrapper_uri_normalize(
       $this->destinationDir . '/' .
       ltrim($this->destinationFile, "/\\"));
@@ -284,7 +284,7 @@ abstract class MigrateFile extends MigrateFileBase {
     }
 
     // Prepare the destination directory.
-    $destdir = drupal_dirname($destination);
+    $destdir = backdrop_dirname($destination);
     if (!file_prepare_directory($destdir,
                                 FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
       $migration->saveMessage(t('Could not create destination directory for !dest',
@@ -309,7 +309,7 @@ abstract class MigrateFile extends MigrateFileBase {
     }
 
     // Set the permissions on the new file.
-    drupal_chmod($destination);
+    backdrop_chmod($destination);
 
     // Create and save the file entity.
     $file = file_save($this->createFileEntity($destination, $owner));
@@ -327,7 +327,7 @@ abstract class MigrateFile extends MigrateFileBase {
 
 /**
  * Handle cases where we're handed a URI, or local filespec, representing a file
- * to be imported to Drupal.
+ * to be imported to Backdrop.
  */
 class MigrateFileUri extends MigrateFile {
   /**
@@ -379,7 +379,7 @@ class MigrateFileUri extends MigrateFile {
    * Implementation of MigrateFile::copyFile().
    *
    * @param $destination
-   *  Destination within Drupal.
+   *  Destination within Backdrop.
    *
    * @return bool
    *  TRUE if the copy succeeded, FALSE otherwise.
@@ -462,7 +462,7 @@ class MigrateFileUri extends MigrateFile {
 
 /**
  * Handle cases where we're handed a blob (i.e., the actual contents of a file,
- * such as image data) to be stored as a real file in Drupal.
+ * such as image data) to be stored as a real file in Backdrop.
  */
 class MigrateFileBlob extends MigrateFile {
   /**
@@ -476,7 +476,7 @@ class MigrateFileBlob extends MigrateFile {
    * Implementation of MigrateFile::copyFile().
    *
    * @param $destination
-   *  Drupal destination path.
+   *  Backdrop destination path.
    * @return bool
    *  TRUE if the file contents were successfully written, FALSE otherwise.
    */

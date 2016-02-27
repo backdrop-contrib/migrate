@@ -8,7 +8,7 @@
 /**
  * The base class for all objects representing distinct steps in a migration
  * process. Most commonly these will be Migration objects which actually import
- * data from a source into a Drupal destination, but by deriving classes directly
+ * data from a source into a backdrop destination, but by deriving classes directly
  * from MigrationBase one can have other sorts of tasks (e.g., enabling/disabling
  * of modules) occur during the migration process.
  */
@@ -373,8 +373,7 @@ abstract class MigrationBase {
     if (is_object($arguments) && is_a($arguments, 'MigrateGroup')) {
       $this->group = $arguments;
       $this->arguments['group_name'] = $arguments->getName();
-      if (!self::$groupArgumentWarning &&
-          variable_get('migrate_deprecation_warnings', 1)) {
+      if (!self::$groupArgumentWarning && config_get('migrate.settings', 'migrate_deprecation_warnings')) {
         self::displayMessage(t('Passing a group object to a migration constructor is now deprecated - pass through the arguments array passed to the leaf class instead.'));
         self::$groupArgumentWarning = TRUE;
       }
@@ -382,8 +381,7 @@ abstract class MigrationBase {
     else {
       if (empty($arguments)) {
         $this->arguments = array();
-        if (!self::$emptyArgumentsWarning &&
-            variable_get('migrate_deprecation_warnings', 1)) {
+        if (!self::$emptyArgumentsWarning && config_get('migrate.settings', 'migrate_deprecation_warnings')) {
           self::displayMessage(t('Passing an empty first parameter to a migration constructor is now deprecated - pass through the arguments array passed to the leaf class instead.'));
           self::$emptyArgumentsWarning = TRUE;
         }
@@ -417,7 +415,7 @@ abstract class MigrationBase {
     }
     else {
       if (!is_numeric($limit)) {
-        $last = drupal_strtolower($limit[strlen($limit)-1]);
+        $last = backdrop_strtolower($limit[strlen($limit)-1]);
         switch ($last) {
           case 'g':
             $limit *= 1024;
@@ -438,7 +436,7 @@ abstract class MigrationBase {
     $this->timeLimit = ini_get('max_execution_time');
 
     // Make sure we clear our semaphores in case of abrupt exit
-    drupal_register_shutdown_function(array($this, 'endProcess'));
+    backdrop_register_shutdown_function(array($this, 'endProcess'));
 
     // Save any hook disablement information.
     if (isset($this->arguments['disable_hooks']) &&
@@ -456,7 +454,7 @@ abstract class MigrationBase {
       self::$displayFunction = 'drush_log';
     }
     else {
-      self::$displayFunction = 'drupal_set_message';
+      self::$displayFunction = 'backdrop_set_message';
     }
   }
 
@@ -543,7 +541,7 @@ abstract class MigrationBase {
    */
   protected static function machineFromClass($class_name) {
     if (preg_match('/Migration$/', $class_name)) {
-      $machine_name = drupal_substr($class_name, 0,
+      $machine_name = backdrop_substr($class_name, 0,
         strlen($class_name) - strlen('Migration'));
     }
     else {
@@ -571,9 +569,9 @@ abstract class MigrationBase {
    * @return MigrationBase
    */
   static public function getInstance($machine_name, $class_name = NULL, array $arguments = array()) {
-    $migrations = &drupal_static(__FUNCTION__, array());
+    $migrations = &backdrop_static(__FUNCTION__, array());
     // Otherwise might miss cache hit on case difference
-    $machine_name_key = drupal_strtolower($machine_name);
+    $machine_name_key = backdrop_strtolower($machine_name);
     if (!isset($migrations[$machine_name_key])) {
       // See if we know about this migration
       $row = db_select('migrate_status', 'ms')
@@ -659,12 +657,12 @@ abstract class MigrationBase {
   }
 
   /**
-   * Output the given message appropriately (drush_print/drupal_set_message/etc.)
+   * Output the given message appropriately (drush_print/backdrop_set_message/etc.)
    *
    * @param string $message
    *  The message to output.
    * @param int $level
-   *  Optional message severity as understood by drupal_set_message and drush_log
+   *  Optional message severity as understood by backdrop_set_message and drush_log
    *  (defaults to 'error').
    */
   static public function displayMessage($message, $level = 'error') {
@@ -714,7 +712,7 @@ abstract class MigrationBase {
    *  in contexts where this doesn't make sense.
    */
   public function handleException($exception, $save = TRUE) {
-    $result = _drupal_decode_exception($exception);
+    $result = _backdrop_decode_exception($exception);
     $message = $result['!message'] . ' (' . $result['%file'] . ':' . $result['%line'] . ')';
     if ($save) {
       $this->saveMessage($message);
@@ -941,9 +939,9 @@ abstract class MigrationBase {
     // it is rebuilt with the specified hooks removed by our
     // hook_module_implements_alter(). By setting #write_cache to FALSE, we
     // ensure that our munged version of the hooks array does not get written
-    // to the persistent cache and interfere with other Drupal processes.
+    // to the persistent cache and interfere with other backdrop processes.
     if (!empty($this->disableHooks)) {
-      $implementations = &drupal_static('module_implements');
+      $implementations = &backdrop_static('module_implements');
       $implementations = array();
       $implementations['#write_cache'] = FALSE;
     }
@@ -1108,7 +1106,7 @@ abstract class MigrationBase {
    * before calling the processImport method.
    */
   public function setBatchTimeLimit() {
-    drupal_set_time_limit($this->batchTimeLimit);
+    backdrop_set_time_limit($this->batchTimeLimit);
   }
 
   /**
@@ -1136,9 +1134,9 @@ abstract class MigrationBase {
                 '!usage' => format_size($usage),
                 '!limit' => format_size($this->memoryLimit))),
         'warning');
-      // First, try resetting Drupal's static storage - this frequently releases
+      // First, try resetting backdrop's static storage - this frequently releases
       // plenty of memory to continue
-      drupal_static_reset();
+      backdrop_static_reset();
       $usage = memory_get_usage();
       $pct_memory = $usage/$this->memoryLimit;
       // Use a lower threshold - we don't want to be in a situation where we keep
@@ -1207,7 +1205,7 @@ abstract class MigrationBase {
   }
 
   /**
-   * Encrypt an incoming value. Detects for existence of the Drupal 'Encrypt'
+   * Encrypt an incoming value. Detects for existence of the backdrop 'Encrypt'
    *  module or the mcrypt PHP extension.
    *
    * @param string $value
@@ -1218,8 +1216,8 @@ abstract class MigrationBase {
       $value = encrypt($value);
     }
     else if (extension_loaded('mcrypt')) {
-      // Mimic encrypt module to ensure compatibility
-      $key = drupal_substr(variable_get('drupal_private_key', 'no_key'), 0, 32);
+      // Mimic encrypt module to ensure compatibility  
+      $key = backdrop_substr(state_get('private_key'), 0, 32);
       $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
       $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
       $value = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $value,
@@ -1228,7 +1226,7 @@ abstract class MigrationBase {
       $encryption_array['text'] = $value;
       // For forward compatibility with the encrypt module.
       $encryption_array['method'] = 'mcrypt_rij_256';
-      $encryption_array['key_name'] = 'drupal_private_key';
+      $encryption_array['key_name'] = 'private_key';
       $value = serialize($encryption_array);
     }
     else {
@@ -1265,7 +1263,7 @@ abstract class MigrationBase {
 
       $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
       $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-      $key = drupal_substr(variable_get('drupal_private_key', 'no_key'), 0, 32);
+      $key = backdrop_substr(state_get('private_key'), 0, 32);
       $value = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $text,
                               MCRYPT_MODE_ECB, $iv);
     }
@@ -1362,8 +1360,8 @@ abstract class MigrationBase {
     $time = $date->format('U');
     if ($time == FALSE) {
       // Handles form YYYY-MM-DD HH:MM:SS.garbage
-      if (drupal_strlen($value) > 19) {
-        $time = strtotime(drupal_substr($value, 0, 19));
+      if (backdrop_strlen($value) > 19) {
+        $time = strtotime(backdrop_substr($value, 0, 19));
       }
     }
     return $time;

@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Define a MigrateSource for importing from Drupal connections
+ * Define a MigrateSource for importing from Backdrop connections
  */
 
 /**
- * Implementation of MigrateSource, to handle imports from Drupal connections.
+ * Implementation of MigrateSource, to handle imports from Backdrop connections.
  */
 class MigrateSourceSQL extends MigrateSource {
   /**

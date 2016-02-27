@@ -1,0 +1,12 @@
+{
+    "_config_name": "migrate.settings",
+    "migrate_disabled_handlers": [],
+    "migrate_patterns": [],
+    "migrate_source_uri_table": "migrate_source_uri_map",
+    "migrate_deprecation_warnings": "1",
+    "migrate_drush_mail_subjects": "Migration operation completed",
+    "migrate_drush_mail_body": "The migration operation is complete. Please review the results on your dashboard",
+    "migrate_import_method": "0",
+    "migrate_drush_path": "",
+    "migrate_drush_mail": "0"
+}

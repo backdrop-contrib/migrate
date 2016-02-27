@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Defines base for migration destinations implemented as Drupal entities.
+ * Defines base for migration destinations implemented as Backdrop entities.
  */
 
 /**

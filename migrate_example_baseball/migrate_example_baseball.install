@@ -55,10 +55,3 @@ function migrate_example_baseball_uninstall() {
 function migrate_example_baseball_disable() {
   MigrateGroup::deregister('baseball');
 }
-
-/**
- * Get a copy of the sample CSV data if necessary.
- */
-function migrate_example_baseball_update_7201() {
-  migrate_example_baseball_get_files(dirname(__FILE__) . '/data');
-}

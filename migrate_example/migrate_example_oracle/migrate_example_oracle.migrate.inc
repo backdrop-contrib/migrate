@@ -6,8 +6,8 @@
  * in your settings.php. E.g.,
  *
  * $conf['oracle_db'] = array(
- *   'username' => 'DRUPAL',
- *   'password' => 'DRUPAL',
+ *   'username' => 'BACKDROP',
+ *   'password' => 'BACKDROP',
  *   'connection_string' => '//oracledb/orcl',
  * );
  *
