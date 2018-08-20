@@ -6,11 +6,9 @@
  */
 
 /**
- * Implementation of MigrateSource, to handle imports from remote MS SQL Server
- * db servers.
+ * Implementation of MigrateSource, to handle imports from remote MS SQL Server db servers.
  */
 class MigrateSourceMSSQL extends MigrateSource {
-
   /**
    * Array containing information for connecting to SQL Server:
    *  servername - Hostname of the SQL Server
@@ -41,7 +39,7 @@ class MigrateSourceMSSQL extends MigrateSource {
   protected $result;
 
   /**
-   * By default, mssql_query fetches all results - severe memory problems with
+   * By default, sqlsrv_query fetches all results - severe memory problems with
    * big tables. So, we will fetch a batch at a time.
    *
    * @var int
@@ -64,7 +62,7 @@ class MigrateSourceMSSQL extends MigrateSource {
    * Simple initialization.
    */
   public function __construct(array $configuration, $query, $count_query,
-                              array $fields, array $options = array()) {
+      array $fields, array $options = array()) {
     parent::__construct($options);
     $this->query = $query;
     $this->countQuery = $count_query;
@@ -87,8 +85,8 @@ class MigrateSourceMSSQL extends MigrateSource {
    */
   protected function connect() {
     if (!isset($this->connection)) {
-      if (!extension_loaded('mssql')) {
-        throw new Exception(t('You must configure the mssql extension in PHP.'));
+      if (!extension_loaded('sqlsrv')) {
+        throw new Exception(t('You must configure the sqlsrv extension in PHP.'));
       }
 
       if (isset($this->configuration['port'])) {
@@ -97,13 +95,10 @@ class MigrateSourceMSSQL extends MigrateSource {
       else {
         $host = $this->configuration['servername'];
       }
-      $this->connection = mssql_connect(
-        $host,
-        $this->configuration['username'],
-        $this->configuration['password'],
-        TRUE);
-      if (isset($this->configuration['database'])) {
-        return mssql_select_db($this->configuration['database'], $this->connection);
+      $connectionInfo = array( "Database"=>$this->configuration['database'], "UID"=>$this->configuration['username'], "PWD"=>$this->configuration['password']);
+      $this->connection = sqlsrv_connect($host, $connectionInfo);
+      if ($this->connection !== FALSE) {
+        return $this->connection;
       }
     }
   }
@@ -126,8 +121,8 @@ class MigrateSourceMSSQL extends MigrateSource {
   public function computeCount() {
     migrate_instrument_start('MigrateSourceMSSQL count');
     if ($this->connect()) {
-      $result = mssql_query($this->countQuery);
-      $result_array = mssql_fetch_array($result);
+      $result = sqlsrv_query($this->countQuery);
+      $result_array = sqlsrv_fetch_array($result);
       $count = reset($result_array);
     }
     else {
@@ -178,10 +173,10 @@ class MigrateSourceMSSQL extends MigrateSource {
       }
     }
 
-    migrate_instrument_start('mssql_query');
+    migrate_instrument_start('sqlsrv_query');
     $this->connect();
-    $this->result = mssql_query($this->query, $this->connection, $this->batchSize);
-    migrate_instrument_stop('mssql_query');
+    $this->result = sqlsrv_query($this->connection, $this->query, $this->batchSize);
+    migrate_instrument_stop('sqlsrv_query');
   }
 
   /**
@@ -191,13 +186,13 @@ class MigrateSourceMSSQL extends MigrateSource {
    * difference between the end of the batch and the end of all data.
    */
   public function getNextRow() {
-    $row = mssql_fetch_object($this->result);
+    $row = sqlsrv_fetch_object($this->result);
 
     // Might be totally out of data, or just out of this batch - request another
     // batch and see
     if (!is_object($row)) {
-      mssql_fetch_batch($this->result);
-      $row = mssql_fetch_object($this->result);
+      sqlsrv_num_rows($this->result);
+      $row = sqlsrv_fetch_object($this->result);
     }
     if (is_object($row)) {
       return $row;
