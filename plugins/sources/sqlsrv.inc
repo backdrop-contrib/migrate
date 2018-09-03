@@ -120,10 +120,12 @@ class MigrateSourceMSSQL extends MigrateSource {
    */
   public function computeCount() {
     migrate_instrument_start('MigrateSourceMSSQL count');
-    if ($this->connect()) {
-      $result = sqlsrv_query($this->countQuery);
+    if ($connect = $this->connect()) {
+      $result = sqlsrv_query($connect,$this->countQuery);
       $result_array = sqlsrv_fetch_array($result);
-      $count = reset($result_array);
+      if ($result_array) {
+        $count = reset($result_array);
+      }
     }
     else {
       // Do something else?
@@ -175,7 +177,7 @@ class MigrateSourceMSSQL extends MigrateSource {
 
     migrate_instrument_start('sqlsrv_query');
     $this->connect();
-    $this->result = sqlsrv_query($this->connection, $this->query, $this->batchSize);
+    $this->result = sqlsrv_query($this->connection, $this->query, array($this->batchSize));
     migrate_instrument_stop('sqlsrv_query');
   }
 
