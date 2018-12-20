@@ -492,6 +492,7 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
         array('@doc' => 'http://drupal.org/node/1224042#create_term')),
       'ignore_case' => t('Option: <a href="@doc">Set to TRUE to ignore case differences between source data and existing term names</a>',
         array('@doc' => 'http://drupal.org/node/1224042#ignore_case')),
+      'not_empty' => t('Option: Set to TRUE to ignore empty terms to get created in case of multiple term names per row.'),
     );
   }
 
@@ -526,6 +527,17 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
 
       // Remove leading and trailing spaces in term names
       $values = array_map('trim', $values);
+
+      // Remove empty array values from $values array.
+      if (!empty($arguments['not_empty'])) {
+        $terms = array();
+        foreach ($values as $term) {
+          if(!empty($term)) {
+            $terms[] = $term;
+          }
+          $values = $terms;
+        }
+      }
 
       // Cannot use taxonomy_term_load_multiple() since we have an array of names.
       // It wants a singular value. This query may return case-insensitive
