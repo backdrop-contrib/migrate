@@ -242,6 +242,8 @@ abstract class Migration extends MigrationBase {
    */
   protected $queuedMessages = array();
 
+  protected $subfieldDelimiter = ':';
+
   /**
    * General initialization of a Migration object.
    */
@@ -1328,7 +1330,7 @@ abstract class Migration extends MigrationBase {
 
         // Are we dealing with the primary value of the destination field, or a
         // subfield?
-        $destination = explode(':', $destination);
+        $destination = explode($this->subfieldDelimiter, $destination);
         // Count how many levels of fields are in the mapping. We'll use the
         // last one.
         $destination_count = count($destination);
