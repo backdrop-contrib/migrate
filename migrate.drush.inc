@@ -1431,7 +1431,7 @@ function drush_migrate_deregister($args = NULL) {
         $migrations = explode(',', $args);
       }
       foreach ($migrations as $machine_name) {
-        drush_migrate_deregister_migration(drupal_strtolower($machine_name));
+        drush_migrate_deregister_migration($machine_name);
         drush_log(dt("Deregistered '!description' migration",
           array('!description' => $machine_name)), 'success');
       }
@@ -1445,13 +1445,15 @@ function drush_migrate_deregister($args = NULL) {
 /**
  * Given a migration machine name, remove its tracking from the database.
  *
- * @param $machine_name
+ * @param string $machine_name
+ *   Migration machine name.
  */
 function drush_migrate_deregister_migration($machine_name) {
+  $machine_name_lowered = drupal_strtolower($machine_name);
   // The class is gone, so we'll manually clear migrate_status, and make
   // the default assumptions about the map/message tables.
-  db_drop_table('migrate_map_' . $machine_name);
-  db_drop_table('migrate_message_' . $machine_name);
+  db_drop_table('migrate_map_' . $machine_name_lowered);
+  db_drop_table('migrate_message_' . $machine_name_lowered);
   db_delete('migrate_status')
     ->condition('machine_name', $machine_name)
     ->execute();
