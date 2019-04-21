@@ -806,6 +806,7 @@ abstract class MigrationBase {
       ->condition('machine_name', $this->machineName)
       ->isNotNull('endtime')
       ->orderBy('endtime', 'DESC')
+      ->range(0, 1)
       ->execute()
       ->fetchField();
     if ($last_imported) {
