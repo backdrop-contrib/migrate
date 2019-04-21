@@ -1270,6 +1270,13 @@ function drush_migrate_import($args = NULL) {
       }
       if (drush_get_option('needs-update')) {
         $map_rows = $migration->getMap()->getRowsNeedingUpdate(10000);
+
+        if (empty($map_rows)) {
+          drush_set_error(NULL, dt("Not found records to update for '!name' migration.",
+            array('!name' => get_class($migration))));
+          return;
+        }
+
         $idlist = array();
         foreach ($map_rows as $row) {
           $idlist[] = $row->sourceid1;
