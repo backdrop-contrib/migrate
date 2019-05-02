@@ -438,6 +438,7 @@ class MigrateFileUri extends MigrateFile {
       $filename = str_replace('%3A', ':', $filename);
       $filename = str_replace('%3F', '?', $filename);
       $filename = str_replace('%26', '&', $filename);
+      $filename = str_replace('%40', '@', $filename);
     }
     return $filename;
   }
