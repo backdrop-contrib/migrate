@@ -464,7 +464,8 @@ class MigrateFileUri extends MigrateFile {
     }
 
     if (empty($this->destinationFile)) {
-      $this->destinationFile = basename($this->sourcePath);
+      $path = explode('?', $this->sourcePath);
+      $this->destinationFile = basename($path[0]);
     }
 
     // MigrateFile has most of the smarts - the key is that it will call back
