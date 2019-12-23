@@ -15,6 +15,7 @@ class MigrateSourceMSSQL extends MigrateSource {
    *  username - Username to connect as
    *  password - Password for logging in
    *  database (optional) - Database to select after connecting
+   *  character_set (optional) - set to "UTF-8" for multibyte chars support
    *
    * @var array
    */
@@ -95,7 +96,15 @@ class MigrateSourceMSSQL extends MigrateSource {
       else {
         $host = $this->configuration['servername'];
       }
-      $connectionInfo = array( "Database"=>$this->configuration['database'], "UID"=>$this->configuration['username'], "PWD"=>$this->configuration['password']);
+      $connectionInfo = array(
+        "Database" => $this->configuration['database'],
+        "UID" => $this->configuration['username'],
+        "PWD" => $this->configuration['password'],
+      );
+      // Add CharacterSet option.
+      if (!empty($this->configuration['character_set'])) {
+        $connectionInfo["CharacterSet"] = $this->configuration['character_set'];
+      }
       $this->connection = sqlsrv_connect($host, $connectionInfo);
       if ($this->connection !== FALSE) {
         return $this->connection;
