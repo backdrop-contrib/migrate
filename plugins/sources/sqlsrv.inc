@@ -90,7 +90,7 @@ class MigrateSourceMSSQL extends MigrateSource {
       }
 
       if (isset($this->configuration['port'])) {
-        $host = $this->configuration['servername'] . ':' . $this->configuration['port'];
+        $host = $this->configuration['servername'] . ',' . $this->configuration['port'];
       }
       else {
         $host = $this->configuration['servername'];
