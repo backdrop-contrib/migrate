@@ -1501,7 +1501,7 @@ abstract class Migration extends MigrationBase {
         }
       }
       // Occasionally $source_key comes through with an empty string.
-      $sanity_check = array_filter($source_key);
+      $sanity_check = array_filter($source_key, 'strlen');
       if ($continue || empty($source_key) || empty($sanity_check)) {
         continue;
       }
