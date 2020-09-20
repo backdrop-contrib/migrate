@@ -1,4 +1,5 @@
-core = "7.x"
+backdrop = 1.x
+type = module
 dependencies[] = "features"
 dependencies[] = "image"
 dependencies[] = "migrate"
@@ -6,7 +7,6 @@ description = "Content type supporting example of Oracle migration"
 features[field][] = "node-migrate_example_oracle-body"
 features[field][] = "node-migrate_example_oracle-field_mainimage"
 features[node][] = "migrate_example_oracle"
-files[] = "migrate_example_oracle.migrate.inc"
 name = "Migrate example - Oracle"
 package = "Migration"
 project = "migrate_example_oracle"

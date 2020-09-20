@@ -12,8 +12,8 @@ include_once('migrate_example_oracle.features.inc');
  *  String of the given length.
  */
 function migrate_example_oracle_generate($length) {
-  $base = 'word ';  // Five characters long
-  $multiplier = ($length / 5) + 1;  // 80% chance of going a bit long, thus substr below
+  $base = 'word '; // Five characters long
+  $multiplier = ($length / 5) + 1; // 80% chance of going a bit long, thus substr below
   $data = str_repeat($base, $multiplier);
   $data = substr($data, 0, $length);
   return $data;
@@ -51,5 +51,14 @@ function migrate_example_oracle_sample_data() {
       'created' => '2012/01/01 13:14:15',
       'updated' => '2012/03/14 16:17:18',
     ),
+  );
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function migrate_example_oracle_autoload_info() {
+  return array(
+    'MigrateExampleOracleNode' => 'migrate_example_oracle.migrate.inc',
   );
 }

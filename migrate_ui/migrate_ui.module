@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_ui_help($path, $arg) {
   switch ($path) {
     case 'admin/content/migrate':
@@ -8,7 +12,7 @@ function migrate_ui_help($path, $arg) {
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function migrate_ui_menu() {
   $items = array();
@@ -16,8 +20,8 @@ function migrate_ui_menu() {
   $items['admin/content/migrate'] = array(
     'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
     'title' => 'Migrate',
-    'description' => 'Manage importing of data into your Drupal site',
-    'page callback' => 'drupal_get_form',
+    'description' => 'Manage importing of data into your Backdrop site',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('migrate_ui_migrate_dashboard'),
     'access arguments' => array(MIGRATE_ACCESS_BASIC),
     'access callback' => 'user_access',
@@ -46,7 +50,7 @@ function migrate_ui_menu() {
       'type' => MENU_LOCAL_TASK,
       'title' => 'Import from @source_title',
       'title arguments' => array('@source_title' => $wizard->getSourceName()),
-      'page callback' => 'drupal_get_form',
+      'page callback' => 'backdrop_get_form',
       'page arguments' => array('migrate_ui_wizard', $wizard_class),
       'access arguments' => array(MIGRATE_ACCESS_BASIC),
       'file' => 'migrate_ui.wizard.inc',
@@ -55,54 +59,54 @@ function migrate_ui_menu() {
 
   $items['admin/content/migrate/groups/%'] =
     array(
-      'title callback' => 'migrate_ui_migrate_group_title',
-      'title arguments' => array(4),
-      'type' => MENU_NORMAL_ITEM,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('migrate_ui_migrate_group', 4),
-      'access arguments' => array(MIGRATE_ACCESS_BASIC),
-      'file' => 'migrate_ui.pages.inc',
-    );
+    'title callback' => 'migrate_ui_migrate_group_title',
+    'title arguments' => array(4),
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('migrate_ui_migrate_group', 4),
+    'access arguments' => array(MIGRATE_ACCESS_BASIC),
+    'file' => 'migrate_ui.pages.inc',
+  );
 
   $items['admin/content/migrate/groups/%/%'] =
     array(
-      'title callback' => 'migrate_ui_migrate_migration_title',
-      'title arguments' => array(5),
-      'type' => MENU_NORMAL_ITEM,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('migrate_migration_info', 4, 5),
-      'access arguments' => array(MIGRATE_ACCESS_BASIC),
-      'file' => 'migrate_ui.pages.inc',
-    );
+    'title callback' => 'migrate_ui_migrate_migration_title',
+    'title arguments' => array(5),
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('migrate_migration_info', 4, 5),
+    'access arguments' => array(MIGRATE_ACCESS_BASIC),
+    'file' => 'migrate_ui.pages.inc',
+  );
 
   $items['admin/content/migrate/groups/%/%/view'] =
     array(
-      'title' => 'View',
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-      'weight' => -10,
-    );
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
 
   $items['admin/content/migrate/groups/%/%/edit'] =
     array(
-      'type' => MENU_LOCAL_TASK,
-      'title' => 'Edit',
-      'description' => 'Edit migration mappings',
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('migrate_ui_edit_mappings', 4, 5),
-      'access arguments' => array(MIGRATE_ACCESS_ADVANCED),
-      'file' => 'migrate_ui.pages.inc',
-    );
+    'type' => MENU_LOCAL_TASK,
+    'title' => 'Edit',
+    'description' => 'Edit migration mappings',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('migrate_ui_edit_mappings', 4, 5),
+    'access arguments' => array(MIGRATE_ACCESS_ADVANCED),
+    'file' => 'migrate_ui.pages.inc',
+  );
 
   $items['admin/content/migrate/groups/%/%/messages'] =
     array(
-      'type' => MENU_LOCAL_TASK,
-      'title' => 'Messages',
-      'description' => 'View messages from a migration',
-      'page callback' => 'migrate_ui_messages',
-      'page arguments' => array(4, 5),
-      'access arguments' => array(MIGRATE_ACCESS_ADVANCED),
-      'file' => 'migrate_ui.pages.inc',
-    );
+    'type' => MENU_LOCAL_TASK,
+    'title' => 'Messages',
+    'description' => 'View messages from a migration',
+    'page callback' => 'migrate_ui_messages',
+    'page arguments' => array(4, 5),
+    'access arguments' => array(MIGRATE_ACCESS_ADVANCED),
+    'file' => 'migrate_ui.pages.inc',
+  );
 
   return $items;
 }
@@ -123,7 +127,7 @@ function migrate_ui_migrate_migration_title($migration_name) {
 }
 
 /**
- * Implements hook_theme()
+ * Implements hook_theme().
  *
  * @return array
  */
@@ -143,7 +147,7 @@ function migrate_ui_theme() {
 }
 
 /**
- * Implementation of hook_mail().
+ * Implements hook_mail().
  *
  * @param $key
  * @param $message
@@ -153,8 +157,10 @@ function migrate_ui_mail($key, &$message, $params) {
   $options['language'] = $message['language'];
   user_mail_tokens($variables, array(), $options);
   $langcode = $message['language']->language;
+  // TODO This variable was probably removed in Backdrop without replacement.
   $subject = variable_get('migrate_drush_mail_subject', '');
   $message['subject'] = t($subject, array(), array('langcode' => $langcode));
+  // TODO This variable was probably removed in Backdrop without replacement.
   $body = variable_get('migrate_drush_mail_body', '');
   $body .= "\n" . $params['output'];
   $message['body'][] = t($body, array(), array('langcode' => $langcode));
@@ -181,4 +187,15 @@ function migrate_ui_wizards() {
     }
   }
   return $wizards;
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function migrate_ui_autoload_info() {
+  return array(
+    'MigrateUIWizard' => 'migrate_ui.wizard.inc',
+    'MigrateUIStep' => 'migrate_ui.wizard.inc',
+    'MigrateUIWizardExtender' => 'migrate_ui.wizard.inc',
+  );
 }

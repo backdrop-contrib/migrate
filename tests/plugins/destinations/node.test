@@ -8,7 +8,7 @@
 /**
  * Test node migration.
  */
-class MigrateNodeUnitTest extends DrupalWebTestCase {
+class MigrateNodeUnitTest extends BackdropWebTestCase {
 
   public static function getInfo() {
     return array(
@@ -69,12 +69,12 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
 
     $query = db_select('migrate_example_wine_producer', 'p')
       ->fields('p', array(
-        'producerid',
-        'name',
-        'body',
-        'excerpt',
-        'accountid',
-      ));
+      'producerid',
+      'name',
+      'body',
+      'excerpt',
+      'accountid',
+    ));
     // Region term is singletons, handled straighforwardly
     $query->leftJoin('migrate_example_wine_category_producer', 'reg',
       "p.producerid = reg.producerid");
@@ -95,16 +95,16 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     }
     $query = db_select('migrate_example_wine', 'w')
       ->fields('w', array(
-        'wineid',
-        'name',
-        'body',
-        'excerpt',
-        'accountid',
-        'posted',
-        'last_changed',
-        'variety',
-        'region',
-      ));
+      'wineid',
+      'name',
+      'body',
+      'excerpt',
+      'accountid',
+      'posted',
+      'last_changed',
+      'variety',
+      'region',
+    ));
     $query->leftJoin('migrate_example_wine_category_wine', 'cwbw',
       "w.wineid = cwbw.wineid");
     $query->leftJoin('migrate_example_wine_categories', 'bw',
@@ -144,7 +144,7 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     // Test Field API fields of all types
     // body_with_summary
     $body = field_get_items('node', $wine_node, 'body');
-    $this->assertEqual($body[0]['value'], 'REVIEW: ' . drupal_strtoupper($wine_row->body),
+    $this->assertEqual($body[0]['value'], 'REVIEW: ' . backdrop_strtoupper($wine_row->body),
       t('body properly migrated'));
     $this->assertEqual($body[0]['summary'], $wine_row->excerpt,
       t('summary properly migrated'));
@@ -204,10 +204,10 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
           if ($value != $final_nodes[$nid]->{$field}) {
             $this->error(t('Field !field mismatch: original !value1, result !value2',
               array(
-                '!field' => $field,
-                '!value1' => print_r($value, TRUE),
-                '!value2' => print_r($final_nodes[$nid]->{$field}, TRUE),
-              )));
+              '!field' => $field,
+              '!value1' => print_r($value, TRUE),
+              '!value2' => print_r($final_nodes[$nid]->{$field}, TRUE),
+            )));
           }
         }
       }
@@ -263,10 +263,10 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
 
     db_update('migrate_example_wine')
       ->fields(array(
-        'body' => 'Not so much berry character',
-        // Timestamp 1285058521
-        'last_changed' => strtotime('2010-10-21 04:42:01'),
-      ))
+      'body' => 'Not so much berry character',
+      // Timestamp 1285058521
+      'last_changed' => strtotime('2010-10-21 04:42:01'),
+    ))
       ->condition('wineid', 2)
       ->execute();
 
@@ -308,15 +308,14 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     // Now test highwater with unjoined map table
     $migration->getSource()->setMapJoinable(FALSE);
     $result = $migration->processImport(array(
-      'limit' =>
-        array('value' => 2, 'unit' => 'items'),
+      'limit' => array('value' => 2, 'unit' => 'items'),
     ));
     db_update('migrate_example_wine')
       ->fields(array(
-        'body' => 'Very berry',
-        // Timestamp 1286008921
-        'last_changed' => strtotime('2010-10-02 04:42:01'),
-      ))
+      'body' => 'Very berry',
+      // Timestamp 1286008921
+      'last_changed' => strtotime('2010-10-02 04:42:01'),
+    ))
       ->condition('wineid', 1)
       ->execute();
     $result = $migration->processImport();
@@ -337,8 +336,7 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     $result = $migration->processRollback(array('force' => TRUE));
     $migration->getSource()->setMapJoinable(TRUE);
     $result = $migration->processImport(array(
-      'limit' =>
-        array('value' => 1, 'unit' => 'item'),
+      'limit' => array('value' => 1, 'unit' => 'item'),
     ));
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Wine node import with itemlimit returned RESULT_COMPLETED'));
@@ -360,8 +358,7 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     $result = $migration->processRollback(array('force' => TRUE));
     $migration->getSource()->setMapJoinable(FALSE);
     $result = $migration->processImport(array(
-      'limit' =>
-        array('value' => 1, 'unit' => 'item'),
+      'limit' => array('value' => 1, 'unit' => 'item'),
     ));
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Wine node import with itemlimit returned RESULT_COMPLETED'));
@@ -456,10 +453,12 @@ class MigrateNodeUnitTest extends DrupalWebTestCase {
     // This is not necessarily node-related, but it was shoved in the node test.
     $migration->saveMailSystem();
     $migration->disableMailSystem();
+    // TODO This variable was probably removed in Backdrop without replacement.
     $ms = variable_get('mail_system', NULL);
     $this->assertTrue(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration has disabled mail system'));
     $migration->restoreMailSystem();
+    // TODO This variable was probably removed in Backdrop without replacement.
     $ms = variable_get('mail_system', NULL);
     $this->assertFalse(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration::restoreMailSystem restored mail system'));

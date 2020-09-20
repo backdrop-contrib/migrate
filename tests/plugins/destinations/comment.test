@@ -8,7 +8,7 @@
 /**
  * Test comment migration.
  */
-class MigrateCommentUnitTest extends DrupalWebTestCase {
+class MigrateCommentUnitTest extends BackdropWebTestCase {
 
   public static function getInfo() {
     return array(
@@ -71,19 +71,19 @@ class MigrateCommentUnitTest extends DrupalWebTestCase {
 
     $result = db_select('migrate_example_wine_comment', 'wc')
       ->fields('wc', array(
-        'commentid',
-        'comment_parent',
-        'name',
-        'mail',
-        'accountid',
-        'body',
-        'wineid',
-        'subject',
-        'commenthost',
-        'userpage',
-        'posted',
-        'lastchanged',
-      ))
+      'commentid',
+      'comment_parent',
+      'name',
+      'mail',
+      'accountid',
+      'body',
+      'wineid',
+      'subject',
+      'commenthost',
+      'userpage',
+      'posted',
+      'lastchanged',
+    ))
       ->orderBy('comment_parent')
       ->execute();
 
@@ -146,10 +146,10 @@ class MigrateCommentUnitTest extends DrupalWebTestCase {
           if ($value != $final_comments[$cid]->{$field}) {
             $this->error(t('Field !field mismatch: original !value1, result !value2',
               array(
-                '!field' => $field,
-                '!value1' => print_r($value, TRUE),
-                '!value2' => print_r($final_comments[$cid]->{$field}, TRUE),
-              )));
+              '!field' => $field,
+              '!value1' => print_r($value, TRUE),
+              '!value2' => print_r($final_comments[$cid]->{$field}, TRUE),
+            )));
           }
         }
       }

@@ -8,7 +8,7 @@
 /**
  * Test node migration.
  */
-class MigrateXMLUnitTest extends DrupalWebTestCase {
+class MigrateXMLUnitTest extends BackdropWebTestCase {
 
   public static function getInfo() {
     return array(
@@ -106,7 +106,7 @@ class MigrateXMLUnitTest extends DrupalWebTestCase {
     $this->assertEqual($body[0]['value'], 'Makers of Ladybug Red',
       t('body properly migrated'));
     $region = field_get_items('node', $producer_node, 'migrate_example_wine_regions');
-    $term = taxonomy_get_term_by_name('Redwood Valley');
+    $term = taxonomy_term_load_multiple_by_name('Redwood Valley');
     $term = reset($term);
     $this->assertEqual($region[0]['tid'], $term->tid,
       t('region properly migrated'));

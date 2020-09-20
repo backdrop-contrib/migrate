@@ -37,7 +37,7 @@
  *   - wizard extenders: An array of classes that extend Migrate UI wizards.
  *     Keys are the wizard classes, values are arrays of extender classes.
  *
- * See system_hook_info() for all hook groups defined by Drupal core.
+ * See system_hook_info() for all hook groups defined by Backdrop core.
  *
  * @see hook_migrate_api_alter().
  */
@@ -102,7 +102,7 @@ function hook_migrate_api_alter(array &$info) {
  */
 function hook_migrate_overview() {
   return t('<p>Listed below are all the migration processes defined for migration
-    of our old site to Drupal. Open issues applying to specific migrations
+    of our old site to Backdrop. Open issues applying to specific migrations
     can be viewed by clicking the migration name. Also, details on how each
     migration will behave when incrementally migrated are provided.</p>
     <p><a href="http://issuetracker.example.com/?project=migration&status=open">Open migration tickets</a></p>');

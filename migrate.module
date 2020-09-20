@@ -3,7 +3,7 @@
 /**
  * @file
  * API and drush commands to support migration of data from external sources
- * into a Drupal installation.
+ * into a Backdrop installation.
  */
 
 // TODO:
@@ -26,7 +26,7 @@ function migrate_help($path, $arg) {
     case 'admin/help#migrate':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Migrate module provides a flexible framework for migrating content into Drupal from other sources (e.g., when converting a web site from another CMS to Drupal). Out-of-the-box, support for creating Drupal nodes, taxonomy terms, comments, and users are included. Plugins permit migration of other types of content. For more information, see the online documentation for the <a href="@handbook">Migrate module</a>.', array('@handbook' => 'http://drupal.org/migrate')) . '</p>';
+      $output .= '<p>' . t('The Migrate module provides a flexible framework for migrating content into Backdrop from other sources (e.g., when converting a web site from another CMS to Backdrop). Out-of-the-box, support for creating Backdrop nodes, taxonomy terms, comments, and users are included. Plugins permit migration of other types of content. For more information, see the online documentation for the <a href="@handbook">Migrate module</a>.', array('@handbook' => 'http://drupal.org/migrate')) . '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
       $output .= '<dl>';
       $output .= '<dt>' . t('Getting Started') . '</dt>';
@@ -139,6 +139,16 @@ function migrate_migrations($reset = NULL) {
 }
 
 /**
+ * Implements hook_config_info().
+ */
+function migrate_config_info() {
+  $prefixes['migrate.settings'] = array(
+    'label' => t('Module name settings'),
+    'group' => t('Configuration'),
+  );
+}
+
+/**
  * Invoke any available handlers attached to a given destination type.
  * If any handlers have dependencies defined, they will be invoked after
  * the specified handlers.
@@ -158,10 +168,10 @@ function migrate_handler_invoke_all($destination, $method) {
   array_shift($args);
   $return = array();
   $class_list = _migrate_class_list('MigrateDestinationHandler');
-  $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
+  $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled) && $handler->handlesType($destination)
-      && method_exists($handler, $method)) {
+        && method_exists($handler, $method)) {
       migrate_instrument_start($class_name . '->' . $method);
       $result = call_user_func_array(array($handler, $method), $args);
       migrate_instrument_stop($class_name . '->' . $method);
@@ -203,21 +213,20 @@ function migrate_field_handler_invoke_all($entity, array $field_info, array $ins
   }
   // No need to do this unserialize/variable_get/serialize so often,
   // it never changes.
-  if(!is_array($disabled)){
-    $disabled = unserialize(variable_get('migrate_disabled_handlers',
-      serialize(array())));
+  if (!is_array($disabled)) {
+    $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
   }
   // This function is called a lot. Rather than determine if the field type is
   // handled once for every record, the value should be determined once per
   // execution.
   // The same can go for whether the handler/method pair exists
-  if(!isset($types_handled[$type])){
-    foreach($class_list as $class_name => $handler) {
+  if (!isset($types_handled[$type])) {
+    foreach ($class_list as $class_name => $handler) {
       $types_handled[$type][$class_name] = $handler->handlesType($type);
     }
   }
-  if(!isset($methods_handled[$method])){
-    foreach($class_list as $class_name => $handler) {
+  if (!isset($methods_handled[$method])) {
+    foreach ($class_list as $class_name => $handler) {
       $methods_handled[$method][$class_name] = method_exists($handler, $method);
     }
   }
@@ -311,7 +320,7 @@ function migrate_hook_info() {
 }
 
 /**
- * Implementation of hook_permission().
+ * Implements hook_permission().
  */
 function migrate_permission() {
   return array(
@@ -341,18 +350,18 @@ function migrate_get_module_apis($reset = FALSE) {
         $cache[$module] = $info;
       }
       else {
-        drupal_set_message(t('%function supports Migrate API version %modversion,
+        backdrop_set_message(t('%function supports Migrate API version %modversion,
           Migrate module API version is %version - migration support not loaded.',
           array(
-            '%function' => $function,
-            '%modversion' => $info['api'],
-            '%version' => MIGRATE_API_VERSION,
-          )));
+          '%function' => $function,
+          '%modversion' => $info['api'],
+          '%version' => MIGRATE_API_VERSION,
+        )));
       }
     }
 
     // Allow modules to alter the migration information.
-    drupal_alter('migrate_api', $cache);
+    backdrop_alter('migrate_api', $cache);
   }
 
   return $cache;
@@ -476,7 +485,7 @@ function migrate_watchdog($log_entry) {
 }
 
 /**
- * Resource functions modeled on Drupal's timer functions
+ * Resource functions modeled on Backdrop's timer functions
  */
 
 /**
@@ -601,7 +610,7 @@ function migrate_overview() {
 }
 
 /**
- * Implements hook_modules_enabled.
+ * Implements hook_modules_enabled().
  */
 function migrate_modules_enabled($modules) {
   if (array_intersect($modules, module_implements('migrate_api'))) {
@@ -623,4 +632,92 @@ function migrate_module_implements_alter(&$implementation, $hook) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function migrate_autoload_info() {
+  return array(
+    'MigrationBase' => 'includes/base.inc',
+    'MigrateDestination' => 'includes/destination.inc',
+    'MigrateDestinationHandler' => 'includes/destination.inc',
+    'MigrateException' => 'includes/exception.inc',
+    'MigrateFieldMapping' => 'includes/field_mapping.inc',
+    'MigrateGroup' => 'includes/group.inc',
+    'MigrateHandler' => 'includes/handler.inc',
+    'MigrateMap' => 'includes/map.inc',
+    'Migration' => 'includes/migration.inc',
+    'DynamicMigration' => 'includes/migration.inc',
+    'MigrateSource' => 'includes/source.inc',
+    'MigrateTeamMember' => 'includes/team.inc',
+    'MigrateMailIgnore' => 'migrate.mail.inc',
+    'MigrateDestinationCustomBlock' => 'plugins/destinations/block_custom.inc',
+    'MigrateDestinationComment' => 'plugins/destinations/comment.inc',
+    'MigrateCommentNodeHandler' => 'plugins/destinations/comment.inc',
+    'MigrateDestinationEntity' => 'plugins/destinations/entity.inc',
+    'MigrateFieldsEntityHandler' => 'plugins/destinations/fields.inc',
+    'MigrateFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateDefaultFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateSimpleFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateTextFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateValueFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateTaxonomyTermReferenceFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateFileFieldBaseHandler' => 'plugins/destinations/fields.inc',
+    'MigrateFileFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateImageFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateNodeReferenceFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateUserReferenceFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateFileInterface' => 'plugins/destinations/file.inc',
+    'MigrateFileBase' => 'plugins/destinations/file.inc',
+    'MigrateFileUriAsIs' => 'plugins/destinations/file.inc',
+    'MigrateFileFid' => 'plugins/destinations/file.inc',
+    'MigrateFile' => 'plugins/destinations/file.inc',
+    'MigrateFileUri' => 'plugins/destinations/file.inc',
+    'MigrateFileBlob' => 'plugins/destinations/file.inc',
+    'MigrateDestinationFile' => 'plugins/destinations/file.inc',
+    'MigrateDestinationMenu' => 'plugins/destinations/menu.inc',
+    'MigrateDestinationMenuLinks' => 'plugins/destinations/menu_links.inc',
+    'MigrateDestinationNode' => 'plugins/destinations/node.inc',
+    'MigrateDestinationNodeRevision' => 'plugins/destinations/node.inc',
+    'MigratePathEntityHandler' => 'plugins/destinations/path.inc',
+    'MigratePollEntityHandler' => 'plugins/destinations/poll.inc',
+    'MigrateStatisticsEntityHandler' => 'plugins/destinations/statistics.inc',
+    'MigrateDestinationTable' => 'plugins/destinations/table.inc',
+    'MigrateDestinationTableCopy' => 'plugins/destinations/table_copy.inc',
+    'MigrateDestinationTerm' => 'plugins/destinations/term.inc',
+    'MigrateDestinationUser' => 'plugins/destinations/user.inc',
+    'MigrateDestinationRole' => 'plugins/destinations/user.inc',
+    'MigrateDestinationVariable' => 'plugins/destinations/variable.inc',
+    'MigrateListCSV' => 'plugins/sources/csv.inc',
+    'MigrateSourceCSV' => 'plugins/sources/csv.inc',
+    'MigrateSourceDB2' => 'plugins/sources/db2.inc',
+    'MigrateContentParser' => 'plugins/sources/files.inc',
+    'MigrateSimpleContentParser' => 'plugins/sources/files.inc',
+    'MigrateListFiles' => 'plugins/sources/files.inc',
+    'MigrateItemFile' => 'plugins/sources/files.inc',
+    'MigrateListJSON' => 'plugins/sources/json.inc',
+    'MigrateItemJSON' => 'plugins/sources/json.inc',
+    'MigrateJSONReader' => 'plugins/sources/json.inc',
+    'MigrateSourceJSON' => 'plugins/sources/json.inc',
+    'MigrateList' => 'plugins/sources/list.inc',
+    'MigrateItem' => 'plugins/sources/list.inc',
+    'MigrateSourceList' => 'plugins/sources/list.inc',
+    'MigrateSourceMongoDB' => 'plugins/sources/mongodb.inc',
+    'MigrateItems' => 'plugins/sources/multiitems.inc',
+    'MigrateSourceMultiItems' => 'plugins/sources/multiitems.inc',
+    'MigrateSourceOracle' => 'plugins/sources/oracle.inc',
+    'MigrateSourceSpreadsheet' => 'plugins/sources/spreadsheet.inc',
+    'MigrateSourceSQL' => 'plugins/sources/sql.inc',
+    'MigrateConnectionQuery' => 'plugins/sources/sql.inc',
+    'MigrateSQLMap' => 'plugins/sources/sqlmap.inc',
+    'MigrateSourceMSSQL' => 'plugins/sources/sqlsrv.inc',
+    'MigrateListXML' => 'plugins/sources/xml.inc',
+    'MigrateItemXML' => 'plugins/sources/xml.inc',
+    'MigrateXMLFieldMapping' => 'plugins/sources/xml.inc',
+    'XMLMigration' => 'plugins/sources/xml.inc',
+    'MigrateItemsXML' => 'plugins/sources/xml.inc',
+    'MigrateXMLReader' => 'plugins/sources/xml.inc',
+    'MigrateSourceXML' => 'plugins/sources/xml.inc',
+  );
 }

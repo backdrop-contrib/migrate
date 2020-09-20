@@ -8,7 +8,7 @@
 /**
  * Test taxonomy migration.
  */
-class MigrateTaxonomyUnitTest extends DrupalWebTestCase {
+class MigrateTaxonomyUnitTest extends BackdropWebTestCase {
 
   public static function getInfo() {
     return array(
@@ -38,12 +38,12 @@ class MigrateTaxonomyUnitTest extends DrupalWebTestCase {
     }
     $query = db_select('migrate_example_wine_categories', 'wc')
       ->fields('wc', array(
-        'categoryid',
-        'name',
-        'details',
-        'category_parent',
-        'ordering',
-      ))
+      'categoryid',
+      'name',
+      'details',
+      'category_parent',
+      'ordering',
+    ))
       ->condition('wc.type', 'variety');
     $query->leftJoin('migrate_example_wine_categories', 'wcpar',
       'wc.category_parent=wcpar.categoryid');
@@ -65,9 +65,9 @@ class MigrateTaxonomyUnitTest extends DrupalWebTestCase {
       t('Weights match'));
     $this->assertEqual($terms['Merlot']->format, $migration->basicFormat->format,
       t('Formats match'));
-    $parents = taxonomy_get_parents($terms['White wine']->tid);
+    $parents = taxonomy_term_load_parents($terms['White wine']->tid);
     $this->assertEqual(count($parents), 0, t('Term without parent properly migrated'));
-    $parents = taxonomy_get_parents($terms['Merlot']->tid);
+    $parents = taxonomy_term_load_parents($terms['Merlot']->tid);
     $parent = array_pop($parents);
     $this->assertEqual($parent->name, 'Red wine', t('Parents match'));
 
@@ -95,10 +95,10 @@ class MigrateTaxonomyUnitTest extends DrupalWebTestCase {
           if ($value != $final_terms[$tid]->{$field}) {
             $this->error(t('Field !field mismatch: original !value1, result !value2',
               array(
-                '!field' => $field,
-                '!value1' => print_r($value, TRUE),
-                '!value2' => print_r($final_terms[$tid]->{$field}, TRUE),
-              )));
+              '!field' => $field,
+              '!value1' => print_r($value, TRUE),
+              '!value2' => print_r($final_terms[$tid]->{$field}, TRUE),
+            )));
           }
         }
       }

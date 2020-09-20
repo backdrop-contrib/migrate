@@ -1,4 +1,5 @@
-core = "7.x"
+backdrop = 1.x
+type = module
 dependencies[] = "features"
 dependencies[] = "migrate"
 dependencies[] = "number"
@@ -19,7 +20,6 @@ features[field][] = "node-migrate_example_baseball-field_visiting_pitcher"
 features[field][] = "node-migrate_example_baseball-field_visiting_score"
 features[field][] = "node-migrate_example_baseball-field_visiting_team"
 features[node][] = "migrate_example_baseball"
-files[] = "migrate_example_baseball.migrate.inc"
 name = "migrate_example_baseball"
 package = "Migration"
 php = "5.2.4"

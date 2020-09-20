@@ -1,0 +1,48 @@
+[MigrateImportOptionsTest]
+name = Import options
+description = Test the import options
+group = Migrate
+file = tests/import/options.test
+
+[MigrateCommentUnitTest]
+name = Comment migration
+description = Test migration of comment data
+group = Migrate
+file = tests/plugins/destinations/comment.test
+
+[MigrateNodeUnitTest]
+name = Node migration
+description = Test migration of node data
+group = Migrate
+file = tests/plugins/destinations/node.test
+
+[MigrateTableUnitTest]
+name = Table migration
+description = Test migration of table data
+group = Migrate
+file = tests/plugins/destinations/table.test
+
+[MigrateTaxonomyUnitTest]
+name = Taxonomy migration
+description = Test migration of taxonomy data
+group = Migrate
+file = tests/plugins/destinations/term.test
+
+[MigrateUserUnitTest]
+name = User migration
+description = Test migration of user data
+group = Migrate
+file = tests/plugins/destinations/user.test
+
+[MigrateOracleUnitTest]
+name = Oracle migration
+description = Test migration from an Oracle source
+group = Migrate
+file = tests/plugins/sources/oracle.test
+
+[MigrateXMLUnitTest]
+name = XML migration
+description = Test migration from XML source
+group = Migrate
+file = tests/plugins/sources/xml.test
+
