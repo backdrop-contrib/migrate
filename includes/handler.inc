@@ -43,7 +43,7 @@ abstract class MigrateHandler {
   protected function registerTypes(array $types) {
     // Make the type names the keys
     foreach ($types as $type) {
-      $type = drupal_strtolower($type);
+      $type = backdrop_strtolower($type);
       $this->typesHandled[$type] = $type;
     }
   }

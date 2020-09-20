@@ -71,7 +71,8 @@ class MigrateDestinationVariable extends MigrateDestination {
     // We cannot just check against NULL because a variable might actually be
     // set to NULL. Attempt to use a unique variable default value that nothing
     // else would use.
-    $default = 'migrate:' . REQUEST_TIME . ':' . drupal_random_key();
+    $default = 'migrate:' . REQUEST_TIME . ':' . backdrop_random_key();
+    // TODO This variable was probably removed in Backdrop without replacement.
     if (variable_get($variable->name, $default) !== $default) {
       $update = TRUE;
     }
@@ -79,10 +80,12 @@ class MigrateDestinationVariable extends MigrateDestination {
     // variable_set() provides no return callback, so we can't really test this
     // without running a variable_get() check.
     migrate_instrument_start('variable_set');
+    // TODO This variable was probably removed in Backdrop without replacement.
     variable_set($variable->name, $variable->value);
     migrate_instrument_stop('variable_set');
 
     // Return the new id or FALSE on failure.
+    // TODO This variable was probably removed in Backdrop without replacement.
     if (variable_get($variable->name, $default) === $variable->value) {
       // Increment the count if the save succeeded.
       if ($update) {
@@ -149,6 +152,7 @@ class MigrateDestinationVariable extends MigrateDestination {
     $name = reset($id);
     migrate_instrument_start('variable_delete');
     $this->prepareRollback($name);
+    // TODO This variable was probably removed in Backdrop without replacement.
     variable_del($name);
     $this->completeRollback($name);
     migrate_instrument_stop('variable_delete');

@@ -130,7 +130,7 @@ class MigrateSourceMSSQL extends MigrateSource {
   public function computeCount() {
     migrate_instrument_start('MigrateSourceMSSQL count');
     if ($connect = $this->connect()) {
-      $result = sqlsrv_query($connect,$this->countQuery);
+      $result = sqlsrv_query($connect, $this->countQuery);
       $result_array = sqlsrv_fetch_array($result);
       if ($result_array) {
         $count = reset($result_array);

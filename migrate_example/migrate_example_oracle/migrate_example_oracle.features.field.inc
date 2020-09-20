@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implementation of hook_field_default_fields().
+ * Implements hook_field_default_fields().
  */
 function migrate_example_oracle_field_default_fields() {
   $fields = array();

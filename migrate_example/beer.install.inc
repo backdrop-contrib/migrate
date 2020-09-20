@@ -19,6 +19,10 @@ function migrate_example_beer_schema() {
   return $schema;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_install() {
   migrate_example_beer_content_type();
   migrate_example_beer_tags();
@@ -38,6 +42,10 @@ function migrate_example_beer_install() {
   migrate_example_beer_data_urls();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_uninstall() {
   if ($vids = taxonomy_vocabulary_load_multiple(array(), array('machine_name' => 'migrate_example_beer_styles'))) {
     // Grab key of the first returned vocabulary.
@@ -46,10 +54,18 @@ function migrate_example_beer_uninstall() {
   migrate_example_beer_content_type_delete();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_disable() {
   MigrateGroup::deregister('beer');
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_schema_node() {
   return array(
     'description' => 'Beers of the world.',
@@ -116,6 +132,10 @@ function migrate_example_beer_schema_node() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_schema_topic() {
   return array(
     'description' => 'Categories',
@@ -153,6 +173,10 @@ function migrate_example_beer_schema_topic() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_schema_topic_node() {
   return array(
     'description' => 'Beers topic pairs.',
@@ -173,6 +197,10 @@ function migrate_example_beer_schema_topic_node() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_schema_comment() {
   return array(
     'description' => 'Beers comments.',
@@ -226,6 +254,10 @@ function migrate_example_beer_schema_comment() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_schema_account() {
   return array(
     'description' => 'Beers accounts.',
@@ -286,6 +318,10 @@ function migrate_example_beer_schema_account() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_schema_legacy_urls() {
   return array(
     'description' => 'Stores legacy paths and destination ids for redirection.',
@@ -323,6 +359,10 @@ function migrate_example_beer_schema_legacy_urls() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_content_type() {
   // This code based on from standard.profile.
   // Insert default user-defined node types into the database.
@@ -345,6 +385,10 @@ function migrate_example_beer_content_type() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_tags() {
   // Create a vocabulary named "Migrate Example Beer Styles", enabled for the 'migrate_example_beer' content type.
   $description = st('Use tags to group beers on similar topics into categories.');
@@ -354,7 +398,6 @@ function migrate_example_beer_tags() {
     'description' => $description,
     'machine_name' => 'migrate_example_beer_styles',
     'help' => $help,
-
   );
   taxonomy_vocabulary_save($vocabulary);
 
@@ -393,6 +436,10 @@ function migrate_example_beer_tags() {
 }
 
 // Create an image field named "Migrate Example Image", enabled for the 'Beer' content type.
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_image() {
   if (!field_info_field('field_migrate_example_image')) {
     $field = array(
@@ -425,7 +472,6 @@ function migrate_example_beer_image() {
         'alt_field' => TRUE,
         'title_field' => '',
       ),
-
       'widget' => array(
         'type' => 'image_image',
         'settings' => array(
@@ -434,7 +480,6 @@ function migrate_example_beer_image() {
         ),
         'weight' => -1,
       ),
-
       'display' => array(
         'full' => array(
           'label' => 'hidden',
@@ -472,6 +517,10 @@ function migrate_example_beer_image() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_favs() {
   if (!field_info_field('field_migrate_example_favbeers')) {
     $field = array(
@@ -500,6 +549,10 @@ function migrate_example_beer_favs() {
 }
 
 // Create Gender list field on User entity.
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_gender() {
   if (!field_info_field('field_migrate_example_gender')) {
     $field = array(
@@ -508,7 +561,7 @@ function migrate_example_beer_gender() {
       'settings' => array(
         'allowed_values' => array(
           0 => 'Male',
-          1 => 'Female'
+          1 => 'Female',
         ),
       ),
     );
@@ -530,6 +583,10 @@ function migrate_example_beer_gender() {
 }
 
 // Create a text field named "Countries", enabled for the 'Beer' content type.
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_country() {
   if (!field_info_field('field_migrate_example_country')) {
     $field = array(
@@ -547,7 +604,6 @@ function migrate_example_beer_country() {
       'label' => 'Countries',
       'bundle' => 'migrate_example_beer',
       'description' => 'Beer country.',
-
       'widget' => array(
         'type' => 'text_textfield',
       ),
@@ -556,6 +612,10 @@ function migrate_example_beer_country() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_content_type_delete() {
   $bundle = 'migrate_example_beer';
   $field_names = array(
@@ -582,6 +642,10 @@ function migrate_example_beer_content_type_delete() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_data_node() {
   $fields = array(
     'bid',
@@ -644,6 +708,10 @@ function migrate_example_beer_data_node() {
 
 // Note that alice has duplicate username. Exercies dedupe() method.
 // @TODO duplicate email also.
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_data_account() {
   $fields = array(
     'status',
@@ -705,6 +773,10 @@ function migrate_example_beer_data_account() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_data_comment() {
   $fields = array(
     'bid',
@@ -762,6 +834,10 @@ function migrate_example_beer_data_comment() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_data_topic() {
   $fields = array('style', 'details', 'style_parent', 'region', 'hoppiness');
   $query = db_insert('migrate_example_beer_topic')
@@ -783,6 +859,10 @@ function migrate_example_beer_data_topic() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_data_topic_node() {
   $fields = array('bid', 'style');
   $query = db_insert('migrate_example_beer_topic_node')
@@ -798,6 +878,10 @@ function migrate_example_beer_data_topic_node() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_beer_data_urls() {
   $fields = array(
     'id',

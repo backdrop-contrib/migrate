@@ -7,8 +7,8 @@
  *   Oracle database in your settings.php. E.g.,
  *
  * $conf['oracle_db'] = array(
- *   'username' => 'DRUPAL',
- *   'password' => 'DRUPAL',
+ *   'username' => 'BACKDROP',
+ *   'password' => 'BACKDROP',
  *   'connection_string' => '//oracledb/orcl',
  * );
  *
@@ -32,13 +32,13 @@ class MigrateExampleOracleNode extends Migration {
     // for the key name and for source fields below.
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'OID' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Content ID',
-        ),
+      'OID' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Content ID',
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -74,11 +74,10 @@ class MigrateExampleOracleNode extends Migration {
     $this->addFieldMapping('field_mainimage', 'MAINIMAGE')
       ->description('An image blob in the DB')
       ->arguments(array(
-        'file_function' => 'file_blob',
-        // Alternatively, specify a column here for dynamic file name.
-        'source_path' => 'druplicon.png',
-
-      ));
+      'file_function' => 'file_blob',
+      // Alternatively, specify a column here for dynamic file name.
+      'source_path' => 'druplicon.png',
+    ));
     $this->addFieldMapping('created', 'CREATED');
     $this->addFieldMapping('changed', 'UPDATED');
 
@@ -99,6 +98,10 @@ class MigrateExampleOracleNode extends Migration {
 
 /*
  * Implementation of hook_migrate_api().
+ */
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
  */
 function migrate_example_oracle_migrate_api() {
   $api = array(

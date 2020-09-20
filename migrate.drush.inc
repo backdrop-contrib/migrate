@@ -34,7 +34,7 @@ function migrate_drush_command() {
       'migrate-status' => 'Retrieve status for all migrations',
       'migrate-status BeerNode' => 'Retrieve status for just one migration',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('ms'),
   );
   $items['migrate-fields-destination'] = array(
@@ -49,7 +49,7 @@ function migrate_drush_command() {
     'examples' => array(
       'migrate-fields-destination MyNode' => 'List fields for the destination in the MyNode migration',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mfd'),
   );
   $items['migrate-fields-source'] = array(
@@ -64,7 +64,7 @@ function migrate_drush_command() {
     'examples' => array(
       'migrate-fields-destination MyNode' => 'List fields in the source query for the MyNode migration',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mfs'),
   );
   $items['migrate-mappings'] = array(
@@ -82,7 +82,7 @@ function migrate_drush_command() {
       'migrate-mappings MyNode' => 'Show mappings for the MyNode migration',
       'migrate-mappings MyNode --csv --full' => 'Export full mapping information in CSV format',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mm'),
   );
   $items['migrate-messages'] = array(
@@ -96,7 +96,7 @@ function migrate_drush_command() {
     'examples' => array(
       'migrate-messages MyNode' => 'Show all messages for the MyNode migration',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mmsg'),
   );
   $items['migrate-analyze'] = array(
@@ -111,7 +111,7 @@ function migrate_drush_command() {
     'examples' => array(
       'migrate-analyze MyNode' => 'Report on field values for the MyNode migration',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('maz'),
   );
   $items['migrate-audit'] = array(
@@ -126,7 +126,7 @@ function migrate_drush_command() {
     'examples' => array(
       'migrate-audit MyNode' => 'Report on problems in the MyNode migration',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('ma'),
   );
   $items['migrate-rollback'] = array(
@@ -138,16 +138,15 @@ function migrate_drush_command() {
     'examples' => array(
       'migrate-rollback Article' => 'Roll back the article migration',
       'migrate-rollback Article --idlist=4,9' => 'Roll back two articles. The ids refer to the value of the primary key in base table',
-      'migrate-rollback User --limit="50 items"' =>
-        'Roll back up to 50 items from the migration named User',
+      'migrate-rollback User --limit="50 items"' => 'Roll back up to 50 items from the migration named User',
       'migrate-rollback User --feedback="60 seconds"' => 'Display a progress message every 60 seconds or less',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mr'),
   );
   $migration_options['update'] = 'In addition to processing unprocessed items from the source, update previously-imported items with new data';
   $migration_options['needs-update'] =
-    'Reimport up to 10K records where needs_update=1. This option is only needed when your Drupal DB is on a different DB server from your source data. Otherwise, these records get migrated with just migrate-import.';
+    'Reimport up to 10K records where needs_update=1. This option is only needed when your Backdrop DB is on a different DB server from your source data. Otherwise, these records get migrated with just migrate-import.';
   $migration_options['stop'] = 'Stop specified migration(s) if applicable.';
   $migration_options['rollback'] = 'Rollback specified migration(s) if applicable.';
   $migration_options['file_function'] = 'Override file function to use when migrating images.';
@@ -163,14 +162,12 @@ function migrate_drush_command() {
       'migrate-import Article --update' => 'Import new items, and also update previously-imported items',
       'migrate-import Article --idlist=4,9' => 'Import two specific articles. The ids refer to the value of the primary key in base table',
       'migrate-import Article --idlist=450:pasta,451' => 'Import two specific articles. A colon can be used to separate parts of compound keys; otherwise, compound keys match by the first key field.',
-      'migrate-import Article --limit="60 seconds" --stop --rollback' =>
-        'Import for up to 60 seconds after stopping and rolling back the Article migration.',
-      'migrate-import Article --limit="100 items"' =>
-        'Import up to 100 items from the migration named Article.',
+      'migrate-import Article --limit="60 seconds" --stop --rollback' => 'Import for up to 60 seconds after stopping and rolling back the Article migration.',
+      'migrate-import Article --limit="100 items"' => 'Import up to 100 items from the migration named Article.',
       'migrate-import User --feedback="1000 items"' => 'Display a progress message every 1000 processed items or less',
       'migrate-import --all=User' => 'Perform User migrations and all that follow it.',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mi'),
   );
   $items['migrate-stop'] = array(
@@ -186,7 +183,7 @@ function migrate_drush_command() {
       'migrate-stop Article' => 'Stop any active operation on the Article migration',
       'migrate-stop --all' => 'Stop all active migration operations',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mst'),
   );
   $items['migrate-reset-status'] = array(
@@ -199,7 +196,7 @@ function migrate_drush_command() {
       'migrate-reset-status Article' => 'Reset any active operation on the Article migration',
       'migrate-reset-status --all' => 'Reset all active migration operations',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mrs'),
   );
   $items['migrate-deregister'] = array(
@@ -216,17 +213,17 @@ function migrate_drush_command() {
       'migrate-deregister --orphans' => 'Deregister any no-longer-implemented migrations',
       'migrate-deregister --group=myblog' => 'Deregister the myblog group and all migrations within it',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mdreg'),
   );
   $items['migrate-auto-register'] = array(
     'description' => 'Register any newly defined migration classes',
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mar'),
   );
   $items['migrate-register'] = array(
     'description' => 'Register or reregister any statically defined migrations',
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mreg'),
   );
   $items['migrate-wipe'] = array(
@@ -237,7 +234,7 @@ function migrate_drush_command() {
     'arguments' => array(
       'type' => 'A space delimited list of content type machine readable Ids.',
     ),
-    'drupal dependencies' => array('migrate'),
+    'backdrop dependencies' => array('migrate'),
     'aliases' => array('mw'),
   );
   return $items;
@@ -298,7 +295,7 @@ function drush_migrate_invoke_process($migrations = '') {
 function drush_migrate_status($name = NULL) {
   try {
     $refresh = drush_get_option('refresh');
-    $group_option = drupal_strtolower(drush_get_option('group'));
+    $group_option = backdrop_strtolower(drush_get_option('group'));
     $names_only = drush_get_option('names-only');
 
     // Validate input and load Migration(s).
@@ -317,7 +314,7 @@ function drush_migrate_status($name = NULL) {
     $groups = MigrateGroup::groups();
     $table = array();
     foreach ($groups as $group) {
-      if ($group_option && drupal_strtolower($group->getName()) != $group_option) {
+      if ($group_option && backdrop_strtolower($group->getName()) != $group_option) {
         continue;
       }
       $group_members_count = 0;
@@ -411,7 +408,8 @@ function drush_migrate_status($name = NULL) {
       }
     }
     drush_print_table($table);
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -436,7 +434,8 @@ function drush_migrate_fields_destination($args = NULL) {
         drush_print(dt('No fields were found.'));
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -460,7 +459,8 @@ function drush_migrate_fields_source($args = NULL) {
         drush_print(dt('No fields were found.'));
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -508,7 +508,7 @@ function drush_migrate_mappings($args = NULL) {
         $dnm = array();
         foreach ($migration->getFieldMappings() as $mapping) {
           $group = $mapping->getIssueGroup();
-          $lowergroup = drupal_strtolower($group);
+          $lowergroup = backdrop_strtolower($group);
           if ($lowergroup == dt('done')) {
             $done[$group][] = $mapping;
           }
@@ -551,7 +551,7 @@ function drush_migrate_mappings($args = NULL) {
             $table[] = array(' ');
           }
           // Attempt to highlight the group header a bit so it stands out
-          $group_header = '--- ' . drupal_strtoupper($group) . ' ---';
+          $group_header = '--- ' . backdrop_strtoupper($group) . ' ---';
           $table[] = array($group_header);
           foreach ($mappings as $mapping) {
             if (is_array($mapping->getDefaultValue())) {
@@ -604,7 +604,8 @@ function drush_migrate_mappings($args = NULL) {
         }
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -655,7 +656,8 @@ function drush_migrate_messages($migration_name) {
         drush_print_table($table, TRUE, $widths);
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -697,16 +699,16 @@ function drush_migrate_analyze($args = NULL) {
             if ($details['is_numeric']) {
               drush_print('  ' . dt('Numeric field with a range of @min to @max',
                   array(
-                    '@min' => $details['min_numeric'],
-                    '@max' => $details['max_numeric'],
-                  )));
+                '@min' => $details['min_numeric'],
+                '@max' => $details['max_numeric'],
+              )));
             }
             else {
               drush_print('  ' . dt('String field with a length ranging from @min to @max',
                   array(
-                    '@min' => $details['min_strlen'],
-                    '@max' => $details['max_strlen'],
-                  )));
+                '@min' => $details['min_strlen'],
+                '@max' => $details['max_strlen'],
+              )));
             }
             $values = array();
             $header = NULL;
@@ -857,7 +859,8 @@ function drush_migrate_audit($args = NULL) {
         }
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -953,7 +956,8 @@ function drush_migrate_rollback($args = NULL) {
           'warning');
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -986,7 +990,7 @@ function _drush_migrate_notify() {
   $params['output'] = ob_get_contents();
   drush_print_r(ob_get_status());
   ob_end_flush();
-  drupal_mail('migrate_ui', 'import_complete', $account->mail,
+  backdrop_mail('migrate_ui', 'import_complete', $account->mail,
     user_preferred_language($account), $params);
 }
 
@@ -998,7 +1002,7 @@ function drush_migrate_get_migrations($args) {
     $seen = $start === TRUE ? TRUE : FALSE;
 
     foreach ($migration_objects as $name => $migration) {
-      if (!$seen && (drupal_strtolower($start) == drupal_strtolower($name))) {
+      if (!$seen && (backdrop_strtolower($start) == backdrop_strtolower($name))) {
         // We found our starting migration. $seen is always TRUE now.
         $seen = TRUE;
       }
@@ -1010,8 +1014,8 @@ function drush_migrate_get_migrations($args) {
   }
   elseif ($group = drush_get_option('group')) {
     foreach ($migration_objects as $name => $migration) {
-      if (drupal_strtolower($group) !=
-        drupal_strtolower($migration->getGroup()->getName()) ||
+      if (backdrop_strtolower($group) !=
+        backdrop_strtolower($migration->getGroup()->getName()) ||
         !$migration->getEnabled()) {
         unset($migration_objects[$name]);
       }
@@ -1019,7 +1023,7 @@ function drush_migrate_get_migrations($args) {
   }
   elseif ($wildcard = drush_get_option('wildcard')) {
     foreach ($migration_objects as $name => $migration) {
-      if (!fnmatch(drupal_strtolower($wildcard), drupal_strtolower($name)) ||
+      if (!fnmatch(backdrop_strtolower($wildcard), backdrop_strtolower($name)) ||
         !$migration->getEnabled()) {
         unset($migration_objects[$name]);
       }
@@ -1030,7 +1034,7 @@ function drush_migrate_get_migrations($args) {
     foreach (explode(',', $args) as $name) {
       $found = FALSE;
       foreach ($migration_objects as $machine_name => $migration) {
-        if (drupal_strtolower($name) == drupal_strtolower($machine_name)) {
+        if (backdrop_strtolower($name) == backdrop_strtolower($machine_name)) {
           if ($migration->getEnabled()) {
             $named_migrations[$name] = $migration;
             $found = TRUE;
@@ -1165,12 +1169,13 @@ function drush_migrate_pre_migrate_import($args = NULL) {
           // Give the process a chance to stop.
           $count = 0;
           while ($migration->getStatus() != MigrationBase::STATUS_IDLE
-            && $count++ < 5) {
+             && $count++ < 5) {
             sleep(1);
           }
         }
       }
-    } catch (MigrateException $e) {
+    }
+    catch (MigrateException $e) {
       drush_print($e->getMessage());
       exit;
     }
@@ -1292,9 +1297,9 @@ function drush_migrate_import($args = NULL) {
         if ($status == MigrationBase::RESULT_SKIPPED) {
           drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\nUse the --force option to run it anyway.",
             array(
-              '!name' => $machine_name,
-              '!depends' => implode("\n  ", $migration->incompleteDependencies()),
-            )),
+            '!name' => $machine_name,
+            '!depends' => implode("\n  ", $migration->incompleteDependencies()),
+          )),
             'warning');
         }
         elseif ($status == MigrationBase::RESULT_STOPPED) {
@@ -1314,9 +1319,9 @@ function drush_migrate_import($args = NULL) {
           if ($status == MigrationBase::RESULT_SKIPPED) {
             drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\nUse the --force option to run it anyway.",
               array(
-                '!name' => $machine_name,
-                '!depends' => implode("\n  ", $migration->incompleteDependencies()),
-              )),
+              '!name' => $machine_name,
+              '!depends' => implode("\n  ", $migration->incompleteDependencies()),
+            )),
               'warning');
           }
           elseif ($status == MigrationBase::RESULT_STOPPED) {
@@ -1331,9 +1336,9 @@ function drush_migrate_import($args = NULL) {
         if ($status == MigrationBase::RESULT_SKIPPED) {
           drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\n",
             array(
-              '!name' => $machine_name,
-              '!depends' => implode("\n  ", $migration->incompleteDependencies()),
-            )),
+            '!name' => $machine_name,
+            '!depends' => implode("\n  ", $migration->incompleteDependencies()),
+          )),
             'warning');
         }
         elseif ($status == MigrationBase::RESULT_INCOMPLETE) {
@@ -1350,7 +1355,8 @@ function drush_migrate_import($args = NULL) {
       }
       unset($migrations[$machine_name]);
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -1384,7 +1390,8 @@ function drush_migrate_stop($args = NULL) {
       drush_log(dt("Stopping '!description' migration", array('!description' => $migration->getMachineName())));
       $migration->stopProcess();
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -1401,7 +1408,8 @@ function drush_migrate_reset_status($args = NULL) {
         array('!description' => $migration->getMachineName())));
       $migration->resetStatus();
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -1443,7 +1451,8 @@ function drush_migrate_deregister($args = NULL) {
           array('!description' => $machine_name)), 'success');
       }
     }
-  } catch (MigrateException $e) {
+  }
+  catch (MigrateException $e) {
     drush_print($e->getMessage());
     exit;
   }
@@ -1456,7 +1465,7 @@ function drush_migrate_deregister($args = NULL) {
  *   Migration machine name.
  */
 function drush_migrate_deregister_migration($machine_name) {
-  $machine_name_lowered = drupal_strtolower($machine_name);
+  $machine_name_lowered = backdrop_strtolower($machine_name);
   // The class is gone, so we'll manually clear migrate_status, and make
   // the default assumptions about the map/message tables.
   db_drop_table('migrate_map_' . $machine_name_lowered);
@@ -1548,36 +1557,64 @@ function migrate_migrate_status_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_import_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_rollback_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_fields_destination_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_fields_source_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_mappings_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_reset_status_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_migrate_stop_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 function drush_migrate_migrations() {
-  drush_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+  drush_bootstrap(BACKDROP_BOOTSTRAP_FULL);
   $migrations = migrate_migrations();
   foreach ($migrations as $migration) {
     $values[] = $migration->getMachineName();

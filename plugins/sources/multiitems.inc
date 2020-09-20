@@ -15,8 +15,7 @@
  */
 abstract class MigrateItems {
 
-  public function __construct() {
-  }
+  public function __construct() { }
 
   /**
    * Implementors are expected to return a string representing where the listing

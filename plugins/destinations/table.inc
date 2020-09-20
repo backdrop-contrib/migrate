@@ -26,7 +26,7 @@ class MigrateDestinationTable extends MigrateDestination {
   protected $tableName = NULL;
 
   public function __construct($table_name) {
-    $this->schema = drupal_get_schema($table_name);
+    $this->schema = backdrop_get_schema($table_name);
     $this->tableName = $table_name;
   }
 
@@ -34,7 +34,7 @@ class MigrateDestinationTable extends MigrateDestination {
     if (empty($table_name)) {
       return array();
     }
-    $schema = drupal_get_schema($table_name);
+    $schema = backdrop_get_schema($table_name);
     $keys = array();
     foreach ($schema['primary key'] as $primary_key) {
       // We can't have any form of serial fields here, since the mapping table
@@ -139,7 +139,7 @@ class MigrateDestinationTable extends MigrateDestination {
     }
 
     $this->prepare($entity, $row);
-    $status = drupal_write_record($this->tableName, $entity, $primary_key);
+    $status = backdrop_write_record($this->tableName, $entity, $primary_key);
     $this->complete($entity, $row);
 
     if ($status) {
@@ -149,7 +149,7 @@ class MigrateDestinationTable extends MigrateDestination {
       }
 
       // Increment the number of updated or inserted records by checking the
-      // result of drupal_write_record.
+      // result of backdrop_write_record.
       ($status == SAVED_NEW) ? $this->numCreated++ : $this->numUpdated++;
 
       return $id;

@@ -62,9 +62,9 @@ abstract class Migration extends MigrationBase {
 
   /**
    * Indicate whether the primary system of record for this migration is the
-   * source, or the destination (Drupal). In the source case, migration of
-   * an existing object will completely replace the Drupal object with data from
-   * the source side. In the destination case, the existing Drupal object will
+   * source, or the destination (Backdrop). In the source case, migration of
+   * an existing object will completely replace the Backdrop object with data from
+   * the source side. In the destination case, the existing Backdrop object will
    * be loaded, then changes from the source applied; also, rollback will not be
    * supported.
    *
@@ -300,7 +300,8 @@ abstract class Migration extends MigrationBase {
       // Call the parent deregistration (which clears migrate_status) last, the
       // above will reference it.
       parent::deregisterMigration($machine_name);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       // Fail silently if it's already gone
     }
   }
@@ -321,11 +322,11 @@ abstract class Migration extends MigrationBase {
       $source_field = $field_mapping->getSourceField();
       db_insert('migrate_field_mapping')
         ->fields(array(
-          'machine_name' => $machine_name,
-          'destination_field' => is_null($destination_field) ? '' : $destination_field,
-          'source_field' => is_null($source_field) ? '' : $source_field,
-          'options' => serialize($field_mapping),
-        ))
+        'machine_name' => $machine_name,
+        'destination_field' => is_null($destination_field) ? '' : $destination_field,
+        'source_field' => is_null($source_field) ? '' : $source_field,
+        'options' => serialize($field_mapping),
+      ))
         ->execute();
     }
   }
@@ -373,10 +374,10 @@ abstract class Migration extends MigrationBase {
       self::displayMessage(
         t('!name addFieldMapping: !dest was previously mapped from !source, overridden',
           array(
-            '!name' => $this->machineName,
-            '!dest' => $destination_field,
-            '!source' => $this->codedFieldMappings[$destination_field]->getSourceField(),
-          )),
+        '!name' => $this->machineName,
+        '!dest' => $destination_field,
+        '!source' => $this->codedFieldMappings[$destination_field]->getSourceField(),
+      )),
         'warning');
     }
     $mapping = new MigrateFieldMapping($destination_field, $source_field);
@@ -620,7 +621,8 @@ abstract class Migration extends MigrationBase {
             migrate_instrument_stop('rollback map/message update');
             $this->total_successes += $batch_count;
             $this->successes_since_feedback += $batch_count;
-          } catch (Exception $e) {
+          }
+          catch (Exception $e) {
             $this->handleException($e, FALSE);
             migrate_instrument_stop('bulkRollback');
             migrate_instrument_stop('rollback map/message update');
@@ -695,7 +697,8 @@ abstract class Migration extends MigrationBase {
           migrate_instrument_stop('rollback map/message update');
           $this->total_successes++;
           $this->successes_since_feedback++;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
           // TODO: At least count failures
           continue;
         }
@@ -725,15 +728,16 @@ abstract class Migration extends MigrationBase {
 
     try {
       $this->source->rewind();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       self::displayMessage(
         t('Migration for %class failed with source plugin exception: %e, in %file:%line',
           array(
-            '%class' => get_class($this),
-            '%e' => $e->getMessage(),
-            '%file' => $e->getFile(),
-            '%line' => $e->getLine(),
-          )));
+        '%class' => get_class($this),
+        '%e' => $e->getMessage(),
+        '%file' => $e->getFile(),
+        '%line' => $e->getLine(),
+      )));
       return MigrationBase::RESULT_FAILED;
     }
     while ($this->source->valid()) {
@@ -756,9 +760,11 @@ abstract class Migration extends MigrationBase {
         else {
           $this->onEmptyDestination($data_row, $ids);
         }
-      } catch (MigrateException $e) {
+      }
+      catch (MigrateException $e) {
         $this->onMigrateException($e, $data_row);
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         $this->onException($e);
       }
 
@@ -789,15 +795,16 @@ abstract class Migration extends MigrationBase {
       }
       try {
         $this->source->next();
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         self::displayMessage(
           t('Migration for %class failed with source plugin exception: %e, in %file:%line',
             array(
-              '%class' => get_class($this),
-              '%e' => $e->getMessage(),
-              '%file' => $e->getFile(),
-              '%line' => $e->getLine(),
-            )));
+          '%class' => get_class($this),
+          '%e' => $e->getMessage(),
+          '%file' => $e->getFile(),
+          '%line' => $e->getLine(),
+        )));
         return MigrationBase::RESULT_FAILED;
       }
     }
@@ -849,7 +856,7 @@ abstract class Migration extends MigrationBase {
    *   Exception.
    *
    */
-  protected function onMigrateException(\MigrateException $e, $data_row) {
+  protected function onMigrateException(MigrateException $e, $data_row) {
     $this->map->saveIDMapping($this->sourceValues, array(),
       $e->getStatus(), $this->rollbackAction, $data_row->migrate_map_hash);
     $this->saveMessage($e->getMessage(), $e->getLevel());
@@ -862,7 +869,7 @@ abstract class Migration extends MigrationBase {
    * @param \Exception $e
    *   Exception.
    */
-  protected function onException(\Exception $e) {
+  protected function onException(Exception $e) {
     $this->map->saveIDMapping($this->sourceValues, array(),
       MigrateMap::STATUS_FAILED, $this->rollbackAction,
       NULL);
@@ -881,7 +888,8 @@ abstract class Migration extends MigrationBase {
     self::$currentMigration = $this;
     try {
       $this->source->rewind();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       self::displayMessage(
         t('Migration analysis failed with source plugin exception: !e',
           array('!e' => $e->getMessage())));
@@ -976,7 +984,8 @@ abstract class Migration extends MigrationBase {
 
       try {
         $this->source->next();
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         self::displayMessage(
           t('Migration analysis failed with source plugin exception: !e. Partial results follow:',
             array('!e' => $e->getMessage())));
@@ -1046,7 +1055,8 @@ abstract class Migration extends MigrationBase {
   public function sourceCount($refresh = FALSE) {
     try {
       $count = $this->source->count($refresh);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       $count = t('N/A');
       self::displayMessage($e->getMessage());
     }
@@ -1062,7 +1072,8 @@ abstract class Migration extends MigrationBase {
   public function processedCount() {
     try {
       $count = $this->map->processedCount();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       $count = t('N/A');
       self::displayMessage($e->getMessage());
     }
@@ -1078,7 +1089,8 @@ abstract class Migration extends MigrationBase {
   public function importedCount() {
     try {
       $count = $this->map->importedCount();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       $count = t('N/A');
       self::displayMessage($e->getMessage());
     }
@@ -1093,7 +1105,8 @@ abstract class Migration extends MigrationBase {
   public function updateCount() {
     try {
       $count = $this->map->updateCount();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       $count = t('N/A');
       self::displayMessage($e->getMessage());
     }
@@ -1206,16 +1219,16 @@ abstract class Migration extends MigrationBase {
     $numitems = $this->processed_since_feedback + $this->source->getIgnored();
     $message = t($basetext,
       array(
-        '!numitems' => $numitems,
-        '!successes' => $this->successes_since_feedback,
-        '!failed' => $this->processed_since_feedback - $this->successes_since_feedback,
-        '!created' => $this->destination->getCreated(),
-        '!updated' => $this->destination->getUpdated(),
-        '!ignored' => $this->source->getIgnored(),
-        '!time' => $time,
-        '!perminute' => $perminute,
-        '!name' => $this->machineName,
-      ));
+      '!numitems' => $numitems,
+      '!successes' => $this->successes_since_feedback,
+      '!failed' => $this->processed_since_feedback - $this->successes_since_feedback,
+      '!created' => $this->destination->getCreated(),
+      '!updated' => $this->destination->getUpdated(),
+      '!ignored' => $this->source->getIgnored(),
+      '!time' => $time,
+      '!perminute' => $perminute,
+      '!name' => $this->machineName,
+    ));
     self::displayMessage($message, $type);
 
     // Report on lookup_cache hit rate. Only visible at 'debug' level.
@@ -1229,13 +1242,13 @@ abstract class Migration extends MigrationBase {
         $sum = $tallies['hit'] + $tallies['miss_hit'] + $tallies['miss_miss'];
         self::displayMessage(
           t('Lookup cache: !mn SM=!name !hit hit, !miss_hit miss_hit, !miss_miss miss_miss (!total total).', array(
-            '!mn' => $this->machineName,
-            '!name' => $name,
-            '!hit' => round((100 * $tallies['hit']) / $sum) . '%',
-            '!miss_hit' => round((100 * $tallies['miss_hit']) / $sum) . '%',
-            '!miss_miss' => round((100 * $tallies['miss_miss']) / $sum) . '%',
-            '!total' => $sum,
-          )), 'debug');
+          '!mn' => $this->machineName,
+          '!name' => $name,
+          '!hit' => round((100 * $tallies['hit']) / $sum) . '%',
+          '!miss_hit' => round((100 * $tallies['miss_hit']) / $sum) . '%',
+          '!miss_miss' => round((100 * $tallies['miss_miss']) / $sum) . '%',
+          '!total' => $sum,
+        )), 'debug');
       }
       $this->counts['lookup_cache'] = array();
     }
@@ -1563,7 +1576,7 @@ abstract class Migration extends MigrationBase {
    * necessary.
    *
    * @param array $dedupe
-   *  An array with two keys, 'table' the name of the Drupal table and 'column'
+   *  An array with two keys, 'table' the name of the Backdrop table and 'column'
    *  the column within that table where uniqueness must be maintained.
    * @param $original
    *  The value coming in, which must be checked for uniqueness.
@@ -1608,10 +1621,10 @@ abstract class Migration extends MigrationBase {
     if ($i > 1) {
       $message = t('Replacing !column !original with !candidate',
         array(
-          '!column' => $dedupe['column'],
-          '!original' => $original,
-          '!candidate' => $candidate,
-        ));
+        '!column' => $dedupe['column'],
+        '!original' => $original,
+        '!candidate' => $candidate,
+      ));
       $migration = Migration::currentMigration();
       $migration->saveMessage($message, Migration::MESSAGE_INFORMATIONAL);
     }
@@ -1663,7 +1676,10 @@ abstract class Migration extends MigrationBase {
    *  Optional message severity (defaults to MESSAGE_ERROR).
    */
   public function queueMessage($message, $level = MigrationBase::MESSAGE_ERROR) {
-    $this->queuedMessages[] = array('message' => $message, 'level' => $level);
+    $this->queuedMessages[] = array(
+      'message' => $message,
+      'level' => $level,
+    );
   }
 
   /**
@@ -1697,7 +1713,7 @@ abstract class DynamicMigration extends Migration {
 
   public function __construct($arguments) {
     parent::__construct($arguments);
-    if (variable_get('migrate_deprecation_warnings', 1) &&
+    if (config_get('migrate.settings', 'migrate_deprecation_warnings') &&
       !self::$deprecationWarning) {
       self::displayMessage(t('The DynamicMigration class is no longer necessary and is now deprecated - please derive your migration classes directly from Migration.'));
       self::$deprecationWarning = TRUE;

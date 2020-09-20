@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Defines a Drupal db-based implementation of MigrateMap.
+ * Defines a Backdrop db-based implementation of MigrateMap.
  */
 
 class MigrateSQLMap extends MigrateMap {
@@ -43,7 +43,7 @@ class MigrateSQLMap extends MigrateMap {
 
       if (!empty($options['driver']) && $options['driver'] == 'mysql') {
         // Backtick the db name on mysql to ensure dbs with hyphens work.
-        $dbname = "`{$dbname}`";
+        $dbname = "`{$dbname`";
       }
       return $dbname . '.' . $this->mapTable;
     }
@@ -51,7 +51,7 @@ class MigrateSQLMap extends MigrateMap {
 
   /**
    * sourceKey and destinationKey arrays are keyed by the field names; values
-   * are the Drupal schema definition for the field.
+   * are the Backdrop schema definition for the field.
    *
    * @var array
    */
@@ -64,7 +64,7 @@ class MigrateSQLMap extends MigrateMap {
   }
 
   /**
-   * Drupal connection object on which to create the map/message tables.
+   * Backdrop connection object on which to create the map/message tables.
    *
    * @var DatabaseConnection
    */
@@ -97,7 +97,7 @@ class MigrateSQLMap extends MigrateMap {
    *   The database schema for the destination key.
    * @param string $connection_key
    *   Optional - The connection used to create the mapping tables. By default
-   *   this is the destination (Drupal). If it's not possible to make joins
+   *   this is the destination (Backdrop). If it's not possible to make joins
    *   between the destination database and your source database you can specify
    *   a different connection to create the mapping tables on.
    * @param array $options
@@ -120,10 +120,10 @@ class MigrateSQLMap extends MigrateMap {
 
     // Default generated table names, limited to 63 characters.
     $prefixLength = strlen($this->connection->tablePrefix());
-    $this->mapTable = 'migrate_map_' . drupal_strtolower($machine_name);
-    $this->mapTable = drupal_substr($this->mapTable, 0, 63 - $prefixLength);
-    $this->messageTable = 'migrate_message_' . drupal_strtolower($machine_name);
-    $this->messageTable = drupal_substr($this->messageTable, 0, 63 - $prefixLength);
+    $this->mapTable = 'migrate_map_' . backdrop_strtolower($machine_name);
+    $this->mapTable = backdrop_substr($this->mapTable, 0, 63 - $prefixLength);
+    $this->messageTable = 'migrate_message_' . backdrop_strtolower($machine_name);
+    $this->messageTable = backdrop_substr($this->messageTable, 0, 63 - $prefixLength);
     $this->sourceKey = $source_key;
     $this->destinationKey = $destination_key;
 
@@ -241,13 +241,13 @@ class MigrateSQLMap extends MigrateMap {
           'rollback_action')) {
           $this->connection->schema()->addField($this->mapTable,
             'rollback_action', array(
-              'type' => 'int',
-              'size' => 'tiny',
-              'unsigned' => TRUE,
-              'not null' => TRUE,
-              'default' => 0,
-              'description' => 'Flag indicating what to do for this item on rollback',
-            ));
+            'type' => 'int',
+            'size' => 'tiny',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+            'description' => 'Flag indicating what to do for this item on rollback',
+          ));
         }
         if (!$this->connection->schema()
           ->fieldExists($this->mapTable, 'hash')) {
@@ -333,7 +333,7 @@ class MigrateSQLMap extends MigrateMap {
     migrate_instrument_start('lookupSourceID');
     // Try a cache lookup if enabled.
     if ($this->cacheMapLookups) {
-      $cache = &drupal_static($this->mapTable . '_sourceIDCache');
+      $cache = &backdrop_static($this->mapTable . '_sourceIDCache');
       $serialized = json_encode($destination_id);
       if (isset($cache[$serialized])) {
         migrate_instrument_stop('lookupSourceID');
@@ -372,7 +372,7 @@ class MigrateSQLMap extends MigrateMap {
     migrate_instrument_start('lookupDestinationID');
     // Try a cache lookup if enabled.
     if ($this->cacheMapLookups) {
-      $cache = &drupal_static($this->mapTable . '_destinationIDCache');
+      $cache = &backdrop_static($this->mapTable . '_destinationIDCache');
       $serialized = json_encode($source_id);
       if (isset($cache[$serialized])) {
         migrate_instrument_stop('lookupDestinationID');

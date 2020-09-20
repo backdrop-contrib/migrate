@@ -156,7 +156,7 @@ class MigrateListFiles extends MigrateList {
    * @param $options
    *   Options that will be passed on to file_scan_directory(). See docs of
    *   that
-   *   core Drupal function for more information.
+   *   core Backdrop function for more information.
    * @param MigrateContentParser $parser
    *   Content parser class to use.
    * @param $get_contents

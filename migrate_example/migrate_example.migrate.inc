@@ -17,6 +17,10 @@
  * your migrations using registerMigration() - see migrate_example_baseball for
  * more information.
  */
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_migrate_api() {
   // Usually field mappings are established by code in the migration constructor -
   // a call to addFieldMapping(). They may also be passed as arguments when
@@ -47,7 +51,6 @@ function migrate_example_migrate_api() {
         'title' => t('Wine Imports'),
       ),
     ),
-
     // Here we register the individual migrations. The keys (BeerTerm, BeerUser,
     // etc.) are the machine names of the migrations, and the class_name
     // argument is required. The group_name is optional (defaulting to 'default')

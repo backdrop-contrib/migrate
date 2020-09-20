@@ -80,4 +80,5 @@ function migrate_example_baseball_disable() {
 }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_example_baseball_update_7201() { }

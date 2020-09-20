@@ -149,6 +149,16 @@ function migrate_config_info() {
 }
 
 /**
+ * Implements hook_config_info().
+ */
+function migrate_config_info() {
+  $prefixes['migrate.settings'] = array(
+    'label' => t('Module name settings'),
+    'group' => t('Configuration'),
+  );
+}
+
+/**
  * Invoke any available handlers attached to a given destination type.
  * If any handlers have dependencies defined, they will be invoked after
  * the specified handlers.
@@ -171,7 +181,7 @@ function migrate_handler_invoke_all($destination, $method) {
   $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled) && $handler->handlesType($destination)
-        && method_exists($handler, $method)) {
+         && method_exists($handler, $method)) {
       migrate_instrument_start($class_name . '->' . $method);
       $result = call_user_func_array(array($handler, $method), $args);
       migrate_instrument_stop($class_name . '->' . $method);

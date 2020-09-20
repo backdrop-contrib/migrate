@@ -604,13 +604,13 @@ class MigrateItemsXML extends MigrateItems {
       "Column: !libxmlerrorcolumn\n" .
       "File: !libxmlerrorfile",
       array(
-        '!libxmlerrorcodename' => $error_code_name,
-        '!libxmlerrorcode' => $error->code,
-        '!libxmlerrormessage' => trim($error->message),
-        '!libxmlerrorline' => $error->line,
-        '!libxmlerrorcolumn' => $error->column,
-        '!libxmlerrorfile' => (($error->file)) ? $error->file : NULL,
-      )
+      '!libxmlerrorcodename' => $error_code_name,
+      '!libxmlerrorcode' => $error->code,
+      '!libxmlerrormessage' => trim($error->message),
+      '!libxmlerrorline' => $error->line,
+      '!libxmlerrorcolumn' => $error->column,
+      '!libxmlerrorfile' => (($error->file)) ? $error->file : NULL,
+    )
     );
   }
 

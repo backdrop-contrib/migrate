@@ -70,11 +70,11 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
     // First the core (comment table) properties
     $fields['cid'] = t('<a href="@doc">Existing comment ID</a>',
       array('@doc' => 'http://drupal.org/node/1349714#cid'));
-    $fields['nid'] = t('<a href="@doc">Node (by Drupal ID)</a>',
+    $fields['nid'] = t('<a href="@doc">Node (by Backdrop ID)</a>',
       array('@doc' => 'http://drupal.org/node/1349714#nid'));
-    $fields['uid'] = t('<a href="@doc">User (by Drupal ID)</a>',
+    $fields['uid'] = t('<a href="@doc">User (by Backdrop ID)</a>',
       array('@doc' => 'http://drupal.org/node/1349714#uid'));
-    $fields['pid'] = t('<a href="@doc">Parent (by Drupal ID)</a>',
+    $fields['pid'] = t('<a href="@doc">Parent (by Backdrop ID)</a>',
       array('@doc' => 'http://drupal.org/node/1349714#pid'));
     $fields['subject'] = t('<a href="@doc">Subject</a>',
       array('@doc' => 'http://drupal.org/node/1349714#subject'));
@@ -140,9 +140,9 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
         if ($comment->cid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming cid !cid and map destination nid !destid1 don't match",
             array(
-              '!cid' => $comment->cid,
-              '!destid1' => $row->migrate_map_destid1,
-            )));
+            '!cid' => $comment->cid,
+            '!destid1' => $row->migrate_map_destid1,
+          )));
         }
       }
       else {
@@ -287,7 +287,7 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
   protected function disableStatistics() {
     // If maintaining node statistics is enabled, temporarily disable it
     $this->maintainNodeStatistics =
-      variable_get('comment_maintain_node_statistics', TRUE);
+      state_get('comment_maintain_node_statistics', TRUE);
     if ($this->maintainNodeStatistics) {
       $GLOBALS['conf']['comment_maintain_node_statistics'] = FALSE;
     }
@@ -341,7 +341,8 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
       }
       try {
         db_query($sql, array(':published' => COMMENT_PUBLISHED));
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         // Our edge case has been hit. A Postgres migration has likely just
         // lost data. Let the user know.
         Migration::displayMessage(t('Failed to update node comment statistics: !message',

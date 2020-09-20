@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Support for node_counter statistics in core Drupal nodes.
+ * Support for node_counter statistics in core Backdrop nodes.
  */
 
 class MigrateStatisticsEntityHandler extends MigrateDestinationHandler {
@@ -39,10 +39,10 @@ class MigrateStatisticsEntityHandler extends MigrateDestinationHandler {
       db_merge('node_counter')
         ->key(array('nid' => $node->nid))
         ->fields(array(
-          'totalcount' => $totalcount,
-          'daycount' => $daycount,
-          'timestamp' => $timestamp,
-        ))
+        'totalcount' => $totalcount,
+        'daycount' => $daycount,
+        'timestamp' => $timestamp,
+      ))
         ->execute();
     }
   }

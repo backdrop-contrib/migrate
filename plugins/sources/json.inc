@@ -47,12 +47,12 @@ class MigrateListJSON extends MigrateList {
       $json = file_get_contents($this->listUrl);
     }
     else {
-      $response = drupal_http_request($this->listUrl, $this->httpOptions);
+      $response = backdrop_http_request($this->listUrl, $this->httpOptions);
       $json = $response->data;
     }
     migrate_instrument_stop("Retrieve $this->listUrl");
     if ($json) {
-      $data = drupal_json_decode($json);
+      $data = backdrop_json_decode($json);
       if ($data !== NULL) {
         return $this->getIDsFromJSON($data);
       }
@@ -88,11 +88,11 @@ class MigrateListJSON extends MigrateList {
       $json = file_get_contents($this->listUrl);
     }
     else {
-      $response = drupal_http_request($this->listUrl, $this->httpOptions);
+      $response = backdrop_http_request($this->listUrl, $this->httpOptions);
       $json = $response->data;
     }
     if ($json) {
-      $data = drupal_json_decode($json);
+      $data = backdrop_json_decode($json);
       if ($data) {
         $count = count($this->getIDsFromJSON($data));
       }
@@ -168,7 +168,7 @@ class MigrateItemJSON extends MigrateItem {
       $json = file_get_contents($item_url);
     }
     else {
-      $response = drupal_http_request($item_url, $this->httpOptions);
+      $response = backdrop_http_request($item_url, $this->httpOptions);
       $json = $response->data;
     }
     return json_decode($json);
@@ -328,7 +328,7 @@ class MigrateJSONReader implements Iterator {
               case '"':
                 $in_string = FALSE;
                 break;
-              // Unescaped \\ means start of escape
+                // Unescaped \\ means start of escape
               case '\\':
                 $in_escape = TRUE;
                 break;
@@ -479,7 +479,7 @@ class MigrateSourceJSON extends MigrateSource {
 
     $this->sourceUrls = $urls;
 
-    $active_url = variable_get('migrate_source_json_active_url', NULL);
+    $active_url = config_get('migrate.settings', 'migrate_source_json_active_url');
     if (isset($active_url)) {
       $active_url--;
     }
@@ -545,7 +545,7 @@ class MigrateSourceJSON extends MigrateSource {
     // Set the reader back to the beginning of the file (positioned to the
     // first matching element), then apply our logic to make sure we have the
     // first element fulfilling our logic (idlist/map/prepareRow()).
-    $active_url = variable_get('migrate_source_json_active_url', NULL);
+    $active_url = config_get('migrate.settings', 'migrate_source_json_active_url');
     if (isset($active_url)) {
       $active_url--;
     }
@@ -609,7 +609,7 @@ class MigrateSourceJSON extends MigrateSource {
         $this->activeUrl = $this->activeUrl + 1;
       }
 
-      variable_set('migrate_source_json_active_url', $this->activeUrl);
+      config_set('migrate.settings', 'migrate_source_json_active_url', $this->activeUrl);
 
       $this->reader = new $this->readerClass($this->sourceUrls[$this->activeUrl], $this->idField);
       $this->reader->rewind();
@@ -621,8 +621,8 @@ class MigrateSourceJSON extends MigrateSource {
       }
     }
 
-    if ((count($this->sourceUrls)-1) == $this->activeUrl) {
-      variable_del('migrate_source_json_active_url');
+    if ((count($this->sourceUrls) -1) == $this->activeUrl) {
+      config_clear('migrate.settings', 'migrate_source_json_active_url');
     }
 
     migrate_instrument_stop('MigrateSourceJSON::nextSource');

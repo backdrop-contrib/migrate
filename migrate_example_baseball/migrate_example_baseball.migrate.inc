@@ -10,6 +10,10 @@
  * You must implement hook_migrate_api(), setting the API level to 2, for
  * your migration classes to be recognized by the Migrate module.
  */
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_baseball_migrate_api() {
   $api = array(
     'api' => 2,
@@ -34,24 +38,24 @@ class GameBaseball extends Migration {
     // Create a map object for tracking the relationships between source rows
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'start_date' => array(
-          'type' => 'varchar',
-          'length' => 8,
-          'not null' => TRUE,
-          'description' => 'Start date',
-        ),
-        'home_team' => array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'description' => 'Home team',
-        ),
-        'home_game_number' => array(
-          'type' => 'int',
-          'not null' => TRUE,
-          'description' => 'Home team game number',
-        ),
+      'start_date' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Start date',
       ),
+      'home_team' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Home team',
+      ),
+      'home_game_number' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Home team game number',
+      ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -130,7 +134,7 @@ class GameBaseball extends Migration {
    * Construct the machine name from the source file name.
    */
   protected function generateMachineName($class_name = NULL) {
-    return drupal_strtolower(pathinfo($this->arguments['source_file'],
+    return backdrop_strtolower(pathinfo($this->arguments['source_file'],
       PATHINFO_FILENAME));
   }
 

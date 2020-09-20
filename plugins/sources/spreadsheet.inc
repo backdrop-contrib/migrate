@@ -158,7 +158,8 @@ class MigrateSourceSpreadsheet extends MigrateSource {
       // Load the source file.
       $this->workbook = $reader->load($this->file);
       $this->worksheet = $this->workbook->getSheet();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       Migration::displayMessage(t('Error loading file: %message', array('%message' => $e->getMessage())));
       return FALSE;
     }

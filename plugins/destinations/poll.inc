@@ -96,9 +96,9 @@ class MigratePollEntityHandler extends MigrateDestinationHandler {
         // Have no mapping tracking for chid, so assume choice text is unique.
         db_update('poll_choice')
           ->fields(array(
-            'chvotes' => $choice['chvotes'],
-            'weight' => $choice['weight'],
-          ))
+          'chvotes' => $choice['chvotes'],
+          'weight' => $choice['weight'],
+        ))
           ->condition('nid', $entity->nid)
           ->condition('chtext', $choice['chtext'])
           ->execute();
@@ -119,12 +119,12 @@ class MigratePollEntityHandler extends MigrateDestinationHandler {
         }
         db_insert('poll_vote')
           ->fields(array(
-            'chid' => $chid,
-            'nid' => $entity->nid,
-            'uid' => $vote['uid'],
-            'hostname' => $vote['hostname'],
-            'timestamp' => $vote['timestamp'],
-          ))
+          'chid' => $chid,
+          'nid' => $entity->nid,
+          'uid' => $vote['uid'],
+          'hostname' => $vote['hostname'],
+          'timestamp' => $vote['timestamp'],
+        ))
           ->execute();
       }
     }

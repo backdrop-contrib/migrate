@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Copies data_row into a table using drupal_write_record()
+ * Copies data_row into a table using backdrop_write_record()
  */
 
 /**
@@ -75,10 +75,12 @@ class MigrateDestinationTableCopy extends MigrateDestination {
         $this->numUpdated++;
       }
       return $values;
-    } catch (MigrateException $e) {
+    }
+    catch (MigrateException $e) {
       $migration->saveMessage($e->getMessage(), $e->getLevel());
       Migration::displayMessage($e->getMessage());
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       $migration->handleException($e);
     }
   }

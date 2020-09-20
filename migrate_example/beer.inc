@@ -7,8 +7,8 @@
  *
  * The basic idea is
  * - The users in the source application are listed in the
- *   migrate_example_beer_account table and are transformed into Drupal users.
- * - Drupal "beer" nodes describe beers; The information to create the nodes
+ *   migrate_example_beer_account table and are transformed into Backdrop users.
+ * - Backdrop "beer" nodes describe beers; The information to create the nodes
  *   comes from the migrate_example_beer_node table.
  * - Taxonomy terms for the beer nodes (ale, pilsner) come from the
  *   migrate_example_beer_topic table and they are applied to nodes using the
@@ -17,12 +17,12 @@
  *   migrate_example_beer_comment table.
  *
  * We will use the Migrate API to import and transform this data and turn it
- * into a working Drupal site.
+ * into a working Backdrop site.
  */
 
 /**
  * To define a migration process from a set of source data to a particular
- * kind of Drupal object (for example, a specific node type), you define
+ * kind of Backdrop object (for example, a specific node type), you define
  * a class derived from Migration. You must define a constructor to initialize
  * your migration object.
  *
@@ -69,7 +69,7 @@ abstract class BasicExampleMigration extends Migration {
  *    will feed data to the migration.
  *  $this->destination - An instance of a class derived from MigrateDestination,
  *    this will receive data that originated from the source and has been mapped
- *    by the Migration class, and create Drupal objects.
+ *    by the Migration class, and create Backdrop objects.
  *  $this->map - An instance of a class derived from MigrateMap, this will keep
  *    track of which source items have been imported and what destination
  *    objects they map to.
@@ -87,7 +87,7 @@ class BeerTermMigration extends BasicExampleMigration {
       t('Migrate styles from the source database to taxonomy terms');
 
     // In this example, we're using tables that have been added to the existing
-    // Drupal database but which are not Drupal tables. You can examine the
+    // Backdrop database but which are not Backdrop tables. You can examine the
     // various tables (starting here with migrate_example_beer_topic) using a
     // database browser such as phpMyAdmin.
     // First, we set up a query for this data. Note that by ordering on
@@ -95,12 +95,12 @@ class BeerTermMigration extends BasicExampleMigration {
     // parent_name mapping below will find that the parent exists.
     $query = db_select('migrate_example_beer_topic', 'met')
       ->fields('met', array(
-        'style',
-        'details',
-        'style_parent',
-        'region',
-        'hoppiness',
-      ))
+      'style',
+      'details',
+      'style_parent',
+      'region',
+      'hoppiness',
+    ))
       // This sort assures that parents are saved before children.
       ->orderBy('style_parent', 'ASC');
 
@@ -113,7 +113,7 @@ class BeerTermMigration extends BasicExampleMigration {
       new MigrateDestinationTerm('migrate_example_beer_styles');
 
     // Create a map object for tracking the relationships between source rows
-    // and their resulting Drupal objects. We will use the MigrateSQLMap class,
+    // and their resulting Backdrop objects. We will use the MigrateSQLMap class,
     // which uses database tables for tracking. Pass the machine name (BeerTerm)
     // of this migration to use in generating map and message table names.
     // And, pass schema definitions for the primary keys of the source and
@@ -121,20 +121,20 @@ class BeerTermMigration extends BasicExampleMigration {
     // class knows its schema already.
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'style' => array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'description' => 'Topic ID',
-        ),
+      'style' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Topic ID',
       ),
+    ),
       MigrateDestinationTerm::getKeySchema()
     );
 
     // Assign mappings TO destination fields FROM source fields. To discover
     // the names used in these calls, use the drush commands
-    //  drush migrate-fields-destination BeerTerm
-    //  drush migrate-fields-source BeerTerm
+//  drush migrate-fields-destination BeerTerm
+//  drush migrate-fields-source BeerTerm
     // or review the detail pages in the UI.
     $this->addFieldMapping('name', 'style');
     $this->addFieldMapping('description', 'details');
@@ -149,14 +149,14 @@ class BeerTermMigration extends BasicExampleMigration {
     // is 'Done', indicating active mappings which need no attention. A
     // suggested practice is to use groups of:
     // Do Not Migrate (or DNM) to indicate source fields which are not being
-    //  used, or destination fields not to be populated by migration.
+//  used, or destination fields not to be populated by migration.
     // Client Issues to indicate input from the client is needed to determine
-    //  how a given field is to be migrated.
+//  how a given field is to be migrated.
     // Implementor Issues to indicate that the client has provided all the
-    //  necessary information, and now the implementor needs to complete the
-    //  work.
+//  necessary information, and now the implementor needs to complete the
+//  work.
     $this->addFieldMapping(NULL, 'hoppiness')
-      ->description(t('This info will not be maintained in Drupal'))
+      ->description(t('This info will not be maintained in Backdrop'))
       ->issueGroup(t('DNM'));
 
     // Open mapping issues can be assigned priorities (the default is
@@ -217,26 +217,26 @@ class BeerUserMigration extends BasicExampleMigration {
     $this->description = t('Beer Drinkers of the world');
     $query = db_select('migrate_example_beer_account', 'mea')
       ->fields('mea', array(
-        'aid',
-        'status',
-        'posted',
-        'name',
-        'nickname',
-        'password',
-        'mail',
-        'sex',
-        'beers',
-      ));
+      'aid',
+      'status',
+      'posted',
+      'name',
+      'nickname',
+      'password',
+      'mail',
+      'sex',
+      'beers',
+    ));
     $this->source = new MigrateSourceSQL($query);
     $this->destination = new MigrateDestinationUser();
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'aid' => array(
-          'type' => 'int',
-          'not null' => TRUE,
-          'description' => 'Account ID.',
-        ),
+      'aid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Account ID.',
       ),
+    ),
       MigrateDestinationUser::getKeySchema()
     );
 
@@ -248,16 +248,16 @@ class BeerUserMigration extends BasicExampleMigration {
 
     // This is a shortcut you can use when the source and destination field
     // names are identical (e.g., the email address field is named 'mail' in
-    // both the source table and in Drupal).
+    // both the source table and in Backdrop).
     $this->addSimpleMappings(array('status', 'mail'));
 
     // Our source table has two entries for 'alice', but we must have a unique
-    // username in the Drupal 'users' table. dedupe() creates new, unique
+    // username in the Backdrop 'users' table. dedupe() creates new, unique
     // destination values when the source field of that value already exists.
     // For example, if we're importing a user with name 'test' and a user
     // 'test' already exists in the target, we'll create a new user named
     // 'test_1'.
-    // dedupe() takes the Drupal table and column for determining uniqueness.
+    // dedupe() takes the Backdrop table and column for determining uniqueness.
     $this->addFieldMapping('name', 'name')
       ->dedupe('users', 'name');
 
@@ -272,7 +272,7 @@ class BeerUserMigration extends BasicExampleMigration {
     // value is provided in addition to a source field, the default value will
     // be applied to any rows where the source field is empty or NULL.
     $this->addFieldMapping('roles')
-      ->defaultValue(DRUPAL_AUTHENTICATED_RID);
+      ->defaultValue(BACKDROP_AUTHENTICATED_RID);
 
     $this->addFieldMapping('field_migrate_example_gender', 'sex');
 
@@ -333,7 +333,7 @@ class BeerUserMigration extends BasicExampleMigration {
 
 /**
  * The BeerNodeMigration uses the migrate_example_beer_node table as source
- * and creates Drupal nodes of type 'Beer' as destination.
+ * and creates Backdrop nodes of type 'Beer' as destination.
  */
 class BeerNodeMigration extends BasicExampleMigration {
 
@@ -343,22 +343,22 @@ class BeerNodeMigration extends BasicExampleMigration {
 
     // We have a more complicated query. The Migration class fundamentally
     // depends on taking a single source row and turning it into a single
-    // Drupal object, so how do we deal with zero or more terms attached to
+    // Backdrop object, so how do we deal with zero or more terms attached to
     // each node? One way (valid for MySQL only) is to pull them into a single
     // comma-separated list.
     $query = db_select('migrate_example_beer_node', 'b')
       ->fields('b', array(
-        'bid',
-        'name',
-        'body',
-        'excerpt',
-        'aid',
-        'countries',
-        'image',
-        'image_alt',
-        'image_title',
-        'image_description',
-      ));
+      'bid',
+      'name',
+      'body',
+      'excerpt',
+      'aid',
+      'countries',
+      'image',
+      'image_alt',
+      'image_title',
+      'image_description',
+    ));
     $query->leftJoin('migrate_example_beer_topic_node', 'tb', 'b.bid = tb.bid');
     // Gives a single comma-separated list of related terms
     $query->groupBy('tb.bid');
@@ -380,13 +380,13 @@ class BeerNodeMigration extends BasicExampleMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'bid' => array(
-          'type' => 'int',
-          'not null' => TRUE,
-          'description' => 'Beer ID.',
-          'alias' => 'b',
-        ),
+      'bid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Beer ID.',
+        'alias' => 'b',
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -400,9 +400,9 @@ class BeerNodeMigration extends BasicExampleMigration {
       ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_LOW);
 
     // References to related objects (such as the author of the content) are
-    // most likely going to be identifiers from the source data, not Drupal
+    // most likely going to be identifiers from the source data, not Backdrop
     // identifiers (such as uids). You can use the mapping from the relevant
-    // migration to translate from the old ID to the Drupal identifier.
+    // migration to translate from the old ID to the Backdrop identifier.
     // Note that we also provide a default value of 1 - if the lookup fails to
     // find a corresponding uid for the aid, the owner will be the administrative
     // account.
@@ -424,7 +424,7 @@ class BeerNodeMigration extends BasicExampleMigration {
     $this->addFieldMapping('body', 'body');
     $this->addFieldMapping('body:summary', 'excerpt');
 
-    // File fields are more complex - the file needs to be copied, a Drupal
+    // File fields are more complex - the file needs to be copied, a Backdrop
     // file entity (file_managed table row) created, and the field populated.
     // There are several different options involved. It's usually best to do
     // migrate the files themselves in their own migration (see wine.inc for an
@@ -440,7 +440,7 @@ class BeerNodeMigration extends BasicExampleMigration {
       ->defaultValue('MigrateFileUri');
     // Here we specify the directory containing the source files.
     $this->addFieldMapping('field_migrate_example_image:source_dir')
-      ->defaultValue(drupal_get_path('module', 'migrate_example'));
+      ->defaultValue(backdrop_get_path('module', 'migrate_example'));
     // And we map the alt and title values in the database to those on the image.
     $this->addFieldMapping('field_migrate_example_image:alt', 'image_alt');
     $this->addFieldMapping('field_migrate_example_image:title', 'image_title');
@@ -493,7 +493,7 @@ class BeerNodeMigration extends BasicExampleMigration {
 
 /**
  * Import items from the migrate_example_beer_comment table and make them into
- * Drupal comment objects.
+ * Backdrop comment objects.
  */
 class BeerCommentMigration extends BasicExampleMigration {
 
@@ -503,15 +503,15 @@ class BeerCommentMigration extends BasicExampleMigration {
 
     $query = db_select('migrate_example_beer_comment', 'mec')
       ->fields('mec', array(
-        'cid',
-        'cid_parent',
-        'name',
-        'mail',
-        'aid',
-        'body',
-        'bid',
-        'subject',
-      ))
+      'cid',
+      'cid_parent',
+      'name',
+      'mail',
+      'aid',
+      'body',
+      'bid',
+      'subject',
+    ))
       ->orderBy('cid_parent', 'ASC');
     $this->source = new MigrateSourceSQL($query);
     // Note that the machine name passed for comment migrations is
@@ -522,11 +522,11 @@ class BeerCommentMigration extends BasicExampleMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'cid' => array(
-          'type' => 'int',
-          'not null' => TRUE,
-        ),
+      'cid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationComment::getKeySchema()
     );
 

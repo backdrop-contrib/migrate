@@ -16,8 +16,7 @@
  */
 abstract class MigrateList {
 
-  public function __construct() {
-  }
+  public function __construct() { }
 
   /**
    * Implementors are expected to return a string representing where the listing
@@ -50,8 +49,7 @@ abstract class MigrateList {
  */
 abstract class MigrateItem {
 
-  public function __construct() {
-  }
+  public function __construct() { }
 
   /**
    * Implementors are expected to return an object representing a source item.

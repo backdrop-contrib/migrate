@@ -16,17 +16,23 @@ function migrate_ui_install() {
  */
 function migrate_ui_uninstall() {
   // TODO This variable was probably removed in Backdrop without replacement.
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_del('migrate_import_method');
+  // TODO This variable was probably removed in Backdrop without replacement.
   // TODO This variable was probably removed in Backdrop without replacement.
   variable_del('migrate_drush_path');
   // TODO This variable was probably removed in Backdrop without replacement.
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_del('migrate_drush_mail');
   // TODO This variable was probably removed in Backdrop without replacement.
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_del('migrate_drush_mail_subject');
+  // TODO This variable was probably removed in Backdrop without replacement.
   // TODO This variable was probably removed in Backdrop without replacement.
   variable_del('migrate_drush_mail_body');
 }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_ui_update_7201() { }
 
@@ -46,5 +52,6 @@ function migrate_ui_set_weight() {
     ->execute();
 }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_ui_update_7202() { }

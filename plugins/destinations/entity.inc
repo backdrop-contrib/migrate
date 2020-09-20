@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Defines base for migration destinations implemented as Drupal entities.
+ * Defines base for migration destinations implemented as Backdrop entities.
  */
 
 /**
@@ -129,10 +129,10 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
   public function prepare($entity, stdClass $source_row) {
     // Add source keys for debugging and identification of migrated data by hooks.
     /* TODO: Restore
-    foreach ($migration->sourceKeyMap() as $field_name => $key_name) {
-      $keys[$key_name] = $source_row->{$field_name};
-    }
-    */
+     foreach ($migration->sourceKeyMap() as $field_name => $key_name) {
+     $keys[$key_name] = $source_row->{$field_name};
+     }
+     */
     $migration = Migration::currentMigration();
     $entity->migrate = array(
       //      'source_keys' => $keys,
@@ -173,7 +173,8 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
     if (method_exists($migration, 'complete')) {
       try {
         $migration->complete($entity, $source_row);
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         // If we catch any errors here, save the messages without letting
         // the exception prevent the saving of the entity being recorded.
         $migration->saveMessage($e->getMessage());
@@ -194,7 +195,8 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
   static public function fieldAttachValidate($entity_type, $entity) {
     try {
       field_attach_validate($entity_type, $entity);
-    } catch (FieldValidationException $e) {
+    }
+    catch (FieldValidationException $e) {
       $migration = Migration::currentMigration();
       foreach ($e->errors as $field_name => $error_list) {
         if (is_array($error_list)) {

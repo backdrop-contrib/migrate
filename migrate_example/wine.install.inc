@@ -25,6 +25,10 @@ function migrate_example_wine_schema() {
   return $schema;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_install() {
   migrate_example_wine_content_types();
   migrate_example_wine_categories();
@@ -48,6 +52,10 @@ function migrate_example_wine_install() {
   migrate_example_wine_data_table_source();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_uninstall() {
   migrate_example_wine_content_type_delete();
   if ($vids = taxonomy_vocabulary_load_multiple(array(), array('machine_name' => 'migrate_example_wine_varieties'))) {
@@ -64,10 +72,18 @@ function migrate_example_wine_uninstall() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_disable() {
   MigrateGroup::deregister('wine');
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_wine() {
   return array(
     'description' => 'Wines of the world',
@@ -136,6 +152,10 @@ function migrate_example_wine_schema_wine() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_updates() {
   return array(
     'description' => 'Updated wine ratings',
@@ -157,6 +177,10 @@ function migrate_example_wine_schema_updates() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_producer() {
   return array(
     'description' => 'Wine producers of the world',
@@ -195,6 +219,10 @@ function migrate_example_wine_schema_producer() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_categories() {
   return array(
     'description' => 'Categories',
@@ -238,6 +266,10 @@ function migrate_example_wine_schema_categories() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_vintages() {
   return array(
     'description' => 'Wine vintages',
@@ -258,6 +290,10 @@ function migrate_example_wine_schema_vintages() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_variety_updates() {
   return array(
     'description' => 'Variety updates',
@@ -278,6 +314,10 @@ function migrate_example_wine_schema_variety_updates() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_category_wine() {
   return array(
     'description' => 'Wine category assignments',
@@ -298,6 +338,10 @@ function migrate_example_wine_schema_category_wine() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_category_producer() {
   return array(
     'description' => 'Producer category assignments',
@@ -318,6 +362,10 @@ function migrate_example_wine_schema_category_producer() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_comment() {
   return array(
     'description' => 'Wine comments',
@@ -399,6 +447,10 @@ function migrate_example_wine_schema_comment() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_comment_updates() {
   return array(
     'description' => 'Wine comment updates',
@@ -420,6 +472,10 @@ function migrate_example_wine_schema_comment_updates() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_account() {
   return array(
     'description' => 'Wine accounts.',
@@ -505,6 +561,10 @@ function migrate_example_wine_schema_account() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_account_updates() {
   return array(
     'description' => 'Wine account updates',
@@ -525,6 +585,10 @@ function migrate_example_wine_schema_account_updates() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_blobs() {
   return array(
     'description' => 'Wine blobs to be migrated to file entities',
@@ -545,6 +609,10 @@ function migrate_example_wine_schema_blobs() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_files() {
   return array(
     'description' => 'Wine and account files',
@@ -584,9 +652,13 @@ function migrate_example_wine_schema_files() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_table_source() {
   return array(
-    'description' => 'Source data to go into a custom Drupal table',
+    'description' => 'Source data to go into a custom Backdrop table',
     'fields' => array(
       'fooid' => array(
         'type' => 'int',
@@ -611,9 +683,13 @@ function migrate_example_wine_schema_table_source() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_schema_table_dest() {
   return array(
-    'description' => 'Custom Drupal table to receive source data directly',
+    'description' => 'Custom Backdrop table to receive source data directly',
     'fields' => array(
       'recordid' => array(
         'type' => 'serial',
@@ -621,13 +697,13 @@ function migrate_example_wine_schema_table_dest() {
         'not null' => TRUE,
         'description' => 'Primary key',
       ),
-      'drupal_text' => array(
+      'backdrop_text' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'First field',
       ),
-      'drupal_int' => array(
+      'backdrop_int' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -638,6 +714,10 @@ function migrate_example_wine_schema_table_dest() {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_content_types() {
   // This code based on from standard.profile.
   // Insert default user-defined node types into the database.
@@ -668,6 +748,10 @@ function migrate_example_wine_content_types() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_categories() {
   // Create vocabularies for variety, region, and "best with"
   $description = st('Wine varieties');
@@ -805,6 +889,10 @@ function migrate_example_wine_categories() {
 }
 
 // Create an image field named "Migrate Example Image", enabled for the 'wine' content type.
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_fields() {
   if (!field_info_field('field_migrate_example_image')) {
     $field = array(
@@ -837,7 +925,6 @@ function migrate_example_wine_fields() {
         'alt_field' => TRUE,
         'title_field' => '',
       ),
-
       'widget' => array(
         'type' => 'image_image',
         'settings' => array(
@@ -846,7 +933,6 @@ function migrate_example_wine_fields() {
         ),
         'weight' => -1,
       ),
-
       'display' => array(
         'full' => array(
           'label' => 'hidden',
@@ -903,7 +989,6 @@ function migrate_example_wine_fields() {
       'settings' => array(
         'scale' => 0,
       ),
-
       'widget' => array(
         'type' => 'number',
         'weight' => -1,
@@ -932,7 +1017,6 @@ function migrate_example_wine_fields() {
       'settings' => array(
         'scale' => 0,
       ),
-
       'widget' => array(
         'type' => 'number',
         'weight' => -1,
@@ -942,6 +1026,10 @@ function migrate_example_wine_fields() {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_content_type_delete() {
   $bundle = 'migrate_example_wine';
   $field_names = array(
@@ -966,6 +1054,10 @@ function migrate_example_wine_content_type_delete() {
   node_type_delete($bundle);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_wine() {
   $fields = array(
     'wineid',
@@ -1013,6 +1105,10 @@ function migrate_example_wine_data_wine() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_updates() {
   $fields = array('wineid', 'rating');
   $query = db_insert('migrate_example_wine_updates')
@@ -1027,6 +1123,10 @@ function migrate_example_wine_data_updates() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_producer() {
   $fields = array('producerid', 'name', 'body', 'excerpt', 'accountid');
   $query = db_insert('migrate_example_wine_producer')
@@ -1041,6 +1141,10 @@ function migrate_example_wine_data_producer() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_account() {
   $fields = array(
     'accountid',
@@ -1112,6 +1216,10 @@ function migrate_example_wine_data_account() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_account_updates() {
   $fields = array('accountid', 'sex');
   $query = db_insert('migrate_example_wine_account_updates')
@@ -1127,6 +1235,10 @@ function migrate_example_wine_data_account_updates() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_comment() {
   $fields = array(
     'commentid',
@@ -1222,6 +1334,10 @@ function migrate_example_wine_data_comment() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_comment_updates() {
   $fields = array('commentid', 'subject');
   $query = db_insert('migrate_example_wine_comment_updates')
@@ -1239,6 +1355,10 @@ function migrate_example_wine_data_comment_updates() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_categories() {
   $fields = array(
     'categoryid',
@@ -1295,6 +1415,10 @@ function migrate_example_wine_data_categories() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_vintages() {
   $fields = array('wineid', 'vintage');
   $query = db_insert('migrate_example_wine_vintages')
@@ -1310,6 +1434,10 @@ function migrate_example_wine_data_vintages() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_variety_updates() {
   $fields = array('categoryid', 'details');
   $query = db_insert('migrate_example_wine_variety_updates')
@@ -1330,6 +1458,10 @@ function migrate_example_wine_data_variety_updates() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_category_wine() {
   $fields = array('wineid', 'categoryid');
   $query = db_insert('migrate_example_wine_category_wine')
@@ -1345,6 +1477,10 @@ function migrate_example_wine_data_category_wine() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_category_producer() {
   $fields = array('producerid', 'categoryid');
   $query = db_insert('migrate_example_wine_category_producer')
@@ -1358,6 +1494,10 @@ function migrate_example_wine_data_category_producer() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_files() {
   $fields = array('imageid', 'url', 'image_alt', 'image_title', 'wineid');
   $query = db_insert('migrate_example_wine_files')
@@ -1392,6 +1532,10 @@ function migrate_example_wine_data_files() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_blobs() {
   $blob = file_get_contents('misc/druplicon.png');
   $fields = array('imageid', 'imageblob');
@@ -1406,6 +1550,10 @@ function migrate_example_wine_data_blobs() {
   $query->execute();
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function migrate_example_wine_data_table_source() {
   $fields = array('fooid', 'field1', 'field2');
   $query = db_insert('migrate_example_wine_table_source')

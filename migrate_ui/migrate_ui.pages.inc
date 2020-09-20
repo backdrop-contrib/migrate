@@ -8,7 +8,7 @@
  * Form for managing migration groups.
  */
 function migrate_ui_migrate_dashboard($form, &$form_state) {
-  drupal_set_title(t('Migrate dashboard'));
+  backdrop_set_title(t('Migrate dashboard'));
 
   $build = array();
 
@@ -257,6 +257,7 @@ function _migrate_ui_migrate_operations() {
   );
 
   //
+  // TODO This variable was probably removed in Backdrop without replacement.
   switch (variable_get('migrate_import_method', 0)) {
     case 1:
       $options = array(
@@ -304,8 +305,8 @@ function _migrate_ui_migrate_operations() {
       'Choose an operation to run on all selections above:
        <ul>
          <li>Import<br /> Imports all previously unprocessed records from the source, plus
-             any records marked for update, into destination Drupal objects.</li>
-         <li>Rollback<br /> Deletes all Drupal objects created by the import.</li>
+             any records marked for update, into destination Backdrop objects.</li>
+         <li>Rollback<br /> Deletes all Backdrop objects created by the import.</li>
          <li>Stop<br /> Cleanly interrupts any import or rollback processes that may
              currently be running.</li>
          <li>Reset<br /> Sometimes a process may fail to stop cleanly, and be
@@ -484,7 +485,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     $batch = array(
       'operations' => $operations,
       'title' => t('Import processing'),
-      'file' => drupal_get_path('module', 'migrate_ui') . '/migrate_ui.pages.inc',
+      'file' => backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.pages.inc',
       'init_message' => t('Starting import process'),
       'progress_message' => t(''),
       'error_message' => t('An error occurred. Some or all of the import processing has failed.'),
@@ -493,18 +494,19 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     batch_set($batch);
   }
   elseif (count($drush_arguments) > 0) {
+    // TODO This variable was probably removed in Backdrop without replacement.
     $drush_path = trim(variable_get('migrate_drush_path', ''));
     // Check that $drush_path works. See migrate_ui_configure_form().
     if (!is_executable($drush_path)) {
       $message = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
         array(
-          '@drush' => 'http://drupal.org/project/drush',
-          '@recommended' => 'http://drupal.org/node/1806824',
-          '@config' => 'http://drupal.org/node/1958170',
-          '@dorg' => 'http://drupal.org/',
-        )
+        '@drush' => 'http://drupal.org/project/drush',
+        '@recommended' => 'http://drupal.org/node/1806824',
+        '@config' => 'http://drupal.org/node/1958170',
+        '@dorg' => 'http://drupal.org/',
+      )
       );
-      drupal_set_message($message);
+      backdrop_set_message($message);
       return;
     }
     $uri = $GLOBALS['base_url'];
@@ -519,15 +521,16 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     }
     $migrations = implode(',', $drush_arguments);
     // If on Acquia, call required shell script to add environment variables.
-    $drush_command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']}/{$_ENV['AH_SITE_ENVIRONMENT']}.shell " : '';
+    $drush_command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']/{$_ENV['AH_SITE_ENVIRONMENT'].shell " : '';
     $drush_command .= "$drush_path $command $migrations --user=$uid --uri=$uri " .
-      '--root=' . DRUPAL_ROOT;
+      '--root=' . BACKDROP_ROOT;
     if ($force) {
       $drush_command .= ' --force';
     }
     if ($update) {
       $drush_command .= ' --update';
     }
+    // TODO This variable was probably removed in Backdrop without replacement.
     if (variable_get('migrate_drush_mail', 0)) {
       $drush_command .= ' --notify';
     }
@@ -535,14 +538,15 @@ function migrate_ui_migrate_submit($form, &$form_state) {
       $limit = $limit['value'] . ' ' . $limit['unit'];
       $drush_command .= " --limit=\"$limit\"";
     }
-    $log_file = drupal_realpath('temporary://' . $drush_arguments[0] . $log_suffix);
+    $log_file = backdrop_realpath('temporary://' . $drush_arguments[0] . $log_suffix);
     $drush_command .= " >$log_file 2>&1 &";
     exec($drush_command, $output, $status);
+    // TODO This variable was probably removed in Backdrop without replacement.
     if (variable_get('migrate_drush_mail', 0)) {
-      drupal_set_message('Your operation is running in the background. You will receive an email message when it is complete.');
+      backdrop_set_message('Your operation is running in the background. You will receive an email message when it is complete.');
     }
     else {
-      drupal_set_message('Your operation is running in the background. You may ' .
+      backdrop_set_message('Your operation is running in the background. You may ' .
         'refresh the dashboard page to check on its progress.');
     }
   }
@@ -626,9 +630,9 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
       $_migrate_messages[] = array(
         'message' => t("Skipped !name due to unfulfilled dependencies: !depends",
           array(
-            '!name' => $machine_name,
-            '!depends' => implode(", ", $migration->incompleteDependencies()),
-          )),
+          '!name' => $machine_name,
+          '!depends' => implode(", ", $migration->incompleteDependencies()),
+        )),
       );
       $context['finished'] = 1;
       break;
@@ -672,7 +676,7 @@ function migrate_ui_batch_finish($success, $results, $operations) {
 
   foreach ($results as $result) {
     // Migration::progressMessage() uses message levels that don't match what
-    // drupal_set_message() expects.
+    // backdrop_set_message() expects.
     if (isset($result['level'])) {
       if ($result['level'] == 'completed') {
         $level = 'status';
@@ -688,7 +692,7 @@ function migrate_ui_batch_finish($success, $results, $operations) {
       $level = NULL;
     }
 
-    drupal_set_message($result['message'], $level);
+    backdrop_set_message($result['message'], $level);
   }
 }
 
@@ -701,7 +705,7 @@ function migrate_ui_batch_finish($success, $results, $operations) {
  *   the message to be displayed
  * @param string $level
  *   the type of the message: 'debug', 'completed', 'failed', or a valid $type
- *   used by drupal_set_message()
+ *   used by backdrop_set_message()
  */
 function migrate_ui_capture_message($message, $level) {
   if ($level != 'debug') {
@@ -736,8 +740,8 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
     $form['detail'] = array(
       '#type' => 'vertical_tabs',
       '#attached' => array(
-        'js' => array(drupal_get_path('module', 'migrate_ui') . '/migrate_ui.js'),
-        'css' => array(drupal_get_path('module', 'migrate_ui') . '/migrate_ui.css'),
+        'js' => array(backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.js'),
+        'css' => array(backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.css'),
       ),
     );
   }
@@ -826,8 +830,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       '#type' => 'fieldset',
       '#title' => t('Destination'),
       '#group' => 'detail',
-      '#description' =>
-        t('<p>These are the fields available in the destination of this migration
+      '#description' => t('<p>These are the fields available in the destination of this migration
            task. The machine names listed here are those available to be used
            as the first parameter to $this->addFieldMapping() in your Migration
            class constructor. <span class="error">Unmapped fields are red</span>.</p>'),
@@ -852,8 +855,14 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
         $classes[] = !isset($destination_fields[$machine_name]) ? 'migrate-error' : '';
       }
       $rows[] = array(
-        array('data' => check_plain($machine_name), 'class' => $classes),
-        array('data' => filter_xss_admin($description), 'class' => $classes),
+        array(
+          'data' => check_plain($machine_name),
+          'class' => $classes,
+        ),
+        array(
+          'data' => filter_xss_admin($description),
+          'class' => $classes,
+        ),
       );
     }
     $classes = array();
@@ -870,8 +879,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       '#type' => 'fieldset',
       '#title' => t('Source'),
       '#group' => 'detail',
-      '#description' =>
-        t('<p>These are the fields available from the source of this migration
+      '#description' => t('<p>These are the fields available from the source of this migration
            task. The machine names listed here are those available to be used
            as the second parameter to $this->addFieldMapping() in your Migration
            class constructor. <span class="error">Unmapped fields are red</span>.</p>'),
@@ -895,8 +903,14 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
         $classes = !isset($source_fields[$machine_name]) ? 'migrate-error' : '';
       }
       $rows[] = array(
-        array('data' => check_plain($machine_name), 'class' => $classes),
-        array('data' => filter_xss_admin($description), 'class' => $classes),
+        array(
+          'data' => check_plain($machine_name),
+          'class' => $classes,
+        ),
+        array(
+          'data' => filter_xss_admin($description),
+          'class' => $classes,
+        ),
       );
     }
     $classes = array();
@@ -926,7 +940,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       $source_field = $mapping->getSourceField();
       $destination_field = $mapping->getDestinationField();
       if (!is_null($source_field) && !isset($source_fields[$source_field])) {
-        drupal_set_message(t('"!source" was used as source field in the
+        backdrop_set_message(t('"!source" was used as source field in the
           "!destination" mapping but is not in list of source fields', array(
           '!source' => filter_xss_admin($source_field),
           '!destination' => filter_xss_admin($destination_field),
@@ -934,7 +948,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
           'warning');
       }
       if (!is_null($destination_field) && !isset($destination_fields[$destination_field])) {
-        drupal_set_message(t('"!destination" was used as destination field in
+        backdrop_set_message(t('"!destination" was used as destination field in
           "!source" mapping but is not in list of destination fields', array(
           '!source' => filter_xss_admin($source_field),
           '!destination' => filter_xss_admin($destination_field),
@@ -960,7 +974,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
         }
         $issue_priority = $mapping->getIssuePriority();
         if (!is_null($issue_priority)) {
-          $classes[] = 'migrate-priority-' . drupal_html_class($issue_priority);
+          $classes[] = 'migrate-priority-' . backdrop_html_class($issue_priority);
           $priority = MigrateFieldMapping::$priorities[$issue_priority];
           $issue_pattern = $migration->getIssuePattern();
           $issue_number = $mapping->getIssueNumber();
@@ -988,13 +1002,22 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
             'data' => filter_xss_admin($destination_field),
             'class' => $classes,
           ),
-          array('data' => filter_xss_admin($source_field), 'class' => $classes),
-          array('data' => filter_xss_admin($default), 'class' => $classes),
+          array(
+            'data' => filter_xss_admin($source_field),
+            'class' => $classes,
+          ),
+          array(
+            'data' => filter_xss_admin($default),
+            'class' => $classes,
+          ),
           array(
             'data' => filter_xss_admin($mapping->getDescription()),
             'class' => $classes,
           ),
-          array('data' => filter_xss_admin($priority), 'class' => $classes),
+          array(
+            'data' => filter_xss_admin($priority),
+            'class' => $classes,
+          ),
         );
         $rows[] = $row;
         $classes = array();
@@ -1021,7 +1044,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
  */
 function migrate_ui_edit_mappings($form, $form_state, $group_name,
                                   $migration_name) {
-  drupal_set_title(t('Edit !migration', array('!migration' => filter_xss_admin($migration_name))));
+  backdrop_set_title(t('Edit !migration', array('!migration' => filter_xss_admin($migration_name))));
 
   $form = array();
   $form['#tree'] = TRUE;
@@ -1036,7 +1059,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
     return $form;
   }
 
-  $source_migration_options = array('-1' => t(''),);
+  $source_migration_options = array('-1' => t(''));
   $all_dependencies = array();
   foreach (migrate_migrations() as $machine_name => $migration_info) {
     $source_migration_options[$machine_name] = $machine_name;
@@ -1056,7 +1079,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
       '#type' => 'fieldset',
       '#title' => t('Field mappings'),
       '#collapsible' => TRUE,
-      '#description' => t('For each field available in your Drupal destination, select the source field used to populate it. You can enter a default value to be applied to the destination when there is no source field, or the source field is empty in a given source item. Check the DNM (Do Not Migrate) box for destination fields you do not want populated by migration. Note that any changes you make here override any field mappings defined by the underlying migration module. Clicking the Revert button will remove all such overrides.'),
+      '#description' => t('For each field available in your Backdrop destination, select the source field used to populate it. You can enter a default value to be applied to the destination when there is no source field, or the source field is empty in a given source item. Check the DNM (Do Not Migrate) box for destination fields you do not want populated by migration. Note that any changes you make here override any field mappings defined by the underlying migration module. Clicking the Revert button will remove all such overrides.'),
       '#theme' => array('migrate_ui_field_mapping_form'),
       '#prefix' => '<div id="field-mappings">',
       '#suffix' => '</div>',
@@ -1515,7 +1538,7 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
 
   Migration::registerMigration($class_name, $machine_name, $arguments);
 
-  drupal_set_message(t('Migration changes applied.'));
+  backdrop_set_message(t('Migration changes applied.'));
   $form_state['redirect'] =
     "admin/content/migrate/groups/$group_name/$machine_name";
 }
@@ -1582,19 +1605,19 @@ function theme_migrate_ui_field_mapping_form($variables) {
       $row = array();
       $title = $form[$mapping_key]['mapping']['#title'];
       unset($form[$mapping_key]['mapping']['#title']);
-      $row[] = drupal_render($form[$mapping_key]['issue_group']);
+      $row[] = backdrop_render($form[$mapping_key]['issue_group']);
       $row[] = $title;
-      $row[] = drupal_render($form[$mapping_key]['mapping']);
-      $row[] = drupal_render($form[$mapping_key]['default_value']);
-      $row[] = drupal_render($form[$mapping_key]['source_migration']);
+      $row[] = backdrop_render($form[$mapping_key]['mapping']);
+      $row[] = backdrop_render($form[$mapping_key]['default_value']);
+      $row[] = backdrop_render($form[$mapping_key]['source_migration']);
       if (!empty($form['#is_xml_migration'])) {
-        $row[] = drupal_render($form[$mapping_key]['xpath']);
+        $row[] = backdrop_render($form[$mapping_key]['xpath']);
       }
       $rows[] = $row;
     }
     $output .= theme('table', array('header' => $header, 'rows' => $rows));
   }
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
   return $output;
 }
 
@@ -1617,7 +1640,7 @@ function theme_migrate_ui_field_mapping_dependencies($variables) {
     $title = $form[$mapping_key]['#title'];
     unset($form[$mapping_key]['#title']);
     $row[] = $title;
-    $row[] = drupal_render($form[$mapping_key]);
+    $row[] = backdrop_render($form[$mapping_key]);
     $rows[] = $row;
   }
   $output .= theme('table', array(
@@ -1626,7 +1649,7 @@ function theme_migrate_ui_field_mapping_dependencies($variables) {
     'empty' => t('No other migrations were found.'),
   ));
 
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
   return $output;
 }
 
@@ -1634,7 +1657,7 @@ function theme_migrate_ui_field_mapping_dependencies($variables) {
  * Menu callback for messages page
  */
 function migrate_ui_messages($group_name, $migration_name) {
-  drupal_set_title(t('Import messages for !migration',
+  backdrop_set_title(t('Import messages for !migration',
     array('!migration' => $migration_name)));
 
   $build = $rows = array();
@@ -1658,8 +1681,14 @@ function migrate_ui_messages($group_name, $migration_name) {
     );
   }
 
-  $header[] = array('data' => t('Level'), 'field' => 'level');
-  $header[] = array('data' => t('Message'), 'field' => 'message');
+  $header[] = array(
+    'data' => t('Level'),
+    'field' => 'level',
+  );
+  $header[] = array(
+    'data' => t('Message'),
+    'field' => 'message',
+  );
 
   // TODO: need a general MigrateMap API
   $messages = $migration->getMap()->getConnection()
@@ -1701,7 +1730,7 @@ function migrate_ui_messages($group_name, $migration_name) {
     '#rows' => $rows,
     '#empty' => t('No messages'),
     '#attached' => array(
-      'css' => array(drupal_get_path('module', 'migrate_ui') . '/migrate_ui.css'),
+      'css' => array(backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.css'),
     ),
   );
   $build['migrate_ui_pager'] = array('#theme' => 'pager');
@@ -1724,7 +1753,7 @@ function migrate_ui_deregister_migration($machine_name) {
   db_delete('migrate_field_mapping')
     ->condition('machine_name', $machine_name)
     ->execute();
-  drupal_set_message(t("Deregistered '!description' task",
+  backdrop_set_message(t("Deregistered '!description' task",
     array('!description' => $machine_name)));
 }
 
@@ -1732,8 +1761,8 @@ function migrate_ui_deregister_migration($machine_name) {
  * Menu callback
  */
 function migrate_ui_configure() {
-  drupal_set_title(t('Configure migration settings'));
-  return drupal_get_form('migrate_ui_configure_form');
+  backdrop_set_title(t('Configure migration settings'));
+  return backdrop_get_form('migrate_ui_configure_form');
 }
 
 /**
@@ -1768,9 +1797,9 @@ function migrate_ui_configure_form($form, &$form_state) {
       $migrations[] = $row->machine_name;
       $migration_list .= '<li>' . t('!migration (class !class)',
           array(
-            '!migration' => filter_xss_admin($row->machine_name),
-            '!class' => filter_xss_admin($row->class_name),
-          )) . "</li>\n";
+        '!migration' => filter_xss_admin($row->machine_name),
+        '!class' => filter_xss_admin($row->class_name),
+      )) . "</li>\n";
     }
   }
 
@@ -1793,6 +1822,7 @@ function migrate_ui_configure_form($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Settings'),
   );
+  // TODO This variable was probably removed in Backdrop without replacement.
   $build['settings']['deprecation_warnings'] = array(
     '#type' => 'checkbox',
     '#title' => t('Warn on usage of deprecated patterns'),
@@ -1806,6 +1836,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   // Configure background imports if the drush command has been set.
+  // TODO This variable was probably removed in Backdrop without replacement.
   $drush_path = trim(variable_get('migrate_drush_path', ''));
   $drush_validated = FALSE;
   if ($drush_path && is_executable($drush_path)) {
@@ -1813,8 +1844,8 @@ function migrate_ui_configure_form($form, &$form_state) {
     $uri = $GLOBALS['base_url'];
     $uid = $GLOBALS['user']->uid;
     // If on Acquia, call required shell script to add environment variables.
-    $command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']}/{$_ENV['AH_SITE_ENVIRONMENT']}.shell " : '';
-    $command .= "$drush_path status --user=$uid --uri=$uri --root=" . DRUPAL_ROOT;
+    $command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']/{$_ENV['AH_SITE_ENVIRONMENT'].shell " : '';
+    $command .= "$drush_path status --user=$uid --uri=$uri --root=" . BACKDROP_ROOT;
     exec($command, $output, $status);
     if ($status == 0) {
       $version = '';
@@ -1822,7 +1853,7 @@ function migrate_ui_configure_form($form, &$form_state) {
         if (preg_match('|Drush version +: +(.*)|', $line, $matches)) {
           $version = trim($matches[1]);
         }
-        elseif (preg_match('|Drupal bootstrap +: +Successful *|', $line, $matches)) {
+        elseif (preg_match('|Backdrop bootstrap +: +Successful *|', $line, $matches)) {
           $drush_validated = TRUE;
         }
       }
@@ -1830,28 +1861,28 @@ function migrate_ui_configure_form($form, &$form_state) {
     if ($drush_validated) {
       $description = t('Configure the use of <a href="@drush">drush</a> version @version to run import and rollback operations in the background.',
         array(
-          '@drush' => 'http://drupal.org/project/drush',
-          '@version' => $version,
-        )
+        '@drush' => 'http://drupal.org/project/drush',
+        '@version' => $version,
+      )
       );
     }
     else {
       $description = t('<a href="@drush">Drush</a> is misconfigured on the server. Please review the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>, and make sure everything is set up correctly.',
         array(
-          '@drush' => 'http://drupal.org/project/drush',
-          '@config' => 'http://drupal.org/node/1958170',
-        )
+        '@drush' => 'http://drupal.org/project/drush',
+        '@config' => 'http://drupal.org/node/1958170',
+      )
       );
     }
   }
   else {
     $description = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
       array(
-        '@drush' => 'http://drupal.org/project/drush',
-        '@recommended' => 'http://drupal.org/node/1806824',
-        '@config' => 'http://drupal.org/node/1958170',
-        '@dorg' => 'http://drupal.org/',
-      )
+      '@drush' => 'http://drupal.org/project/drush',
+      '@recommended' => 'http://drupal.org/node/1806824',
+      '@config' => 'http://drupal.org/node/1958170',
+      '@dorg' => 'http://drupal.org/',
+    )
     );
   }
 
@@ -1869,6 +1900,7 @@ function migrate_ui_configure_form($form, &$form_state) {
       1 => t('Background operation only'),
       2 => t('Allows both immediate and background operations'),
     );
+    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_import_method'] = array(
       '#type' => 'select',
       '#options' => $options,
@@ -1877,12 +1909,14 @@ function migrate_ui_configure_form($form, &$form_state) {
       '#description' => t('Choose whether the dashboard will perform operations immediately, in the background via drush, or offer a choice.'),
     );
 
+    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_drush_mail'] = array(
       '#type' => 'checkbox',
       '#default_value' => variable_get('migrate_drush_mail', 0),
       '#title' => t('Send email notification when a background operation completes.'),
     );
 
+    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_drush_mail_subject'] = array(
       '#type' => 'textfield',
       '#default_value' => variable_get('migrate_drush_mail_subject',
@@ -1895,6 +1929,7 @@ function migrate_ui_configure_form($form, &$form_state) {
       ),
     );
 
+    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_drush_mail_body'] = array(
       '#type' => 'textarea',
       '#rows' => 10,
@@ -1935,6 +1970,7 @@ function migrate_ui_configure_form($form, &$form_state) {
     'types' => array('data' => t('Destination types handled')),
   );
 
+  // TODO This variable was probably removed in Backdrop without replacement.
   $disabled = unserialize(variable_get('migrate_disabled_handlers',
     serialize(array())));
   $class_list = _migrate_class_list('MigrateDestinationHandler');
@@ -2013,7 +2049,7 @@ function migrate_ui_configure_form($form, &$form_state) {
  */
 function migrate_ui_configure_register_submit($form, &$form_state) {
   migrate_static_registration();
-  drupal_set_message(t('All statically defined migrations have been (re)registered.'));
+  backdrop_set_message(t('All statically defined migrations have been (re)registered.'));
   $form_state['redirect'] = 'admin/content/migrate';
 }
 
@@ -2036,9 +2072,10 @@ function migrate_ui_configure_deregister_submit($form, &$form_state) {
  * Submit callback for the configuration form settings fieldset.
  */
 function migrate_ui_configure_settings_submit($form, &$form_state) {
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_set('migrate_deprecation_warnings',
     $form_state['values']['deprecation_warnings']);
-  drupal_set_message(t('Migration settings saved.'));
+  backdrop_set_message(t('Migration settings saved.'));
 }
 
 /**
@@ -2046,9 +2083,13 @@ function migrate_ui_configure_settings_submit($form, &$form_state) {
  */
 function migrate_ui_configure_drush_submit($form, &$form_state) {
   $values = $form_state['values'];
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_set('migrate_import_method', $values['migrate_import_method']);
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_set('migrate_drush_mail', $values['migrate_drush_mail']);
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_set('migrate_drush_mail_subject', $values['migrate_drush_mail_subject']);
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_set('migrate_drush_mail_body', $values['migrate_drush_mail_body']);
 }
 
@@ -2067,12 +2108,13 @@ function migrate_ui_configure_submit($form, &$form_state) {
       $disabled[] = $class;
     }
   }
+  // TODO This variable was probably removed in Backdrop without replacement.
   variable_set('migrate_disabled_handlers', serialize($disabled));
   if (!empty($disabled)) {
-    drupal_set_message(t('The following handler classes are disabled: @classes',
+    backdrop_set_message(t('The following handler classes are disabled: @classes',
       array('@classes' => implode(', ', $disabled))));
   }
   else {
-    drupal_set_message(t('No handler classes are currently disabled.'));
+    backdrop_set_message(t('No handler classes are currently disabled.'));
   }
 }

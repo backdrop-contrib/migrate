@@ -110,7 +110,8 @@ class MigrateSourceMongoDB extends MigrateSource {
         ->find($this->query)
         ->sort($this->sort);
       $this->cursor->timeout(-1);
-    } catch (MongoCursorException $e) {
+    }
+    catch (MongoCursorException $e) {
       Migration::displayMessage($e->getMessage(), 'error');
     }
     migrate_instrument_stop('MigrateSourceMongoDB execute');
@@ -131,9 +132,9 @@ class MigrateSourceMongoDB extends MigrateSource {
 
     $query_info = $this->cursor->info();
 
-    $query = 'query:    ' . drupal_json_encode($query_info['query']['$query']);
-    $sort = 'order by: ' . drupal_json_encode($query_info['query']['$orderby']);
-    $fields = 'fields:   ' . drupal_json_encode($query_info['fields']);
+    $query = 'query:    ' . backdrop_json_encode($query_info['query']['$query']);
+    $sort = 'order by: ' . backdrop_json_encode($query_info['query']['$orderby']);
+    $fields = 'fields:   ' . backdrop_json_encode($query_info['fields']);
 
     return $query . PHP_EOL .
       $sort . PHP_EOL .

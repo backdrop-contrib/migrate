@@ -25,13 +25,13 @@ class RoleTableMigration extends Migration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'rid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'alias' => 'r',
-        ),
+      'rid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'alias' => 'r',
       ),
+    ),
       $destination_key
     );
   }

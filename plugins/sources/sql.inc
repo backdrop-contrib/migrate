@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Define a MigrateSource for importing from Drupal connections.
+ * Define a MigrateSource for importing from Backdrop connections.
  */
 
 /**
- * Implementation of MigrateSource, to handle imports from Drupal connections.
+ * Implementation of MigrateSource, to handle imports from Backdrop connections.
  */
 class MigrateSourceSQL extends MigrateSource {
 
@@ -157,29 +157,29 @@ class MigrateSourceSQL extends MigrateSource {
       // http://drupal.org/node/802514 is committed, assume joinable for now
       $this->mapJoinable = TRUE;
       /*      // To be able to join the map directly, it must be a PDO map on the same
-            // connection, or a compatible connection
-            $map = $migration->getMap();
-            if (is_a($map, 'MigrateSQLMap')) {
-              $map_options = $map->getConnection()->getConnectionOptions();
-              $query_options = $this->query->connection()->getConnectionOptions();
+       // connection, or a compatible connection
+       $map = $migration->getMap();
+       if (is_a($map, 'MigrateSQLMap')) {
+       $map_options = $map->getConnection()->getConnectionOptions();
+       $query_options = $this->query->connection()->getConnectionOptions();
 
-              // Identical options means it will work
-              if ($map_options == $query_options) {
-                $this->mapJoinable = TRUE;
-              }
-              else {
-                // Otherwise, the one scenario we know will work is if it's MySQL and
-                // the credentials match (SQLite too?)
-                if ($map_options['driver'] == 'mysql' && $query_options['driver'] == 'mysql') {
-                  if ($map_options['host'] == $query_options['host'] &&
-                      $map_options['port'] == $query_options['port'] &&
-                      $map_options['username'] == $query_options['username'] &&
-                      $map_options['password'] == $query_options['password']) {
-                    $this->mapJoinable = TRUE;
-                  }
-                }
-              }
-            }*/
+       // Identical options means it will work
+       if ($map_options == $query_options) {
+       $this->mapJoinable = TRUE;
+       }
+       else {
+       // Otherwise, the one scenario we know will work is if it's MySQL and
+       // the credentials match (SQLite too?)
+       if ($map_options['driver'] == 'mysql' && $query_options['driver'] == 'mysql') {
+       if ($map_options['host'] == $query_options['host'] &&
+       $map_options['port'] == $query_options['port'] &&
+       $map_options['username'] == $query_options['username'] &&
+       $map_options['password'] == $query_options['password']) {
+       $this->mapJoinable = TRUE;
+       }
+       }
+       }
+       }*/
     }
   }
 
@@ -227,23 +227,23 @@ class MigrateSourceSQL extends MigrateSource {
     /*
      * Handle queries without explicit field lists
      * TODO: Waiting on http://drupal.org/node/814312
-        $info = Database::getConnectionInfo($query->getConnection());
-        $database = $info['default']['database'];
-        foreach ($this->query->getTables() as $table) {
-          if (isset($table['all_fields']) && $table['all_fields']) {
+     $info = Database::getConnectionInfo($query->getConnection());
+     $database = $info['default']['database'];
+     foreach ($this->query->getTables() as $table) {
+     if (isset($table['all_fields']) && $table['all_fields']) {
 
-            $database = 'plants';
-            $table = $table['table'];
-            $sql = 'SELECT column_name
-                    FROM information_schema.columns
-                    WHERE table_schema=:database AND table_name = :table
-                    ORDER BY ordinal_position';
-            $result = dbtng_query($sql, array(':database' => $database, ':table' => $table));
-            foreach ($result as $row) {
-              $fields[$row->column_name] = $table . '.' . $row->column_name;
-            }
-          }
-        }*/
+     $database = 'plants';
+     $table = $table['table'];
+     $sql = 'SELECT column_name
+     FROM information_schema.columns
+     WHERE table_schema=:database AND table_name = :table
+     ORDER BY ordinal_position';
+     $result = dbtng_query($sql, array(':database' => $database, ':table' => $table));
+     foreach ($result as $row) {
+     $fields[$row->column_name] = $table . '.' . $row->column_name;
+     }
+     }
+     }*/
     $expressionFields = $this->query->getExpressions();
     foreach ($expressionFields as $field_name => $field_info) {
       $fields[$field_name] = $field_info['alias'];

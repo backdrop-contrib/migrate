@@ -454,10 +454,12 @@ class MigrateNodeUnitTest extends BackdropWebTestCase {
     $migration->saveMailSystem();
     $migration->disableMailSystem();
     // TODO This variable was probably removed in Backdrop without replacement.
+    // TODO This variable was probably removed in Backdrop without replacement.
     $ms = variable_get('mail_system', NULL);
     $this->assertTrue(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration has disabled mail system'));
     $migration->restoreMailSystem();
+    // TODO This variable was probably removed in Backdrop without replacement.
     // TODO This variable was probably removed in Backdrop without replacement.
     $ms = variable_get('mail_system', NULL);
     $this->assertFalse(is_array($ms) && in_array('MigrateMailIgnore', $ms),

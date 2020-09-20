@@ -45,8 +45,8 @@ class MigrateDestinationMenuLinks extends MigrateDestination {
       'menu_name' => t('The menu name. All links with the same menu name (such as \'navigation\') are part of the same menu.'),
       'mlid' => t('The menu link ID (mlid) is the integer primary key.'),
       'plid' => t('The parent link ID (plid) is the mlid of the link above in the hierarchy, or zero if the link is at the top level in its menu.'),
-      'link_path' => t('The Drupal path or external path this link points to.'),
-      'router_path' => t('For links corresponding to a Drupal path (external = 0), this connects the link to a {menu_router}.path for joins.'),
+      'link_path' => t('The Backdrop path or external path this link points to.'),
+      'router_path' => t('For links corresponding to a Backdrop path (external = 0), this connects the link to a {menu_router}.path for joins.'),
       'link_title' => t('The text displayed for the link, which may be modified by a title callback stored in {menu_router}.'),
       'options' => t('A serialized array of options to be passed to the url() or l() function, such as a query string or HTML attributes.'),
       'module' => t('The name of the module that generated this link.'),
@@ -66,7 +66,7 @@ class MigrateDestinationMenuLinks extends MigrateDestination {
       'p7' => t('The seventh mlid in the materialized path. See p1.'),
       'p8' => t('The eighth mlid in the materialized path. See p1.'),
       'p9' => t('The ninth mlid in the materialized path. See p1.'),
-      'updated' => t('Flag that indicates that this link was generated during the update from Drupal 5.'),
+      'updated' => t('Flag that indicates that this link was generated during the update from Backdrop 5.'),
     );
     return $fields;
   }
@@ -207,7 +207,7 @@ class MigrateDestinationMenuLinks extends MigrateDestination {
     migrate_instrument_start('menu_link_delete');
     $this->prepareRollback($mlid);
     // @todo: any error checking here? For example, menu.inc has:
-    //   if ($menu = menu_load($menu_name)) { menu_delete($menu) }
+//   if ($menu = menu_load($menu_name)) { menu_delete($menu) }
     menu_link_delete($mlid);
     $this->completeRollback($mlid);
     migrate_instrument_stop('menu_link_delete');

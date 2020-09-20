@@ -121,7 +121,7 @@ function migrate_ui_wizard_migrate_submit($form, &$form_state) {
 
 /**
  * The base class for migration wizards. Extend this class to implement a
- * wizard UI for importing into Drupal from a given source format (Drupal,
+ * wizard UI for importing into Backdrop from a given source format (Backdrop,
  * WordPress, etc.).
  */
 abstract class MigrateUIWizard {
@@ -232,14 +232,13 @@ abstract class MigrateUIWizard {
 
   /**
    * Returns the translatable name representing the source of the data (e.g.,
-   * "Drupal", "WordPress", etc.).
+   * "Backdrop", "WordPress", etc.).
    *
    * @return string
    */
   abstract public function getSourceName();
 
-  public function __construct() {
-  }
+  public function __construct() { }
 
   /**
    * Add a wizard extender.
@@ -371,7 +370,7 @@ abstract class MigrateUIWizard {
    * @return array
    */
   public function form(&$form_state) {
-    drupal_set_title(t('Import from @source_title',
+    backdrop_set_title(t('Import from @source_title',
       array('@source_title' => $this->getSourceName())));
 
     $form_method = $this->currentStep->getFormMethod();
@@ -379,9 +378,9 @@ abstract class MigrateUIWizard {
       '#prefix' => '<h2>',
       '#markup' => t('Step @step: @step_name',
         array(
-          '@step' => $this->stepNumber,
-          '@step_name' => $this->currentStep->getName(),
-        )),
+        '@step' => $this->stepNumber,
+        '@step_name' => $this->currentStep->getName(),
+      )),
       '#suffix' => '</h2>',
     );
 
@@ -471,7 +470,7 @@ abstract class MigrateUIWizard {
         MigrationBase::registerMigration($info['class_name'], $machine_name,
           $info['arguments']);
       }
-    };
+    }
     menu_rebuild();
   }
 
@@ -496,7 +495,7 @@ abstract class MigrateUIWizard {
       $batch = array(
         'operations' => $operations,
         'title' => t('Import processing'),
-        'file' => drupal_get_path('module', 'migrate_ui') . '/migrate_ui.pages.inc',
+        'file' => backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.pages.inc',
         'init_message' => t('Starting import process'),
         'progress_message' => t(''),
         'error_message' => t('An error occurred. Some or all of the import processing has failed.'),

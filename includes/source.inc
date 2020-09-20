@@ -305,7 +305,7 @@ abstract class MigrateSource implements Iterator {
       // First, determine if this row should be passed to prepareRow(), or
       // skipped entirely. The rules are:
       // 1. If there's an explicit idlist, that's all we care about (ignore
-      //    highwaters and map rows).
+//    highwaters and map rows).
       $prepared = FALSE;
       if (!empty($this->idList)) {
         // Check first source key.
@@ -319,7 +319,7 @@ abstract class MigrateSource implements Iterator {
         }
       }
       // 2. If the row is not in the map (we have never tried to import it
-      //    before), we always want to try it.
+//    before), we always want to try it.
       elseif (!isset($row->migrate_map_sourceid1)) {
         // Fall through
       }
@@ -328,10 +328,10 @@ abstract class MigrateSource implements Iterator {
         // Fall through
       }
       // 4. At this point, we have a row which has previously been imported and
-      //    not marked for update. If we're not using highwater marks, then we
-      //    will not take this row. Except, if we're looking for changes in the
-      //    data, we need to go through prepareRow() before we can decide to
-      //    skip it.
+//    not marked for update. If we're not using highwater marks, then we
+//    will not take this row. Except, if we're looking for changes in the
+//    data, we need to go through prepareRow() before we can decide to
+//    skip it.
       elseif (empty($this->highwaterField)) {
         if ($this->trackChanges) {
           if ($this->prepareRow($row) !== FALSE) {
@@ -356,13 +356,13 @@ abstract class MigrateSource implements Iterator {
         }
       }
       // 5. The initial highwater mark, before anything is migrated, is ''. We
-      //    want to make sure we don't mistakenly skip rows with a highwater
-      //    field value of 0, so explicitly handle '' here.
+//    want to make sure we don't mistakenly skip rows with a highwater
+//    field value of 0, so explicitly handle '' here.
       elseif ($this->originalHighwater === '') {
         // Fall through
       }
       // 6. So, we are using highwater marks. Take the row if its highwater
-      //    field value is greater than the saved mark, otherwise skip it.
+//    field value is greater than the saved mark, otherwise skip it.
       else {
         // Call prepareRow() here, in case the highwaterField needs preparation
         if ($this->prepareRow($row) !== FALSE) {

@@ -212,12 +212,15 @@ class MigrateFieldMapping {
   }
 
   public function dedupe($table, $column) {
-    $this->dedupe = array('table' => $table, 'column' => $column);
+    $this->dedupe = array(
+      'table' => $table,
+      'column' => $column,
+    );
     return $this;
   }
 
   public function arguments($arguments) {
-    if (variable_get('migrate_deprecation_warnings', 1)) {
+    if (config_get('migrate.settings', 'migrate_deprecation_warnings')) {
       MigrationBase::displayMessage(t('The field mapping arguments() method is now deprecated - please use subfield notation instead.'));
     }
     $this->arguments = $arguments;

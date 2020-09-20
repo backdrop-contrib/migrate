@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implementation of hook_node_info().
+ * Implements hook_node_info().
  */
 function migrate_example_baseball_node_info() {
   $items = array(

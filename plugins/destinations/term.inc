@@ -79,7 +79,7 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
       array('@doc' => 'http://drupal.org/node/1349702#name'));
     $fields['description'] = t('<a href="@doc">Description</a>',
       array('@doc' => 'http://drupal.org/node/1349702#description'));
-    $fields['parent'] = t('<a href="@doc">Parent (by Drupal term ID)</a>',
+    $fields['parent'] = t('<a href="@doc">Parent (by Backdrop term ID)</a>',
       array('@doc' => 'http://drupal.org/node/1349702#parent'));
     // TODO: Remove parent_name, implement via arguments
     $fields['parent_name'] = t('<a href="@doc">Parent (by name)</a>',
@@ -147,9 +147,9 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
         if ($term->tid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming tid !tid and map destination nid !destid1 don't match",
             array(
-              '!tid' => $term->tid,
-              '!destid1' => $row->migrate_map_destid1,
-            )));
+            '!tid' => $term->tid,
+            '!destid1' => $row->migrate_map_destid1,
+          )));
         }
       }
       else {
@@ -301,7 +301,7 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
     $candidates = taxonomy_term_load_multiple(array(),
       array('name' => trim($term->name), 'vid' => $term->vid));
     foreach ($candidates as $candidate) {
-      $parents = taxonomy_get_parents($candidate->tid);
+      $parents = taxonomy_term_load_parents($candidate->tid);
       // We need to set up $parents as a simple array of tids
       if (empty($parents)) {
         $parents = array(0);

@@ -162,9 +162,9 @@ class MigrateGroup {
     db_merge('migrate_group')
       ->key(array('name' => $name))
       ->fields(array(
-        'title' => $title,
-        'arguments' => serialize($arguments),
-      ))
+      'title' => $title,
+      'arguments' => serialize($arguments),
+    ))
       ->execute();
   }
 

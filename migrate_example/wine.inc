@@ -49,7 +49,7 @@ abstract class AdvancedExampleMigration extends Migration {
 
 /**
  * TIP: While usually you'll create true migrations - processes that copy data
- * from some source into Drupal - you can also define processing steps for
+ * from some source into Backdrop - you can also define processing steps for
  * either the import or rollback stages that take other actions. In this case,
  * we want to disable auto_nodetitle while the migration steps run. We'll
  * re-enable it over in WineFinishMigration.
@@ -116,12 +116,12 @@ abstract class WineTermMigration extends AdvancedExampleMigration {
 
     $query = db_select('migrate_example_wine_categories', 'wc')
       ->fields('wc', array(
-        'categoryid',
-        'name',
-        'details',
-        'category_parent',
-        'ordering',
-      ))
+      'categoryid',
+      'name',
+      'details',
+      'category_parent',
+      'ordering',
+    ))
       ->condition('type', $type)
       // This sort assures that parents are saved before children.
       ->orderBy('category_parent', 'ASC');
@@ -129,12 +129,12 @@ abstract class WineTermMigration extends AdvancedExampleMigration {
     $this->destination = new MigrateDestinationTerm($vocabulary_name);
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'categoryid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-        ),
+      'categoryid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationTerm::getKeySchema()
     );
 
@@ -182,7 +182,7 @@ class WineBestWithMigration extends WineTermMigration {
 /**
  * TIP: Files can be migrated directly by themselves, by using the
  * MigrateDestinationFile class. This will copy the files themselves from the
- * source, and set up the Drupal file tables appropriately. Referencing them
+ * source, and set up the Backdrop file tables appropriately. Referencing them
  * in, say, a node field later is then simple.
  */
 class WineFileCopyMigration extends AdvancedExampleMigration {
@@ -198,13 +198,13 @@ class WineFileCopyMigration extends AdvancedExampleMigration {
     $this->destination = new MigrateDestinationFile();
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'imageid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Image ID.',
-        ),
+      'imageid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Image ID.',
       ),
+    ),
       MigrateDestinationFile::getKeySchema()
     );
 
@@ -250,13 +250,13 @@ class WineFileBlobMigration extends AdvancedExampleMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'imageid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Image ID.',
-        ),
+      'imageid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Image ID.',
       ),
+    ),
       MigrateDestinationFile::getKeySchema()
     );
 
@@ -305,8 +305,8 @@ class WineRoleMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a local file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-      drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+      backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'positions.xml';
     // This is the xpath identifying the items to be migrated, relative to the
     // document.
@@ -324,12 +324,12 @@ class WineRoleMigration extends XMLMigration {
     // file, and used to identify specific items
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationRole::getKeySchema()
     );
 
@@ -348,38 +348,38 @@ class WineUserMigration extends AdvancedExampleMigration {
 
     $query = db_select('migrate_example_wine_account', 'wa')
       ->fields('wa', array(
-        'accountid',
-        'status',
-        'posted',
-        'name',
-        'password',
-        'mail',
-        'last_access',
-        'last_login',
-        'original_mail',
-        'sig',
-        'sex',
-        'imageid',
-        'positions',
-      ));
+      'accountid',
+      'status',
+      'posted',
+      'name',
+      'password',
+      'mail',
+      'last_access',
+      'last_login',
+      'original_mail',
+      'sig',
+      'sex',
+      'imageid',
+      'positions',
+    ));
     $this->source = new MigrateSourceSQL($query);
     $this->destination = new MigrateDestinationUser();
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'accountid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Account ID.',
-        ),
+      'accountid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Account ID.',
       ),
+    ),
       MigrateDestinationUser::getKeySchema()
     );
 
     // Mapped fields
     $this->addSimpleMappings(array('name', 'status', 'mail'));
     // Note that these date/time values are coming in as ISO strings, but
-    // Drupal uses UNIX timestamps. The user destination automatically
+    // Backdrop uses UNIX timestamps. The user destination automatically
     // translates them as necessary.
     $this->addFieldMapping('created', 'posted');
     $this->addFieldMapping('access', 'last_access');
@@ -442,24 +442,24 @@ class WineProducerMigration extends AdvancedExampleMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'producerid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'alias' => 'p',
-        ),
+      'producerid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'alias' => 'p',
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
     $query = db_select('migrate_example_wine_producer', 'p')
       ->fields('p', array(
-        'producerid',
-        'name',
-        'body',
-        'excerpt',
-        'accountid',
-      ));
+      'producerid',
+      'name',
+      'body',
+      'excerpt',
+      'accountid',
+    ));
     // Region term is singletons, handled straighforwardly
     $query->leftJoin('migrate_example_wine_category_producer', 'reg',
       'p.producerid = reg.producerid');
@@ -543,8 +543,8 @@ class WineProducerXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-      drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+      backdrop_get_path('module', 'migrate_example') . '/xml/';
     $list_url = $xml_folder . 'index.xml';
     // Each ID retrieved from the list URL will be plugged into :id in the
     // item URL to fetch the specific objects.
@@ -564,12 +564,12 @@ class WineProducerXMLMigration extends XMLMigration {
     // used to identify the specific item's file
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'varchar',
-          'length' => 4,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -657,8 +657,8 @@ class WineProducerNamespaceXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-      drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+      backdrop_get_path('module', 'migrate_example') . '/xml/';
     $list_url = $xml_folder . 'index2.xml';
     // Each ID retrieved from the list URL will be plugged into :id in the
     // item URL to fetch the specific objects.
@@ -679,12 +679,12 @@ class WineProducerNamespaceXMLMigration extends XMLMigration {
     // used to identify the specific item's file
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'varchar',
-          'length' => 4,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -774,7 +774,7 @@ class WineProducerMultiXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' . drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers.xml';
 
     // We use the MigrateSourceMultiItems class for any source where we obtain
@@ -798,12 +798,12 @@ class WineProducerMultiXMLMigration extends XMLMigration {
     // file, and used to identify specific items
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'varchar',
-          'length' => 4,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -897,7 +897,7 @@ class WineProducerMultiNamespaceXMLMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a file path.
-    $xml_folder = DRUPAL_ROOT . '/' . drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers3.xml';
 
     // We use the MigrateSourceMultiItems class for any source where we obtain
@@ -923,12 +923,12 @@ class WineProducerMultiNamespaceXMLMigration extends XMLMigration {
     // file, and used to identify specific items
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'varchar',
-          'length' => 4,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -1017,8 +1017,8 @@ class WineProducerXMLPullMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a local file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-      drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+      backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers2.xml';
 
     // As with MigrateSourceMultiItems, this applies where there is not a
@@ -1028,8 +1028,8 @@ class WineProducerXMLPullMigration extends XMLMigration {
     // elements that correspond to objects to import is more limited. It must
     // be a fully-qualified path to the element (i.e.,
     // /producers/producer rather than just //producer).
-    $item_xpath = '/producers/producer';  // relative to document
-    $item_ID_xpath = 'sourceid';          // relative to item_xpath
+    $item_xpath = '/producers/producer'; // relative to document
+    $item_ID_xpath = 'sourceid'; // relative to item_xpath
 
     $this->source = new MigrateSourceXML($items_url, $item_xpath,
       $item_ID_xpath, $fields);
@@ -1038,12 +1038,12 @@ class WineProducerXMLPullMigration extends XMLMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'varchar',
-          'length' => 4,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -1124,8 +1124,8 @@ class WineProducerNamespaceXMLPullMigration extends XMLMigration {
     // system.
 
     // This can also be an URL instead of a local file path.
-    $xml_folder = DRUPAL_ROOT . '/' .
-      drupal_get_path('module', 'migrate_example') . '/xml/';
+    $xml_folder = BACKDROP_ROOT . '/' .
+      backdrop_get_path('module', 'migrate_example') . '/xml/';
     $items_url = $xml_folder . 'producers4.xml';
 
     // As with MigrateSourceMultiItems, this applies where there is not a
@@ -1135,8 +1135,8 @@ class WineProducerNamespaceXMLPullMigration extends XMLMigration {
     // elements that correspond to objects to import is more limited. It must
     // be a fully-qualified path to the element (i.e.,
     // /producers/producer rather than just //producer).
-    $item_xpath = '/pr:producers/pr:producer';  // relative to document
-    $item_ID_xpath = 'pr:sourceid';          // relative to item_xpath
+    $item_xpath = '/pr:producers/pr:producer'; // relative to document
+    $item_ID_xpath = 'pr:sourceid'; // relative to item_xpath
     $namespaces = array('pr' => 'http://www.wine.org/wine-producers');
 
     $this->source = new MigrateSourceXML($items_url, $item_xpath,
@@ -1147,12 +1147,12 @@ class WineProducerNamespaceXMLPullMigration extends XMLMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'sourceid' => array(
-          'type' => 'varchar',
-          'length' => 4,
-          'not null' => TRUE,
-        ),
+      'sourceid' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -1213,17 +1213,17 @@ class WineWineMigration extends AdvancedExampleMigration {
 
     $query = db_select('migrate_example_wine', 'w')
       ->fields('w', array(
-        'wineid',
-        'name',
-        'body',
-        'excerpt',
-        'accountid',
-        'posted',
-        'last_changed',
-        'variety',
-        'region',
-        'rating',
-      ));
+      'wineid',
+      'name',
+      'body',
+      'excerpt',
+      'accountid',
+      'posted',
+      'last_changed',
+      'variety',
+      'region',
+      'rating',
+    ));
     $query->leftJoin('migrate_example_wine_category_wine', 'cwbw',
       "w.wineid = cwbw.wineid");
     $query->leftJoin('migrate_example_wine_categories', 'bw',
@@ -1244,10 +1244,8 @@ class WineWineMigration extends AdvancedExampleMigration {
       'name' => t('The name of the wine'),
       'best_vintages' => t('What years were best for this wine?'),
       'url' => t('Image URLs attached to this wine; populated in prepareRow()'),
-      'image_alt' =>
-        t('Image alt text attached to this wine; populated in prepareRow()'),
-      'image_title' =>
-        t('Image titles attached to this wine; populated in prepareRow()'),
+      'image_alt' => t('Image alt text attached to this wine; populated in prepareRow()'),
+      'image_title' => t('Image titles attached to this wine; populated in prepareRow()'),
     );
 
     // TIP: By default, each time a migration is run, any previously unprocessed
@@ -1259,8 +1257,8 @@ class WineWineMigration extends AdvancedExampleMigration {
     // field.
     $this->highwaterField = array(
       'name' => 'last_changed', // Column to be used as highwater mark
-      'alias' => 'w',           // Table alias containing that column
-      'type' => 'int',          // By default, highwater marks are assumed to
+      'alias' => 'w', // Table alias containing that column
+      'type' => 'int', // By default, highwater marks are assumed to
       // be lexicographically sortable (e.g.,
       // '2011-05-19 17:53:12'). To properly deal with
       // integer highwater marks (such as UNIX
@@ -1278,14 +1276,14 @@ class WineWineMigration extends AdvancedExampleMigration {
     // timestamp of when each item was last imported in the map table.
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'wineid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Wine ID',
-          'alias' => 'w',
-        ),
+      'wineid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Wine ID',
+        'alias' => 'w',
       ),
+    ),
       MigrateDestinationNode::getKeySchema(),
       'default', // The SQL connection where the map/message tables are created.
       array('track_last_imported' => TRUE)
@@ -1323,11 +1321,11 @@ class WineWineMigration extends AdvancedExampleMigration {
     // value which is a transformation of the argument. As this example shows,
     // you can have multiple callbacks, and they can either be straight
     // functions or class methods. In this case, our custom method prepends
-    // 'review: ' to the body, and then we call a standard Drupal function to
+    // 'review: ' to the body, and then we call a standard Backdrop function to
     // uppercase the whole body. You can also use ->callback() to pass
     // additional arguments.
     $this->addFieldMapping('body', 'body')
-      ->callbacks(array($this, 'addTitlePrefix'), 'drupal_strtoupper')
+      ->callbacks(array($this, 'addTitlePrefix'), 'backdrop_strtoupper')
       ->callback('html_entity_decode', ENT_QUOTES, 'ISO8859-1');
     $this->addFieldMapping('body:summary', 'excerpt');
 
@@ -1416,16 +1414,16 @@ class WineWineMigration extends AdvancedExampleMigration {
      * This is disabled - see http://drupal.org/node/1679798. To demonstrate
      * remote file migration, edit the migrate_example_wine_files table and enter
      * the URLs of known remote image files, then enable this code.
-        $result = db_select('migrate_example_wine_files', 'f')
-                  ->fields('f', array('url', 'image_alt', 'image_title'))
-                  ->condition('wineid', $source_id)
-                  ->execute();
-        foreach ($result as $row) {
-          $current_row->url[] = $row->url;
-          $current_row->image_alt[] = $row->image_alt;
-          $current_row->image_title[] = $row->image_title;
-        }
-    */
+     $result = db_select('migrate_example_wine_files', 'f')
+     ->fields('f', array('url', 'image_alt', 'image_title'))
+     ->condition('wineid', $source_id)
+     ->execute();
+     foreach ($result as $row) {
+     $current_row->url[] = $row->url;
+     $current_row->image_alt[] = $row->image_alt;
+     $current_row->image_title[] = $row->image_title;
+     }
+     */
 
     // We could also have used this function to decide to skip a row, in cases
     // where that couldn't easily be done through the original query. Simply
@@ -1442,31 +1440,31 @@ class WineCommentMigration extends AdvancedExampleMigration {
 
     $query = db_select('migrate_example_wine_comment', 'wc')
       ->fields('wc', array(
-        'commentid',
-        'comment_parent',
-        'name',
-        'mail',
-        'accountid',
-        'body',
-        'wineid',
-        'subject',
-        'commenthost',
-        'userpage',
-        'posted',
-        'lastchanged',
-      ))
+      'commentid',
+      'comment_parent',
+      'name',
+      'mail',
+      'accountid',
+      'body',
+      'wineid',
+      'subject',
+      'commenthost',
+      'userpage',
+      'posted',
+      'lastchanged',
+    ))
       ->orderBy('comment_parent');
     $this->source = new MigrateSourceSQL($query);
     $this->destination =
       new MigrateDestinationComment('comment_node_migrate_example_wine');
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'commentid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-        ),
+      'commentid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationComment::getKeySchema()
     );
 
@@ -1501,7 +1499,7 @@ class WineCommentMigration extends AdvancedExampleMigration {
   }
 }
 
-// TIP: An easy way to simply migrate into a Drupal table (i.e., one defined
+// TIP: An easy way to simply migrate into a Backdrop table (i.e., one defined
 // through the Schema API) is to use the MigrateDestinationTable destination.
 // Just pass the table name to getKeySchema and the MigrateDestinationTable
 // constructor.
@@ -1519,18 +1517,18 @@ class WineTableMigration extends AdvancedExampleMigration {
     $this->destination = new MigrateDestinationTable($table_name);
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'fooid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-        ),
+      'fooid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationTable::getKeySchema($table_name)
     );
 
     // Mapped fields
-    $this->addFieldMapping('drupal_text', 'field1');
-    $this->addFieldMapping('drupal_int', 'field2');
+    $this->addFieldMapping('backdrop_text', 'field1');
+    $this->addFieldMapping('backdrop_int', 'field2');
 
     $this->addUnmigratedDestinations(array('recordid'));
     $this->removeFieldMapping('path');
@@ -1590,14 +1588,14 @@ class WineUpdatesMigration extends AdvancedExampleMigration {
     $this->destination = new MigrateDestinationNode('migrate_example_wine');
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'wineid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Wine ID',
-          'alias' => 'w',
-        ),
+      'wineid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Wine ID',
+        'alias' => 'w',
       ),
+    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -1682,12 +1680,12 @@ class WineCommentUpdatesMigration extends AdvancedExampleMigration {
       new MigrateDestinationComment('comment_node_migrate_example_wine');
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'commentid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-        ),
+      'commentid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationComment::getKeySchema()
     );
 
@@ -1736,12 +1734,12 @@ class WineVarietyUpdatesMigration extends AdvancedExampleMigration {
       new MigrateDestinationTerm('migrate_example_wine_varieties');
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'categoryid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-        ),
+      'categoryid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
       ),
+    ),
       MigrateDestinationTerm::getKeySchema()
     );
 
@@ -1777,13 +1775,13 @@ class WineUserUpdatesMigration extends AdvancedExampleMigration {
     $this->destination = new MigrateDestinationUser();
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'accountid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Account ID.',
-        ),
+      'accountid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Account ID.',
       ),
+    ),
       MigrateDestinationUser::getKeySchema()
     );
 

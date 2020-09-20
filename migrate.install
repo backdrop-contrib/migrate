@@ -241,47 +241,62 @@ function migrate_uninstall() {
 }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7001() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7002() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7003() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7004() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7005() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7006() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7007() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7008() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7201() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7202() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7203() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7204() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7205() { }
 
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7206() { }
 
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
 // TODO The old hook_update_N functions cannot be applied to Backdrop.
 function migrate_update_7207() { }
 
@@ -292,22 +307,8 @@ function migrate_update_last_removed() {
   return 7207;
 }
 
-/**
- * Implements hook_update_N().
- */
-function migrate_update_1000() {
-  $config = config('migrate.settings');
-  $config->set('migrate_deprecation_warnings', update_variable_get('migrate_deprecation_warnings', '1'));
-  $config->set('migrate_disabled_handlers', update_variable_get('migrate_disabled_handlers', 'dynamic value in file /migrate/migrate.module line 207'));
-  $config->set('migrate_source_json_active_url', update_variable_get('migrate_source_json_active_url', 'NULL'));
-  $config->set('migrate_patterns', update_variable_get('migrate_patterns', 'dynamic value in file /migrate/uri_map_redirect.php line 27'));
-  $config->set('migrate_source_uri_table', update_variable_get('migrate_source_uri_table', 'migrate_source_uri_map'));
-  update_variable_del('migrate_deprecation_warnings');
-  update_variable_del('migrate_disabled_handlers');
-  update_variable_del('migrate_source_json_active_url');
-  update_variable_del('migrate_patterns');
-  update_variable_del('migrate_source_uri_table');
-}
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+function migrate_update_1000() { }
 
 /**
  * Implements hook_install().

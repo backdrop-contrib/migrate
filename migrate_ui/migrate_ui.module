@@ -158,8 +158,10 @@ function migrate_ui_mail($key, &$message, $params) {
   user_mail_tokens($variables, array(), $options);
   $langcode = $message['language']->language;
   // TODO This variable was probably removed in Backdrop without replacement.
+  // TODO This variable was probably removed in Backdrop without replacement.
   $subject = variable_get('migrate_drush_mail_subject', '');
   $message['subject'] = t($subject, array(), array('langcode' => $langcode));
+  // TODO This variable was probably removed in Backdrop without replacement.
   // TODO This variable was probably removed in Backdrop without replacement.
   $body = variable_get('migrate_drush_mail_body', '');
   $body .= "\n" . $params['output'];

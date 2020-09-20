@@ -140,9 +140,9 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
         if ($node->nid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming nid !nid and map destination nid !destid1 don't match",
             array(
-              '!nid' => $node->nid,
-              '!destid1' => $row->migrate_map_destid1,
-            )));
+            '!nid' => $node->nid,
+            '!destid1' => $row->migrate_map_destid1,
+          )));
         }
       }
       else {
@@ -326,7 +326,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
  * Allows you to import revisions.
  *
  * Adapted from
- * http://www.darrenmothersele.com/blog/2012/07/16/migrating-node-revisions-drupal-7/
+ * http://www.darrenmothersele.com/blog/2012/07/16/migrating-node-revisions-backdrop-7/
  *
  * Class MigrateDestinationNodeRevision
  *

@@ -30,11 +30,11 @@ class MigrateFieldsEntityHandler extends MigrateDestinationHandler {
 
       // Look for subfields.
       $class_list = _migrate_class_list('MigrateFieldHandler');
-      $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
+      $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
       $fields_found = FALSE;
       foreach ($class_list as $class_name => $handler) {
         if (!in_array($class_name, $disabled) && $handler->handlesType($type)
-          && method_exists($handler, 'fields')) {
+           && method_exists($handler, 'fields')) {
           migrate_instrument_start($class_name . '->fields');
           $subfields = call_user_func(array($handler, 'fields'), $type,
             $instance, $migration);
@@ -148,8 +148,7 @@ abstract class MigrateFieldHandler extends MigrateHandler {
  */
 class MigrateDefaultFieldHandler extends MigrateFieldHandler {
 
-  public function __construct() {
-  }
+  public function __construct() { }
 
   /**
    * Implements MigrateFieldHandler::fields().
@@ -414,17 +413,17 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
       }
       // Make sure the value will fit
       if ($max_length) {
-        $item['value'] = drupal_substr($value, 0, $max_length);
+        $item['value'] = backdrop_substr($value, 0, $max_length);
         if (!empty($arguments['track_overflow'])) {
-          $value_length = drupal_strlen($value);
+          $value_length = backdrop_strlen($value);
           if ($value_length > $max_length) {
             $migration->saveMessage(
               t('Value for field !field exceeds max length of !max_length, actual length is !length',
                 array(
-                  '!field' => $instance['field_name'],
-                  '!max_length' => $max_length,
-                  '!length' => $value_length,
-                )),
+              '!field' => $instance['field_name'],
+              '!max_length' => $max_length,
+              '!length' => $value_length,
+            )),
               Migration::MESSAGE_INFORMATIONAL);
           }
         }
@@ -697,7 +696,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
     }
 
     // If a destination directory
-    // (relative to the Drupal public files directory) is not
+    // (relative to the Backdrop public files directory) is not
     // explicitly provided, use the default for the field.
     if (empty($arguments['destination_dir'])) {
       $arguments['destination_dir'] = $this->destinationDir($field_info, $instance);
@@ -725,10 +724,10 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
               $migration->saveMessage(
                 t('No data for subfield %key at row %delta for field %field',
                   array(
-                    '%key' => $key,
-                    '%delta' => $delta,
-                    '%field' => $field_info['field_name'],
-                  )),
+                '%key' => $key,
+                '%delta' => $delta,
+                '%field' => $field_info['field_name'],
+              )),
                 Migration::MESSAGE_WARNING);
             }
           }
@@ -766,7 +765,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
    *  Field API info on the field instance for this entity type.
    *
    * @return string
-   *  Directory relative to the Drupal public files directory.
+   *  Directory relative to the Backdrop public files directory.
    */
   protected function destinationDir($field_info, $instance) {
     // Only apply for file/image types
