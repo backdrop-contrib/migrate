@@ -121,15 +121,15 @@ complete text.
 CREDITS
 -----------
 
-[Mike Ryan](http://drupal.org/user/4420)
-[Moshe Weitzman](http://drupal.org/user/23)
+- [Mike Ryan](http://drupal.org/user/4420)
+- [Moshe Weitzman](http://drupal.org/user/23)
 
 
 MAINTAINERS
 -----------
 
- - [Jason Flatt](https://github.com/oadaeh)
+- [Jason Flatt](https://github.com/oadaeh)
 
 Original ported to Backdrop CMS started by:
 
- - [biolithic](https://github.com/biolithic)
+- [biolithic](https://github.com/biolithic)
