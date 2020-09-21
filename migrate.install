@@ -248,65 +248,95 @@ function migrate_uninstall() {
   config_clear('migrate.settings', 'migrate_deprecation_warnings');
 }
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7001() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7001() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7002() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7002() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7003() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7003() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7004() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7004() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7005() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7005() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7006() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7006() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7007() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7007() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7008() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7008() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7201() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7201() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7202() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7202() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7203() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7203() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7204() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7204() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7205() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7205() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7206() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7206() {
+}
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_7207() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_7207() {
+}
 
 /**
  * Implements hook_update_last_removed().
@@ -315,8 +345,11 @@ function migrate_update_last_removed() {
   return 7207;
 }
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_update_1000() { }
+/**
+ * TODO The old hook_update_N functions cannot be applied to Backdrop.
+ */
+function migrate_update_1000() {
+}
 
 /**
  * Implements hook_install().

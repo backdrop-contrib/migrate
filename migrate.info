@@ -1,5 +1,5 @@
 name = "Migrate"
-description = "Import content from external sources"
+description = "Import content from external sources."
 package = "Migration"
 backdrop = 1.x
 type = module

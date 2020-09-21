@@ -518,11 +518,11 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     if (!is_executable($drush_path)) {
       $message = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
         array(
-        '@drush' => 'http://drupal.org/project/drush',
-        '@recommended' => 'http://drupal.org/node/1806824',
-        '@config' => 'http://drupal.org/node/1958170',
-        '@dorg' => 'http://drupal.org/',
-      )
+          '@drush' => 'http://drupal.org/project/drush',
+          '@recommended' => 'http://drupal.org/node/1806824',
+          '@config' => 'http://drupal.org/node/1958170',
+          '@dorg' => 'http://drupal.org/',
+        )
       );
       backdrop_set_message($message);
       return;
@@ -653,9 +653,10 @@ function migrate_ui_batch($operation, $machine_name, array $limit, $force = FALS
       $_migrate_messages[] = array(
         'message' => t("Skipped !name due to unfulfilled dependencies: !depends",
           array(
-          '!name' => $machine_name,
-          '!depends' => implode(", ", $migration->incompleteDependencies()),
-        )),
+            '!name' => $machine_name,
+            '!depends' => implode(", ", $migration->incompleteDependencies()),
+          )
+        ),
       );
       $context['finished'] = 1;
       break;
@@ -1129,20 +1130,22 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name, $migration_na
       else {
         $short_description = $description;
       }
-      if (user_access(MIGRATE_ACCESS_ADVANCED)) {
-        $label_format = '!description [!source_field]';
-      }
-      else {
-        $label_format = '!description';
-      }
-      $label = t($label_format, array(
+      $replacements = array(
         '!source_field' => filter_xss_admin($name),
         '!description' => filter_xss_admin($description),
-      ));
-      $short_label = t($label_format, array(
+      );
+      $short_replacements = array(
         '!source_field' => filter_xss_admin($name),
         '!description' => filter_xss_admin($short_description),
-      ));
+      );
+      if (user_access(MIGRATE_ACCESS_ADVANCED)) {
+        $label = t('!description [!source_field]', $replacements);
+        $short_label = t('!description [!source_field]', $short_replacements);
+      }
+      else {
+        $label = t('!description', $replacements);
+        $short_label = t('!description', $short_replacements);
+      }
 
       $dnm_value = 0;
 
@@ -1224,10 +1227,10 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name, $migration_na
 
       // Only show the machine name to advanced users.
       if (user_access(MIGRATE_ACCESS_ADVANCED)) {
-        $label = '!description [!field_name]';
+        $label = t('!description [!field_name]', array('!description' => $description, '!field_name' => $name));
       }
       else {
-        $label = '!description';
+        $label = t('!description', array('!description' => $description, '!field_name' => $name));
       }
 
       // Indent subfields and options to show their relationship to the parent.
@@ -1242,7 +1245,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name, $migration_na
 
       $form['field_mappings'][$name]['mapping'] = array(
         '#type' => 'select',
-        '#title' => t($label, array('!description' => $description, '!field_name' => $name)),
+        '#title' => $label,
         '#options' => $options,
         '#default_value' => $default_mapping,
       );
@@ -1815,10 +1818,11 @@ function migrate_ui_configure_form($form, &$form_state) {
     if (!class_exists($row->class_name)) {
       $migrations[] = $row->machine_name;
       $migration_list .= '<li>' . t('!migration (class !class)',
-          array(
-        '!migration' => filter_xss_admin($row->machine_name),
-        '!class' => filter_xss_admin($row->class_name),
-      )) . "</li>\n";
+        array(
+          '!migration' => filter_xss_admin($row->machine_name),
+          '!class' => filter_xss_admin($row->class_name),
+        )
+      ) . "</li>\n";
     }
   }
 
@@ -1880,28 +1884,28 @@ function migrate_ui_configure_form($form, &$form_state) {
     if ($drush_validated) {
       $description = t('Configure the use of <a href="@drush">drush</a> version @version to run import and rollback operations in the background.',
         array(
-        '@drush' => 'http://drupal.org/project/drush',
-        '@version' => $version,
-      )
+          '@drush' => 'http://drupal.org/project/drush',
+          '@version' => $version,
+        )
       );
     }
     else {
       $description = t('<a href="@drush">Drush</a> is misconfigured on the server. Please review the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>, and make sure everything is set up correctly.',
         array(
-        '@drush' => 'http://drupal.org/project/drush',
-        '@config' => 'http://drupal.org/node/1958170',
-      )
+          '@drush' => 'http://drupal.org/project/drush',
+          '@config' => 'http://drupal.org/node/1958170',
+        )
       );
     }
   }
   else {
     $description = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
       array(
-      '@drush' => 'http://drupal.org/project/drush',
-      '@recommended' => 'http://drupal.org/node/1806824',
-      '@config' => 'http://drupal.org/node/1958170',
-      '@dorg' => 'http://drupal.org/',
-    )
+        '@drush' => 'http://drupal.org/project/drush',
+        '@recommended' => 'http://drupal.org/node/1806824',
+        '@config' => 'http://drupal.org/node/1958170',
+        '@dorg' => 'http://drupal.org/',
+      )
     );
   }
 

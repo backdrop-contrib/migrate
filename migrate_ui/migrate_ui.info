@@ -1,7 +1,7 @@
 name = "Migrate UI"
-description = "UI for managing migration processes"
+description = "UI for managing migration processes."
 package = "Migration"
-configure = admin/content/migrate/configure
 backdrop = 1.x
 type = module
 dependencies[] = migrate
+configure = admin/content/migrate/configure

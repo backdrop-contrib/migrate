@@ -420,9 +420,10 @@ abstract class MigrateUIWizard {
       '#prefix' => '<h2>',
       '#markup' => t('Step @step: @step_name',
         array(
-        '@step' => $this->stepNumber,
-        '@step_name' => $this->currentStep->getName(),
-      )),
+          '@step' => $this->stepNumber,
+          '@step_name' => $this->currentStep->getName(),
+        )
+      ),
       '#suffix' => '</h2>',
     );
 

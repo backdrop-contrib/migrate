@@ -154,7 +154,8 @@ abstract class MigrationBase {
    *
    * @var array
    */
-  protected $dependencies = array(), $softDependencies = array();
+  protected $dependencies = array();
+  protected $softDependencies = array();
 
   public function getHardDependencies() {
     return $this->dependencies;
@@ -470,11 +471,14 @@ abstract class MigrationBase {
         switch ($last) {
           case 'g':
             $limit *= 1024;
+
           case 'm':
             $limit *= 1024;
+
           case 'k':
             $limit *= 1024;
             break;
+
           default:
             throw new Exception(t('Invalid PHP memory_limit !limit',
               array('!limit' => $limit)));
@@ -692,12 +696,15 @@ abstract class MigrationBase {
       case MigrationBase::MESSAGE_ERROR:
         $level = 'error';
         break;
+
       case MigrationBase::MESSAGE_WARNING:
         $level = 'warning';
         break;
+
       case MigrationBase::MESSAGE_NOTICE:
         $level = 'notice';
         break;
+
       case MigrationBase::MESSAGE_INFORMATIONAL:
         $level = 'status';
         break;
@@ -856,6 +863,7 @@ abstract class MigrationBase {
             case 'pgsql':
               $query->where('(CASE WHEN highwater=\'\' THEN 0 ELSE CAST(highwater AS INTEGER) END) < :highwater', array(':highwater' => intval($highwater)));
               break;
+
             default:
               // MySQL casts as integers as SIGNED or UNSIGNED.
               $query->where('(CASE WHEN highwater=\'\' THEN 0 ELSE CAST(highwater AS SIGNED) END) < :highwater', array(':highwater' => intval($highwater)));
@@ -1207,26 +1215,26 @@ abstract class MigrationBase {
       self::displayMessage(
         t('Memory usage is !usage (!pct% of limit !limit), resetting statics',
           array(
-        '!pct' => round($pct_memory * 100),
-        '!usage' => format_size($usage),
-        '!limit' => format_size($this->memoryLimit),
-      )),
-        'warning');
-      // First, try resetting Backdrop's static storage - this frequently releases
-      // plenty of memory to continue
-      backdrop_static_reset();
-      $usage = memory_get_usage();
-      $pct_memory = $usage / $this->memoryLimit;
-      // Use a lower threshold - we don't want to be in a situation where we keep
-      // coming back here and trimming a tiny amount
-      if ($pct_memory > (.90 * $this->memoryThreshold)) {
-        self::displayMessage(
-          t('Memory usage is now !usage (!pct% of limit !limit), not enough reclaimed, starting new batch',
-            array(
           '!pct' => round($pct_memory * 100),
           '!usage' => format_size($usage),
           '!limit' => format_size($this->memoryLimit),
         )),
+        'warning');
+      // First, try resetting Backdrop's static storage - this frequently
+      // releases plenty of memory to continue.
+      backdrop_static_reset();
+      $usage = memory_get_usage();
+      $pct_memory = $usage / $this->memoryLimit;
+      // Use a lower threshold - we don't want to be in a situation where we
+      // keep coming back here and trimming a tiny amount.
+      if ($pct_memory > (.90 * $this->memoryThreshold)) {
+        self::displayMessage(
+          t('Memory usage is now !usage (!pct% of limit !limit), not enough reclaimed, starting new batch',
+            array(
+            '!pct' => round($pct_memory * 100),
+            '!usage' => format_size($usage),
+            '!limit' => format_size($this->memoryLimit),
+          )),
           'warning');
         return TRUE;
       }
@@ -1234,10 +1242,10 @@ abstract class MigrationBase {
         self::displayMessage(
           t('Memory usage is now !usage (!pct% of limit !limit), reclaimed enough, continuing',
             array(
-          '!pct' => round($pct_memory * 100),
-          '!usage' => format_size($usage),
-          '!limit' => format_size($this->memoryLimit),
-        )),
+            '!pct' => round($pct_memory * 100),
+            '!usage' => format_size($usage),
+            '!limit' => format_size($this->memoryLimit),
+          )),
           'warning');
         return FALSE;
       }
@@ -1250,8 +1258,8 @@ abstract class MigrationBase {
   /**
    * Test whether we're approaching the PHP time limit.
    *
-   * @return boolean
-   *  TRUE if the threshold is exceeded, FALSE if not.
+   * @return bool
+   *   TRUE if the threshold is exceeded, FALSE if not.
    */
   protected function timeExceeded() {
     if ($this->timeLimit == 0) {
@@ -1270,8 +1278,8 @@ abstract class MigrationBase {
   /**
    * Test whether we've exceeded the designated time limit.
    *
-   * @return boolean
-   *  TRUE if the threshold is exceeded, FALSE if not.
+   * @return bool
+   *   TRUE if the threshold is exceeded, FALSE if not.
    */
   protected function timeOptionExceeded() {
     if (!$timelimit = $this->getTimeLimit()) {

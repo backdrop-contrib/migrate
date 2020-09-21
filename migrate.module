@@ -343,10 +343,10 @@ function migrate_get_module_apis($reset = FALSE) {
         backdrop_set_message(t('%function supports Migrate API version %modversion,
           Migrate module API version is %version - migration support not loaded.',
           array(
-          '%function' => $function,
-          '%modversion' => $info['api'],
-          '%version' => MIGRATE_API_VERSION,
-        )
+            '%function' => $function,
+            '%modversion' => $info['api'],
+            '%version' => MIGRATE_API_VERSION,
+          )
         ));
       }
     }

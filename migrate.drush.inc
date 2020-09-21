@@ -429,6 +429,7 @@ function drush_migrate_status($name = NULL) {
  * TODO: Use drush_choice for detailed field info.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_fields_destination($args = NULL) {
   try {
@@ -455,6 +456,11 @@ function drush_migrate_fields_destination($args = NULL) {
   }
 }
 
+/**
+ *
+ * @param array|null $args
+ *   Any additional arguments that were specified.
+ */
 function drush_migrate_fields_source($args = NULL) {
   try {
     $migrations = drush_migrate_get_migrations($args);
@@ -482,6 +488,9 @@ function drush_migrate_fields_source($args = NULL) {
 
 /**
  * Display field mappings for a migration.
+ *
+ * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_mappings($args = NULL) {
   try {
@@ -680,6 +689,9 @@ function drush_migrate_messages($migration_name) {
 
 /**
  * Analyze the source fields for any passed migrations.
+ *
+ * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_analyze($args = NULL) {
   $migrations = drush_migrate_get_migrations($args);
@@ -713,17 +725,19 @@ function drush_migrate_analyze($args = NULL) {
           else {
             if ($details['is_numeric']) {
               drush_print('  ' . dt('Numeric field with a range of @min to @max',
-                  array(
-                '@min' => $details['min_numeric'],
-                '@max' => $details['max_numeric'],
-              )));
+                array(
+                  '@min' => $details['min_numeric'],
+                  '@max' => $details['max_numeric'],
+                )
+              ));
             }
             else {
               drush_print('  ' . dt('String field with a length ranging from @min to @max',
-                  array(
-                '@min' => $details['min_strlen'],
-                '@max' => $details['max_strlen'],
-              )));
+                array(
+                  '@min' => $details['min_strlen'],
+                  '@max' => $details['max_strlen'],
+                )
+              ));
             }
             $values = array();
             $header = NULL;
@@ -762,6 +776,9 @@ function drush_migrate_analyze($args = NULL) {
 
 /**
  * Display field mappings for a migration.
+ *
+ * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_audit($args = NULL) {
   try {
@@ -885,6 +902,7 @@ function drush_migrate_audit($args = NULL) {
  * Rolls back one specified migration.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_rollback($args = NULL) {
   try {
@@ -1016,6 +1034,7 @@ function _drush_migrate_notify() {
 /**
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  *
  * @return array
  */
@@ -1145,6 +1164,7 @@ function drush_migrate_rollback_validate($args = NULL) {
 /**
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  *
  * @return string
  *   An error message.
@@ -1206,6 +1226,7 @@ function drush_migrate_validate_common($args) {
  * A 'pre' callback for migrate-import command.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_pre_migrate_import($args = NULL) {
   if (drush_get_option('stop')) {
@@ -1242,6 +1263,7 @@ function drush_migrate_pre_migrate_import($args = NULL) {
  * Performs import on one or more migrations.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  *
  * @return int
  *   The status of the import.
@@ -1353,9 +1375,9 @@ function drush_migrate_import($args = NULL) {
         if ($status == MigrationBase::RESULT_SKIPPED) {
           drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\nUse the --force option to run it anyway.",
             array(
-            '!name' => $machine_name,
-            '!depends' => implode("\n  ", $migration->incompleteDependencies()),
-          )),
+              '!name' => $machine_name,
+              '!depends' => implode("\n  ", $migration->incompleteDependencies()),
+            )),
             'warning');
         }
         elseif ($status == MigrationBase::RESULT_STOPPED) {
@@ -1375,9 +1397,9 @@ function drush_migrate_import($args = NULL) {
           if ($status == MigrationBase::RESULT_SKIPPED) {
             drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\nUse the --force option to run it anyway.",
               array(
-              '!name' => $machine_name,
-              '!depends' => implode("\n  ", $migration->incompleteDependencies()),
-            )),
+                '!name' => $machine_name,
+                '!depends' => implode("\n  ", $migration->incompleteDependencies()),
+              )),
               'warning');
           }
           elseif ($status == MigrationBase::RESULT_STOPPED) {
@@ -1393,9 +1415,9 @@ function drush_migrate_import($args = NULL) {
         if ($status == MigrationBase::RESULT_SKIPPED) {
           drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\n",
             array(
-            '!name' => $machine_name,
-            '!depends' => implode("\n  ", $migration->incompleteDependencies()),
-          )),
+              '!name' => $machine_name,
+              '!depends' => implode("\n  ", $migration->incompleteDependencies()),
+            )),
             'warning');
         }
         elseif ($status == MigrationBase::RESULT_INCOMPLETE) {
@@ -1438,6 +1460,7 @@ function drush_migrate_import($args = NULL) {
  * Stops clearing or importing a given content set.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_stop($args = NULL) {
   try {
@@ -1457,6 +1480,7 @@ function drush_migrate_stop($args = NULL) {
  * Resets the status of a given migration.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_reset_status($args = NULL) {
   try {
@@ -1481,6 +1505,7 @@ function drush_migrate_reset_status($args = NULL) {
  * migrate_migrations().
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_deregister($args = NULL) {
   try {
@@ -1545,6 +1570,7 @@ function drush_migrate_deregister_migration($machine_name) {
  * This command should be removed entirely in a future point release.
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  *
  * @deprecated
  */
@@ -1557,6 +1583,7 @@ function drush_migrate_auto_register($args = NULL) {
  * Registers any migrations defined in hook_migrate_api().
  *
  * @param array|null $args
+ *   Any additional arguments that were specified.
  */
 function drush_migrate_register($args = NULL) {
   migrate_static_registration();
