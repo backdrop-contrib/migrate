@@ -162,7 +162,7 @@ abstract class Migration extends MigrationBase {
       // But also remove a mapping of a source field to nothing, if there is
       // a mapping to something.
       $mapped_source_fields = array();
-      /** @var MigrateFieldMapping $mapping */
+      // @var MigrateFieldMapping $mapping.
       foreach ($this->allFieldMappings as $destination_field => $mapping) {
         $source_field = $mapping->getSourceField();
         // If the source field is not mapped to a destination field, the
@@ -261,8 +261,7 @@ abstract class Migration extends MigrationBase {
    * @param string $machine_name
    * @param array $arguments
    */
-  static public function registerMigration($class_name, $machine_name = NULL,
-                                           array $arguments = array()) {
+  static public function registerMigration($class_name, $machine_name = NULL, array $arguments = array()) {
     // Record any field mappings provided via arguments.
     if (isset($arguments['field_mappings'])) {
       self::saveFieldMappings($machine_name, $arguments['field_mappings']);

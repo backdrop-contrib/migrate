@@ -6,6 +6,9 @@
  * there should be notification features.
  */
 
+/**
+ * Defines the MigrateTeamMember class.
+ */
 class MigrateTeamMember {
 
   protected $name;

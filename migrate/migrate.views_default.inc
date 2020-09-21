@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file migrate.views_default.inc
+ * @file
  * Contains default views.
  */
 

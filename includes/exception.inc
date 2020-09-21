@@ -5,6 +5,9 @@
  * Custom exception class for the migrate module.
  */
 
+/**
+ * Defines the MigrateException class.
+ */
 class MigrateException extends Exception {
 
   /**
@@ -30,8 +33,17 @@ class MigrateException extends Exception {
     return $this->status;
   }
 
-  public function __construct($message, $level = Migration::MESSAGE_ERROR,
-                              $status = MigrateMap::STATUS_FAILED) {
+  /**
+   * Creates the MigrateException object.
+   *
+   * @param string $message
+   *   The message for the error.
+   * @param int $level
+   *   The level of the error being reported.
+   * @param int $status
+   *   The status for the current item.
+   */
+  public function __construct($message, $level = Migration::MESSAGE_ERROR, $status = MigrateMap::STATUS_FAILED) {
     $this->level = $level;
     $this->status = $status;
     parent::__construct($message);

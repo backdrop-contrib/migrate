@@ -519,8 +519,7 @@ abstract class MigrationBase {
    * @param string $machine_name
    * @param array $arguments
    */
-  static public function registerMigration($class_name, $machine_name = NULL,
-                                           array $arguments = array()) {
+  static public function registerMigration($class_name, $machine_name = NULL, array $arguments = array()) {
     // Support for legacy migration code - in later releases, the machine_name
     // should always be explicit.
     if (!$machine_name) {
@@ -1072,7 +1071,7 @@ abstract class MigrationBase {
    * the earliest opportunity
    */
   public function stopProcess() {
-    // Do not change the status of an idle migration
+    // Do not change the status of an idle migration.
     db_update('migrate_status')
       ->fields(array('status' => MigrationBase::STATUS_STOPPING))
       ->condition('machine_name', $this->machineName)
@@ -1085,7 +1084,7 @@ abstract class MigrationBase {
    * gets stuck, e.g. if a process core-dumped)
    */
   public function resetStatus() {
-    // Do not change the status of an already-idle migration
+    // Do not change the status of an already-idle migration.
     db_update('migrate_status')
       ->fields(array('status' => MigrationBase::STATUS_IDLE))
       ->condition('machine_name', $this->machineName)
@@ -1296,17 +1295,16 @@ abstract class MigrationBase {
    * @return string The encrypted value.
    */
   static public function encrypt($value) {
+    MigrationBase::displayMessage(t('Encryption of secure migration information is not currently supported.'), 'warning');
+    return $value;
+
     if (module_exists('encrypt')) {
       $value = encrypt($value);
     }
     else {
       if (self::$showEncryptionWarning) {
-        MigrationBase::displayMessage(t('Encryption of secure migration information is not supported. Ensure the <a href="@encrypt">Encrypt module</a> is installed for this functionality.',
-          array(
-          '@encrypt' => 'http://drupal.org/project/encrypt',
-        )
-        ),
-          'warning');
+        $replacements = array('@encrypt' => 'http://drupal.org/project/encrypt');
+        MigrationBase::displayMessage(t('Encryption of secure migration information is not supported. Ensure the <a href="@encrypt">Encrypt module</a> is installed for this functionality.', $replacements), 'warning');
         self::$showEncryptionWarning = FALSE;
       }
     }
@@ -1321,17 +1319,16 @@ abstract class MigrationBase {
    * @return string The encrypted value
    */
   static public function decrypt($value) {
+    MigrationBase::displayMessage(t('Encryption of secure migration information is not currently supported.'), 'warning');
+    return $value;
+
     if (module_exists('encrypt')) {
       $value = decrypt($value);
     }
     else {
       if (self::$showEncryptionWarning) {
-        MigrationBase::displayMessage(t('Encryption of secure migration information is not supported. Ensure the <a href="@encrypt">Encrypt module</a> is installed for this functionality.',
-          array(
-          '@encrypt' => 'http://drupal.org/project/encrypt',
-        )
-        ),
-          'warning');
+        $replacements = array('@encrypt' => 'http://drupal.org/project/encrypt');
+        MigrationBase::displayMessage(t('Encryption of secure migration information is not supported. Ensure the <a href="@encrypt">Encrypt module</a> is installed for this functionality.', $replacements), 'warning');
         self::$showEncryptionWarning = FALSE;
       }
     }

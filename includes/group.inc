@@ -5,6 +5,9 @@
  * Definition for a migration group.
  */
 
+/**
+ * Defines the MigrateGroup class.
+ */
 class MigrateGroup {
 
   /**

@@ -16,14 +16,14 @@
  * handler used to process the information.
  *
  * @param string $class_name
- *  Name of the MigrateUIWizard clsas for this wizard.
+ *   Name of the MigrateUIWizard clsas for this wizard.
  */
 function migrate_ui_wizard($form, &$form_state, $class_name = '') {
   // Rather than track state in $form_state, we simply keep our wizard
   // instance there, and it encapsulates all the state. We just need
   // to create the instance the first time in, and it will be serialized
   // between steps.
-  /** @var MigrateUIWizard $wizard */
+  // @var MigrateUIWizard $wizard.
   if (empty($form_state['wizard'])) {
     $wizard = new $class_name();
 
@@ -36,8 +36,8 @@ function migrate_ui_wizard($form, &$form_state, $class_name = '') {
       // other extender classes, to ensure they work in the correct order?
       if (isset($info['wizard extenders'])) {
         foreach ($info['wizard extenders'] as $wizard_class => $extender_classes) {
-          // Note that $class_name is in lower case, so we can't just use isset()
-          // to find our wizard.
+          // Note that $class_name is in lower case, so we can't just use
+          // isset() to find our wizard.
           if (strtolower($wizard_class) == $class_name) {
             foreach ($extender_classes as $extender_class) {
               $wizard->addExtender($extender_class);
@@ -60,45 +60,53 @@ function migrate_ui_wizard($form, &$form_state, $class_name = '') {
 }
 
 /**
- * Submit handler for the "previous" button. Moves the wizard back to the
- * previous step, and retrieves the values that were submitted on that step.
+ * Moves the wizard back to the previous step.
+ *
+ * Also retrieves the values that were submitted on that step.
+ *
+ * Submit handler for the "previous" button.
  *
  * @todo: Can we remove steps that were dynamically added?
  */
 function migrate_ui_wizard_previous_submit($form, &$form_state) {
-  /** @var MigrateUIWizard $wizard */
+  // @var MigrateUIWizard $wizard.
   $wizard = $form_state['wizard'];
   $wizard->gotoPreviousStep($form_state);
 }
 
 /**
- * Validate handler for the 'next' button. Dispatches to the wizard's current
- * step for validation.
+ * Validate handler for the 'next' button.
+ *
+ * Dispatches to the wizard's current step for validation.
  */
 function migrate_ui_wizard_next_validate($form, &$form_state) {
-  /** @var MigrateUIWizard $wizard */
+  // @var MigrateUIWizard $wizard.
   $wizard = $form_state['wizard'];
   $wizard->formValidate($form_state);
 }
 
 /**
- * Submit handler for the 'next' button. Saves the form values for the step
- * we're leaving, so Previous can pick them up, and moves the wizard to the
- * next step.
+ * Saves the form values for the step we're leaving.
+ *
+ * Allows Previous to pick the values up and moves the wizard to the next step.
+ *
+ * Submit handler for the 'next' button.
  */
 function migrate_ui_wizard_next_submit($form, &$form_state) {
-  /** @var MigrateUIWizard $wizard */
+  // @var MigrateUIWizard $wizard.
   $wizard = $form_state['wizard'];
   $wizard->gotoNextStep($form_state);
 }
 
 /**
- * Submit handler for the Save settings button. Register the migrations that
- * were
- * (implicitly) defined along the way and redirect to the Migrate dashboard.
+ * Registers the migrations that were (implicitly) defined along the way.
+ *
+ * Also redirects to the Migrate dashboard.
+ *
+ * Submit handler for the Save settings button.
  */
 function migrate_ui_wizard_submit($form, &$form_state) {
-  /** @var MigrateUIWizard $wizard */
+  // @var MigrateUIWizard $wizard.
   $wizard = $form_state['wizard'];
   $wizard->formSaveSettings();
   $form_state['redirect'] = 'admin/content/migrate/groups/' .
@@ -106,12 +114,14 @@ function migrate_ui_wizard_submit($form, &$form_state) {
 }
 
 /**
- * Submit handler for the "Save settings and import" button. Register the
- * migrations that were (implicitly) defined along the way, run the import, and
- * redirect to the Migrate dashboard.
+ * Registers the migrations that were (implicitly) defined along the way.
+ *
+ * Also runs the import and redirects to the Migrate dashboard.
+ *
+ * Submit handler for the "Save settings and import" button.
  */
 function migrate_ui_wizard_migrate_submit($form, &$form_state) {
-  /** @var MigrateUIWizard $wizard */
+  // @var MigrateUIWizard $wizard.
   $wizard = $form_state['wizard'];
   $wizard->formSaveSettings();
   $wizard->formPerformImport();
@@ -120,9 +130,10 @@ function migrate_ui_wizard_migrate_submit($form, &$form_state) {
 }
 
 /**
- * The base class for migration wizards. Extend this class to implement a
- * wizard UI for importing into Backdrop from a given source format (Backdrop,
- * WordPress, etc.).
+ * The base class for migration wizards.
+ *
+ * Extend this class to implement a wizard UI for importing into Backdrop from a
+ * given source format (Backdrop, WordPress, etc.).
  */
 abstract class MigrateUIWizard {
 
@@ -148,9 +159,9 @@ abstract class MigrateUIWizard {
   /**
    * Get the list of steps currently defined.
    *
-   * @return
-   *  An array of MigrateUIStep objects, in the order defined, keyed by the step
-   *  name.
+   * @return array
+   *   An array of MigrateUIStep objects, in the order defined, keyed by the
+   *   step name.
    */
   protected function getSteps() {
     $steps = array();
@@ -188,6 +199,12 @@ abstract class MigrateUIWizard {
    */
   protected $groupName = 'default';
 
+  /**
+   * Retrieves the name of the group.
+   *
+   * @return string
+   *   The name of the group.
+   */
   public function getGroupName() {
     return $this->groupName;
   }
@@ -221,6 +238,15 @@ abstract class MigrateUIWizard {
    */
   protected $extenders = array();
 
+  /**
+   * Retrieves the names of the classes that extend this specified one.
+   *
+   * @param string $extender_class
+   *   The class to get the extension classes for.
+   *
+   * @return array|null
+   *   The names of the classes that extend the specified one.
+   */
   public function getExtender($extender_class) {
     if (isset($this->extenders[$extender_class])) {
       return $this->extenders[$extender_class];
@@ -231,13 +257,18 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Returns the translatable name representing the source of the data (e.g.,
-   * "Backdrop", "WordPress", etc.).
+   * Returns the translatable name representing the source of the data.
+   *
+   * e.g., "Backdrop", "WordPress", etc.
    *
    * @return string
+   *   The source's translatable name.
    */
   abstract public function getSourceName();
 
+  /**
+   * The classes constructor.
+   */
   public function __construct() { }
 
   /**
@@ -245,8 +276,8 @@ abstract class MigrateUIWizard {
    *
    * This initializes the new extender and adds it to our internal list.
    *
-   * @param $extender_class
-   *  The name of an extender class.
+   * @param string $extender_class
+   *   The name of an extender class.
    */
   public function addExtender($extender_class) {
     $steps = $this->getSteps();
@@ -259,19 +290,20 @@ abstract class MigrateUIWizard {
    * Add a step to the wizard, using a step name and method.
    *
    * @param string $name
-   *  Translatable name for the step, to be used in the page title.
+   *   Translatable name for the step, to be used in the page title.
    * @param callable $form_method
-   *  Callable returning the form array for the step. This can be either the
-   *  name of a MigrateUIWizard method, or a callable array specifying a method
-   *  on a wizard extender. The validation method is formed from the method's
-   *  name with the suffix 'Validate' added.
+   *   Callable returning the form array for the step. This can be either the
+   *   name of a MigrateUIWizard method, or a callable array specifying a method
+   *   on a wizard extender. The validation method is formed from the method's
+   *   name with the suffix 'Validate' added.
    * @param MigrateUIStep $after
-   *  Optional step after which to insert the new step. If omitted, add it at
-   *  the end.
+   *   Optional step after which to insert the new step. If omitted, add it at
+   *   the end.
    * @param mixed $context
-   *  Optional data to be used by this step's form.
+   *   Optional data to be used by this step's form.
    *
    * @return MigrateUIStep
+   *   The newly added step.
    */
   public function addStep($name, $form_method, MigrateUIStep $after = NULL, $context = NULL) {
     if (!is_array($form_method)) {
@@ -307,7 +339,8 @@ abstract class MigrateUIWizard {
   /**
    * Remove the named step from the wizard.
    *
-   * @param $name
+   * @param string $name
+   *   The step to remove.
    */
   protected function removeStep($name) {
     for ($current_step = $this->firstStep; !is_null($current_step); $current_step = $current_step->nextStep) {
@@ -330,8 +363,12 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Move the wizard to the next step in line (if any), first squirreling away
-   * the current step's form values.
+   * Moves the wizard to the next step in line (if any).
+   *
+   * This first saves the current step's form values.
+   *
+   * @param array $form_state
+   *   The current configuration of the form.
    */
   public function gotoNextStep(&$form_state) {
     if ($this->currentStep && $this->currentStep->nextStep) {
@@ -352,8 +389,12 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Move the wizard to the previous step in line (if any), restoring its
-   * form values.
+   * Moves the wizard to the previous step in line (if any).
+   *
+   * This also restores its form values.
+   *
+   * @param array $form_state
+   *   The current configuration of the form.
    */
   public function gotoPreviousStep(&$form_state) {
     if ($this->currentStep && $this->currentStep->previousStep) {
@@ -365,9 +406,10 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Build the form for the current step.
+   * Builds the form for the current step.
    *
-   * @return array
+   * @param array $form_state
+   *   The current configuration of the form.
    */
   public function form(&$form_state) {
     backdrop_set_title(t('Import from @source_title',
@@ -429,10 +471,10 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Call the validation function for the current form (which has the same
-   * name of the form function with 'Validate' appended).
+   * Calls the validation function for the current form.
    *
    * @param array $form_state
+   *   The current configuration of the form.
    */
   public function formValidate(&$form_state) {
     $validate_method = $this->currentStep->getFormMethod();
@@ -451,8 +493,9 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Take the information we've accumulated throughout the wizard, and create
-   * the Migrations to perform the import.
+   * Creates the Migrations to perform the import for.
+   *
+   * This utilizes the information we've accumulated throughout the wizard.
    */
   public function formSaveSettings() {
     MigrateGroup::register($this->groupName, $this->groupTitle, $this->groupArguments);
@@ -475,12 +518,12 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Run the import process for the migration group we've defined.
+   * Runs the import process for the migration group we've defined.
    */
   public function formPerformImport() {
     $migrations = migrate_migrations();
     $operations = array();
-    /** @var Migration $migration */
+    // @var Migration $migration.
     foreach ($migrations as $migration) {
       $group_name = $migration->getGroup()->getName();
       if ($group_name == $this->groupName) {
@@ -497,7 +540,7 @@ abstract class MigrateUIWizard {
         'title' => t('Import processing'),
         'file' => backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.pages.inc',
         'init_message' => t('Starting import process'),
-        'progress_message' => t(''),
+        'progress_message' => '',
         'error_message' => t('An error occurred. Some or all of the import processing has failed.'),
         'finished' => 'migrate_ui_batch_finish',
       );
@@ -506,17 +549,16 @@ abstract class MigrateUIWizard {
   }
 
   /**
-   * Record all the information necessary to register a migration when this is
-   * all over.
+   * Records all the information necessary to register a migration.
    *
    * @param string $machine_name
-   *  Machine name for the migration class.
+   *   Machine name for the migration class.
    * @param string $class_name
-   *  Name of the Migration class to instantiate.
+   *   Name of the Migration class to instantiate.
    * @param array $arguments
-   *  Further information configuring the migration.
+   *   Further information configuring the migration.
    */
-  public function addMigration($machine_name, $class_name, $arguments) {
+  public function addMigration($machine_name, $class_name, array $arguments) {
     // Give extenders an opportunity to modify or reject this migration.
     foreach ($this->extenders as $extender) {
       if (!$extender->addMigrationAlter($machine_name, $class_name, $arguments, $this)) {
@@ -554,13 +596,20 @@ abstract class MigrateUIWizard {
 class MigrateUIStep {
 
   /**
-   * A translatable string briefly describing this step, to be used in the page
-   * title for the step form.
+   * A translatable string briefly describing this step.
+   *
+   * To be used in the page title for the step form.
    *
    * @var string
    */
   protected $name;
 
+  /**
+   * Retrieves the name of the step.
+   *
+   * @return string
+   *   The name of the step.
+   */
   public function getName() {
     return $this->name;
   }
@@ -572,6 +621,12 @@ class MigrateUIStep {
    */
   protected $formMethod;
 
+  /**
+   * Retrieves the name of the method for this step of the wizard.
+   *
+   * @return string
+   *   The name of the method.
+   */
   public function getFormMethod() {
     return $this->formMethod;
   }
@@ -584,23 +639,42 @@ class MigrateUIStep {
    */
   protected $formValues;
 
+  /**
+   * Retrieves the values for the form.
+   *
+   * @return array
+   *   The form's values.
+   */
   public function getFormValues() {
     return $this->formValues;
   }
 
+  /**
+   * Sets the values of the form.
+   *
+   * @param array $form_values
+   *   The form's values.
+   */
   public function setFormValues($form_values) {
     $this->formValues = $form_values;
   }
 
   /**
-   * Any contextual data needed by the form for this step. For example, a
-   * field mapping form would need to know the source and destination content
-   * types so it can determine what fields to expose.
+   * Any contextual data needed by the form for this step.
+   *
+   * For example, a field mapping form would need to know the source and
+   * destination content types so it can determine what fields to expose.
    *
    * @var mixed
    */
   protected $context;
 
+  /**
+   * Retrieves the contextual data needed by the form for this step.
+   *
+   * @return array
+   *   The contextual data.
+   */
   public function getContext() {
     return $this->context;
   }
@@ -621,14 +695,14 @@ class MigrateUIStep {
   /**
    * Class constructor.
    *
-   * @param $name
-   *  The machine name of the wizard step.
-   * @param $form_method
-   *  A callable for the form array for this step. The validation method is
-   *  formed from the method name with the suffix 'Validate' added, regardless
-   *  of which object it is on.
-   * @param $context = NULL
-   *  Contextual data needed by the form for this step.
+   * @param string $name
+   *   The machine name of the wizard step.
+   * @param string $form_method
+   *   A callable for the form array for this step. The validation method is
+   *   formed from the method name with the suffix 'Validate' added, regardless
+   *   of which object it is on.
+   * @param array|null $context
+   *   Contextual data needed by the form for this step.
    */
   public function __construct($name, $form_method, $context = NULL) {
     $this->name = $name;
@@ -638,7 +712,7 @@ class MigrateUIStep {
 }
 
 /**
- *
+ * Class represnting migration extenders.
  */
 abstract class MigrateUIWizardExtender {
 
@@ -657,20 +731,21 @@ abstract class MigrateUIWizardExtender {
   }
 
   /**
-   * Alter the arguments to a migration before it is registered, or potentially
-   * reject it.
+   * Alters the arguments to a migration before it is registered.
+   *
+   * Can also potentially reject the migration.
    *
    * @param string $machine_name
-   *  Machine name for the migration class.
+   *   Machine name for the migration class.
    * @param string $class_name
-   *  Name of the Migration class to instantiate.
+   *   Name of the Migration class to instantiate.
    * @param array $arguments
-   *  Further information configuring the migration.
+   *   Further information configuring the migration.
    * @param MigrateUIWizard $wizard
-   *  The wizard class performing the registration.
+   *   The wizard class performing the registration.
    *
    * @return bool
-   *  Return FALSE to prevent registration of this migration.
+   *   Return FALSE to prevent registration of this migration.
    */
   public function addMigrationAlter($machine_name, $class_name, &$arguments, $wizard) {
     return TRUE;

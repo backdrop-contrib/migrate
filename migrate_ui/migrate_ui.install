@@ -37,8 +37,9 @@ function migrate_ui_uninstall() {
 function migrate_ui_update_7201() { }
 
 /**
- * Sets the weight of migrate_ui higher than node, so Import links come after
- * "Add content" at admin/content.
+ * Sets the weight of migrate_ui higher than node.
+ *
+ * This is done so Import links come after "Add content" at admin/content.
  */
 function migrate_ui_set_weight() {
   $node_weight = db_select('system', 's')

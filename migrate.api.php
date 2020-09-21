@@ -6,11 +6,11 @@
  */
 
 /**
- * Registers your module as an implementor of Migrate-based classes and
- * provides
- * default configuration for migration processes.
+ * Registers your module as an implementor of Migrate-based classes.
  *
- * @return
+ * Also provides default configuration for migration processes.
+ *
+ * @return array
  *   An associative array with the following keys (of which only 'api' is
  *   required):
  *   - api: Always 2 for any module implementing the Migrate 2 API.
@@ -39,7 +39,7 @@
  *
  * See system_hook_info() for all hook groups defined by Backdrop core.
  *
- * @see hook_migrate_api_alter().
+ * @see hook_migrate_api_alter()
  */
 function hook_migrate_api() {
   $api = array(
@@ -47,7 +47,7 @@ function hook_migrate_api() {
     'groups' => array(
       'legacy' => array(
         'title' => t('Import from legacy system'),
-        // Default format for all content migrations
+        // Default format for all content migrations.
         'default_format' => 'filtered_html',
       ),
     ),
@@ -55,12 +55,14 @@ function hook_migrate_api() {
       'ExampleUser' => array(
         'class_name' => 'ExampleUserMigration',
         'group_name' => 'legacy',
-        'default_role' => 'member', // Added to constructor $arguments
+        // Added to constructor $arguments.
+        'default_role' => 'member',
       ),
       'ExampleNode' => array(
         'class_name' => 'ExampleNodeMigration',
         'group_name' => 'legacy',
-        'default_uid' => 1, // Added to constructor $arguments
+        // Added to constructor $arguments.
+        'default_uid' => 1,
         'disable_hooks' => array(
           // Improve migration performance, and prevent accidental emails.
           'node_insert' => array(
@@ -84,7 +86,7 @@ function hook_migrate_api() {
  * @param array $info
  *   An array of results from hook_migrate_api(), keyed by module name.
  *
- * @see hook_migrate_api().
+ * @see hook_migrate_api()
  */
 function hook_migrate_api_alter(array &$info) {
   // Override the class for another module's migration - say, to add some
@@ -97,8 +99,8 @@ function hook_migrate_api_alter(array &$info) {
 /**
  * Provides text to be displayed at the top of the dashboard page (migrate_ui).
  *
- * @return
- *  Translated text for display on the dashboard page.
+ * @return string
+ *   Translated text for display on the dashboard page.
  */
 function hook_migrate_overview() {
   return t('<p>Listed below are all the migration processes defined for migration

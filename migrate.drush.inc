@@ -145,8 +145,7 @@ function migrate_drush_command() {
     'aliases' => array('mr'),
   );
   $migration_options['update'] = 'In addition to processing unprocessed items from the source, update previously-imported items with new data';
-  $migration_options['needs-update'] =
-    'Reimport up to 10K records where needs_update=1. This option is only needed when your Backdrop DB is on a different DB server from your source data. Otherwise, these records get migrated with just migrate-import.';
+  $migration_options['needs-update'] = 'Reimport up to 10K records where needs_update=1. This option is only needed when your Backdrop DB is on a different DB server from your source data. Otherwise, these records get migrated with just migrate-import.';
   $migration_options['stop'] = 'Stop specified migration(s) if applicable.';
   $migration_options['rollback'] = 'Rollback specified migration(s) if applicable.';
   $migration_options['file_function'] = 'Override file function to use when migrating images.';
@@ -241,10 +240,12 @@ function migrate_drush_command() {
 }
 
 /**
- * Get the value of all migrate related options. Used when spawning a subshell.
- * Don't pass along all, stop, update, and rollback options.
+ * Gets the value of all migrate related options.
  *
- * @return
+ * Used when spawning a subshell. Don't pass along all, stop, update, and
+ * rollback options.
+ *
+ * @return array
  *   An array of command specific options and their values.
  */
 function drush_migrate_get_options() {
@@ -266,14 +267,18 @@ function drush_migrate_get_options() {
   return $options;
 }
 
-/*
- * Spawn a subshell which runs the same command we are currently running.
+/**
+ * Spawns a subshell which runs the same command we are currently running.
+ *
+ * @param string $migrations
+ *   The migrations to execute.
  */
 function drush_migrate_invoke_process($migrations = '') {
   $args = drush_get_arguments();
   $options = drush_migrate_get_options();
   if (intval(DRUSH_MAJOR_VERSION) < 4) {
-    // @todo: use drush_backend_invoke_args() as per http://drupal.org/node/658420.
+    // @todo: use drush_backend_invoke_args() as per
+    // http://drupal.org/node/658420.
     return drush_backend_invoke(implode(' ', $args), $options);
   }
   else {
@@ -377,18 +382,23 @@ function drush_migrate_status($name = NULL) {
             case MigrationBase::STATUS_IDLE:
               $status = dt('Idle');
               break;
+
             case MigrationBase::STATUS_IMPORTING:
               $status = dt('Importing');
               break;
+
             case MigrationBase::STATUS_ROLLING_BACK:
               $status = dt('Rolling back');
               break;
+
             case MigrationBase::STATUS_STOPPING:
               $status = dt('Stopping');
               break;
+
             case MigrationBase::STATUS_DISABLED:
               $status = dt('Disabled');
               break;
+
             default:
               $status = dt('Unknown');
               break;
@@ -415,7 +425,11 @@ function drush_migrate_status($name = NULL) {
   }
 }
 
-// TODO: Use drush_choice for detailed field info
+/**
+ * TODO: Use drush_choice for detailed field info.
+ *
+ * @param array|null $args
+ */
 function drush_migrate_fields_destination($args = NULL) {
   try {
     $migrations = drush_migrate_get_migrations($args);
@@ -476,7 +490,8 @@ function drush_migrate_mappings($args = NULL) {
     foreach ($migrations as $name => $migration) {
       drush_print("\n" . dt('@migration Mappings', array('@migration' => $name)) . "\n");
 
-      // In verbose mode, we'll also get source and destination field descriptions
+      // In verbose mode, we'll also get source and destination field
+      // descriptions.
       if ($full) {
         $destination = $migration->getDestination();
         $dest_descriptions = array();
@@ -521,7 +536,7 @@ function drush_migrate_mappings($args = NULL) {
         }
         $descriptions = array_merge($descriptions, $done, $dnm);
 
-        // Put out each group header
+        // Put out each group header.
         $table = array();
         if ($full) {
           $table[] = array(
@@ -550,7 +565,7 @@ function drush_migrate_mappings($args = NULL) {
           else {
             $table[] = array(' ');
           }
-          // Attempt to highlight the group header a bit so it stands out
+          // Attempt to highlight the group header a bit so it stands out.
           $group_header = '--- ' . backdrop_strtoupper($group) . ' ---';
           $table[] = array($group_header);
           foreach ($mappings as $mapping) {
@@ -684,7 +699,7 @@ function drush_migrate_analyze($args = NULL) {
           else {
             drush_print(dt('@name:', array('@name' => $field_name)));
           }
-          // Special handling in degenerate cases
+          // Special handling in degenerate cases.
           if (count($details['distinct_values']) == 1) {
             $value = trim(reset(array_keys($details['distinct_values'])));
             if ($value === '') {
@@ -725,7 +740,7 @@ function drush_migrate_analyze($args = NULL) {
             }
             ksort($details['distinct_values']);
             foreach ($details['distinct_values'] as $value => $count) {
-              // Truncate long strings
+              // Truncate long strings.
               $value = substr($value, 0, 60);
               if (strlen($value) == 60) {
                 $value .= dt('...');
@@ -814,7 +829,7 @@ function drush_migrate_audit($args = NULL) {
           );
         }
 
-        // Validate source and destination fields actually exist
+        // Validate source and destination fields actually exist.
         if (!is_null($source_field) && !isset($source_fields[$source_field])) {
           $problems['sources_missing'][] = $source_field;
         }
@@ -867,19 +882,21 @@ function drush_migrate_audit($args = NULL) {
 }
 
 /**
- * Roll back one specified migration
+ * Rolls back one specified migration.
+ *
+ * @param array|null $args
  */
 function drush_migrate_rollback($args = NULL) {
   try {
     if (drush_get_option('notify', FALSE)) {
-      // Capture non-informational output for mailing
+      // Capture non-informational output for mailing.
       ob_start();
       ob_implicit_flush(FALSE);
     }
 
     $migrations = drush_migrate_get_migrations($args);
 
-    // Rollback in reverse order
+    // Rollback in reverse order.
     $migrations = array_reverse($migrations, TRUE);
 
     $options = array();
@@ -928,9 +945,11 @@ function drush_migrate_rollback($args = NULL) {
       case 'timer':
         $_migrate_track_timer = TRUE;
         break;
+
       case 'memory':
         $_migrate_track_memory = TRUE;
         break;
+
       case 'all':
         $_migrate_track_timer = TRUE;
         $_migrate_track_memory = TRUE;
@@ -941,12 +960,12 @@ function drush_migrate_rollback($args = NULL) {
       drush_log(dt("Rolling back '!description' migration",
         array('!description' => $migration->getMachineName())));
       $return = $migration->processRollback($options);
-      // If it couldn't finish (presumably because it was appraoching memory_limit),
-      // continue in a subprocess
+      // If it couldn't finish (presumably because it was appraoching
+      // memory_limit), continue in a subprocess.
       if ($return == MigrationBase::RESULT_INCOMPLETE) {
         drush_migrate_invoke_process();
       }
-      // If stopped, don't process any further
+      // If stopped, don't process any further.
       elseif ($return == MigrationBase::RESULT_STOPPED) {
         break;
       }
@@ -968,7 +987,7 @@ function drush_migrate_rollback($args = NULL) {
     drush_print_timers();
   }
 
-  // Notify user
+  // Notify user.
   if (drush_get_option('notify')) {
     _drush_migrate_notify();
   }
@@ -994,6 +1013,12 @@ function _drush_migrate_notify() {
     user_preferred_language($account), $params);
 }
 
+/**
+ *
+ * @param array|null $args
+ *
+ * @return array
+ */
 function drush_migrate_get_migrations($args) {
   $migration_objects = migrate_migrations();
 
@@ -1054,51 +1079,76 @@ function drush_migrate_get_migrations($args) {
   return $migration_objects;
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_fields_destination_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_fields_source_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_mappings_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_analyze_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_audit_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_import_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_stop_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_reset_status_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
-// Implement drush_hook_COMMAND_validate().
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
 function drush_migrate_rollback_validate($args = NULL) {
   return drush_migrate_validate_common($args);
 }
 
+/**
+ *
+ * @param array|null $args
+ *
+ * @return string
+ *   An error message.
+ */
 function drush_migrate_validate_common($args) {
   if (drush_get_option('all')) {
     if (!empty($args) || drush_get_option('group') || drush_get_option('wildcard')) {
@@ -1150,15 +1200,18 @@ function drush_migrate_validate_common($args) {
   }
 }
 
-/*
+/**
+ * Calls migrate-stop and migrate-rollback commands if requested.
+ *
  * A 'pre' callback for migrate-import command.
- * Call migrate-stop and migrate-rollback commands if requested.
+ *
+ * @param array|null $args
  */
 function drush_migrate_pre_migrate_import($args = NULL) {
   if (drush_get_option('stop')) {
     drush_unset_option('stop');
     try {
-      /** @var Migration[] $migrations */
+      // @var Migration[] $migrations.
       $migrations = drush_migrate_get_migrations($args);
       foreach ($migrations as $migration) {
         $status = $migration->getStatus();
@@ -1168,8 +1221,7 @@ function drush_migrate_pre_migrate_import($args = NULL) {
           $migration->stopProcess();
           // Give the process a chance to stop.
           $count = 0;
-          while ($migration->getStatus() != MigrationBase::STATUS_IDLE
-             && $count++ < 5) {
+          while ($migration->getStatus() != MigrationBase::STATUS_IDLE && $count++ < 5) {
             sleep(1);
           }
         }
@@ -1187,17 +1239,19 @@ function drush_migrate_pre_migrate_import($args = NULL) {
 }
 
 /**
- * Perform import on one or more migrations.
+ * Performs import on one or more migrations.
  *
- * @param $machine_names
- *  A comma delimited list of machine names, or the special name 'all'
+ * @param array|null $args
+ *
+ * @return int
+ *   The status of the import.
  */
 function drush_migrate_import($args = NULL) {
   $status = NULL;
 
   try {
     if (drush_get_option('notify', FALSE)) {
-      // Capture non-informational output for mailing
+      // Capture non-informational output for mailing.
       ob_start();
       ob_implicit_flush(FALSE);
     }
@@ -1228,8 +1282,7 @@ function drush_migrate_import($args = NULL) {
         'items',
         'item',
       ))) {
-        drush_set_error(NULL, dt("Invalid limit unit '!unit'",
-          array('!unit' => $options['limit']['unit'])));
+        drush_set_error(NULL, dt("Invalid limit unit '!unit'", array('!unit' => $options['limit']['unit'])));
         return;
       }
     }
@@ -1238,12 +1291,13 @@ function drush_migrate_import($args = NULL) {
       $parts = explode(' ', $feedback);
       $options['feedback']['value'] = $parts[0];
       $options['feedback']['unit'] = $parts[1];
-      if ($options['feedback']['unit'] != 'seconds' &&
-        $options['feedback']['unit'] != 'second' &&
-        $options['feedback']['unit'] != 'items' &&
-        $options['feedback']['unit'] != 'item') {
-        drush_set_error(NULL, dt("Invalid feedback frequency unit '!unit'",
-          array('!unit' => $options['feedback']['unit'])));
+      if ($options['feedback']['unit'] != 'seconds'
+        && $options['feedback']['unit'] != 'second'
+        && $options['feedback']['unit'] != 'items'
+        && $options['feedback']['unit'] != 'item') {
+
+        $replacements = array('!unit' => $options['feedback']['unit']);
+        drush_set_error(NULL, dt("Invalid feedback frequency unit '!unit'", $replacements));
         return;
       }
     }
@@ -1253,9 +1307,11 @@ function drush_migrate_import($args = NULL) {
       case 'timer':
         $_migrate_track_timer = TRUE;
         break;
+
       case 'memory':
         $_migrate_track_memory = TRUE;
         break;
+
       case 'all':
         $_migrate_track_timer = TRUE;
         $_migrate_track_memory = TRUE;
@@ -1331,7 +1387,8 @@ function drush_migrate_import($args = NULL) {
         }
       }
       else {
-        // I'm in a subshell. Import then set return value so parent process can respawn or move on.
+        // I'm in a subshell. Import then set return value so parent process can
+        // respawn or move on.
         $status = $migration->processImport($options);
         if ($status == MigrationBase::RESULT_SKIPPED) {
           drush_log(dt("Skipping migration !name due to unfulfilled dependencies:\n  !depends\n",
@@ -1369,7 +1426,7 @@ function drush_migrate_import($args = NULL) {
     drush_print_timers();
   }
 
-  // Notify user
+  // Notify user.
   if (drush_get_option('notify')) {
     _drush_migrate_notify();
   }
@@ -1378,10 +1435,9 @@ function drush_migrate_import($args = NULL) {
 }
 
 /**
- * Stop clearing or importing a given content set.
+ * Stops clearing or importing a given content set.
  *
- * @param $content_set
- *  The name of the Migration
+ * @param array|null $args
  */
 function drush_migrate_stop($args = NULL) {
   try {
@@ -1398,7 +1454,9 @@ function drush_migrate_stop($args = NULL) {
 }
 
 /**
- * Reset the status of a given migration.
+ * Resets the status of a given migration.
+ *
+ * @param array|null $args
  */
 function drush_migrate_reset_status($args = NULL) {
   try {
@@ -1416,10 +1474,13 @@ function drush_migrate_reset_status($args = NULL) {
 }
 
 /**
- * Deregister a given migration, migration group, or all orphaned migrations.
+ * Deregisters a given migration, migration group, or all orphaned migrations.
+ *
  * Note that the migration might no longer "exist" (the class implementation
  * might be gone), so we can't count on being able to instantiate it, or use
  * migrate_migrations().
+ *
+ * @param array|null $args
  */
 function drush_migrate_deregister($args = NULL) {
   try {
@@ -1459,7 +1520,7 @@ function drush_migrate_deregister($args = NULL) {
 }
 
 /**
- * Given a migration machine name, remove its tracking from the database.
+ * Given a migration machine name, removes its tracking from the database.
  *
  * @param string $machine_name
  *   Migration machine name.
@@ -1479,8 +1540,11 @@ function drush_migrate_deregister_migration($machine_name) {
 }
 
 /**
- * Auto-registration is no longer supported. This command should be removed
- * entirely in a future point release.
+ * Auto-registration is no longer supported.
+ *
+ * This command should be removed entirely in a future point release.
+ *
+ * @param array|null $args
  *
  * @deprecated
  */
@@ -1490,7 +1554,9 @@ function drush_migrate_auto_register($args = NULL) {
 }
 
 /**
- * Register any migrations defined in hook_migrate_api().
+ * Registers any migrations defined in hook_migrate_api().
+ *
+ * @param array|null $args
  */
 function drush_migrate_register($args = NULL) {
   migrate_static_registration();
@@ -1514,12 +1580,15 @@ function drush_migrate_wipe() {
   migrate_instrument_stop('node_delete');
 }
 
-// Print all timers for the request.
+/**
+ * Prints all timers for the request.
+ */
 function drush_migrate_print_memory() {
   global $_migrate_memory;
   $temparray = array();
   foreach ((array) $_migrate_memory as $name => $memoryrec) {
-    // We have to use timer_read() for active timers, and check the record for others
+    // We have to use timer_read() for active timers, and check the record for
+    // others.
     if (isset($memoryrec['start'])) {
       $temparray[$name] = migrate_memory_read($name);
     }
@@ -1527,9 +1596,9 @@ function drush_migrate_print_memory() {
       $temparray[$name] = $memoryrec['bytes'];
     }
   }
-  // Go no farther if there were no timers
+  // Go no farther if there were no timers.
   if (count($temparray) > 0) {
-    // Put the highest cumulative times first
+    // Put the highest cumulative times first.
     arsort($temparray);
     $table = array();
     $table[] = array('Name', 'Cum (bytes)', 'Count', 'Avg (bytes)');
@@ -1550,7 +1619,7 @@ function drush_migrate_print_memory() {
 /**
  * Command argument complete callback.
  *
- * @return
+ * @return array
  *   List of migrations.
  */
 function migrate_migrate_status_complete() {
@@ -1558,61 +1627,81 @@ function migrate_migrate_status_complete() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_import_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_rollback_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_fields_destination_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_fields_source_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_mappings_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_reset_status_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
  */
 function migrate_migrate_stop_complete() {
   return array('values' => drush_migrate_migrations());
 }
 
+/**
+ * Command argument complete callback.
+ *
+ * @return array
+ *   List of migrations.
+ */
 function drush_migrate_migrations() {
   drush_bootstrap(BACKDROP_BOOTSTRAP_FULL);
   $migrations = migrate_migrations();

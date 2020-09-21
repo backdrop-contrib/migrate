@@ -1,15 +1,9 @@
 <?php
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * @file
+ * Defines a UI for the module.
  */
-function migrate_ui_help($path, $arg) {
-  switch ($path) {
-    case 'admin/content/migrate':
-      return t('The current status of each migration group defined in this system. Click on a group name for details on its configuration.');
-  }
-}
 
 /**
  * Implements hook_menu().
@@ -57,8 +51,7 @@ function migrate_ui_menu() {
     );
   }
 
-  $items['admin/content/migrate/groups/%'] =
-    array(
+  $items['admin/content/migrate/groups/%'] = array(
     'title callback' => 'migrate_ui_migrate_group_title',
     'title arguments' => array(4),
     'type' => MENU_NORMAL_ITEM,
@@ -68,8 +61,7 @@ function migrate_ui_menu() {
     'file' => 'migrate_ui.pages.inc',
   );
 
-  $items['admin/content/migrate/groups/%/%'] =
-    array(
+  $items['admin/content/migrate/groups/%/%'] = array(
     'title callback' => 'migrate_ui_migrate_migration_title',
     'title arguments' => array(5),
     'type' => MENU_NORMAL_ITEM,
@@ -79,15 +71,13 @@ function migrate_ui_menu() {
     'file' => 'migrate_ui.pages.inc',
   );
 
-  $items['admin/content/migrate/groups/%/%/view'] =
-    array(
+  $items['admin/content/migrate/groups/%/%/view'] = array(
     'title' => 'View',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
 
-  $items['admin/content/migrate/groups/%/%/edit'] =
-    array(
+  $items['admin/content/migrate/groups/%/%/edit'] = array(
     'type' => MENU_LOCAL_TASK,
     'title' => 'Edit',
     'description' => 'Edit migration mappings',
@@ -97,8 +87,7 @@ function migrate_ui_menu() {
     'file' => 'migrate_ui.pages.inc',
   );
 
-  $items['admin/content/migrate/groups/%/%/messages'] =
-    array(
+  $items['admin/content/migrate/groups/%/%/messages'] = array(
     'type' => MENU_LOCAL_TASK,
     'title' => 'Messages',
     'description' => 'View messages from a migration',
@@ -128,8 +117,6 @@ function migrate_ui_migrate_migration_title($migration_name) {
 
 /**
  * Implements hook_theme().
- *
- * @return array
  */
 function migrate_ui_theme() {
   return array(
@@ -148,10 +135,6 @@ function migrate_ui_theme() {
 
 /**
  * Implements hook_mail().
- *
- * @param $key
- * @param $message
- * @param $params
  */
 function migrate_ui_mail($key, &$message, $params) {
   $options['language'] = $message['language'];
@@ -172,10 +155,10 @@ function migrate_ui_mail($key, &$message, $params) {
  * Get info on all modules supporting a migration wizard.
  *
  * @return array
- *  key: machine_name for a particular wizard implementation. Used in the menu
- *    link.
- *  value: Wizard configuration array containing:
- *    source_title -
+ *   key: machine_name for a particular wizard implementation. Used in the menu
+ *   link.
+ *   value: Wizard configuration array containing:
+ *   source_title -
  */
 function migrate_ui_wizards() {
   $module_apis = migrate_get_module_apis();

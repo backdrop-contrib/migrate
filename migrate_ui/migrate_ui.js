@@ -40,13 +40,13 @@ Backdrop.behaviors.migrateUISummary = {
 
     $('fieldset.migrate-mapping').each(function ($context) {
       msg = Backdrop.t('By priority: ');
-      var levels= {1:'OK',2:'Low',3:'Medium',4:'Blocker'};
+      var levels = {1:'OK',2:'Low',3:'Medium',4:'Blocker'};
       for (level in levels) {
         txt = '';
         if (count = $(this).find('td.migrate-priority-' + level).length / 5) {
           txt = count + ' ' + levels[level];
           if (level > 1) {
-            txt = '<span class="error">' + txt  + '</span>';
+            txt = '<span class="error">' + txt + '</span>';
           }
           msg = msg + txt + '. ';
         }

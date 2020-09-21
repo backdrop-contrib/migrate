@@ -45,4 +45,3 @@ name = XML migration
 description = Test migration from XML source
 group = Migrate
 file = tests/plugins/sources/xml.test
-

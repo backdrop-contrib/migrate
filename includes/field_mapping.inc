@@ -6,6 +6,9 @@
  * destination.
  */
 
+/**
+ * Defines the MigrateFieldMapping class.
+ */
 class MigrateFieldMapping {
 
   /**

@@ -19,38 +19,18 @@ define('MIGRATE_ACCESS_BASIC', 'migration information');
 define('MIGRATE_ACCESS_ADVANCED', 'advanced migration information');
 
 /**
- * Implements hook_help().
- */
-function migrate_help($path, $arg) {
-  switch ($path) {
-    case 'admin/help#migrate':
-      $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Migrate module provides a flexible framework for migrating content into Backdrop from other sources (e.g., when converting a web site from another CMS to Backdrop). Out-of-the-box, support for creating Backdrop nodes, taxonomy terms, comments, and users are included. Plugins permit migration of other types of content. For more information, see the online documentation for the <a href="@handbook">Migrate module</a>.', array('@handbook' => 'http://drupal.org/migrate')) . '</p>';
-      $output .= '<h3>' . t('Uses') . '</h3>';
-      $output .= '<dl>';
-      $output .= '<dt>' . t('Getting Started') . '</dt>';
-      $output .= '<dd>' . t('To get started, enable the migrate_example module and browse to admin/content/migrate to see its dashboard. The code for this migration is in migrate_example/beer.inc (advanced examples are in wine.inc). Mimic that file in order to specify your own migrations.') . '</dd>';
-      $output .= '<dt>' . t('Migrate Support') . '</dt>';
-      $output .= '<dd>' . t('The Migrate module itself has support for migration into core objects. Some built-in support for migration involving contrib modules is in the migrate_extras module.') . '</dd>';
-      $output .= '<dt>' . t('Migrate Extended Support') . '</dt>';
-      $output .= '<dd>' . t('The best place to implement migration support for a contributed module is in that module, not in the Migrate or Migrate Extras modules. That way, the migration support is always self-consistent with the current module implementation - it is not practical for the migrate modules to keep up with changes to all other contrib modules.') . '</dd>';
-      $output .= '</dl>';
-      return $output;
-  }
-}
-
-/**
- * Retrieve a list of all active migrations, ordered by dependencies. To be
- * recognized, a class must be non-abstract, and derived from MigrationBase.
+ * Retrieves a list of all active migrations, ordered by dependencies.
  *
- * @param $reset
- *  If TRUE, the static cache of migrations will be flushed before attempting to
- *  reinstantiate all active migrations. This can be important for script runs
- *  where migration classes may be dynamically registered.
+ * To be recognized, a class must be non-abstract, and derived from
+ * MigrationBase.
  *
- * @return
- *  Array of migration objects, keyed by the machine name.
+ * @param bool $reset
+ *   If TRUE, the static cache of migrations will be flushed before attempting
+ *   to reinstantiate all active migrations. This can be important for script
+ *   runs where migration classes may be dynamically registered.
+ *
+ * @return array
+ *   Array of migration objects, keyed by the machine name.
  */
 function migrate_migrations($reset = NULL) {
   static $migrations = array();
@@ -59,7 +39,8 @@ function migrate_migrations($reset = NULL) {
   }
 
   // Get list of modules implementing Migrate API - mainly, we're looking to
-  // make sure any dynamic migrations defined in hook_migrate_api() get registered.
+  // make sure any dynamic migrations defined in hook_migrate_api() get
+  // registered.
   migrate_get_module_apis(TRUE);
 
   $dependencies_list = array();
@@ -78,12 +59,12 @@ function migrate_migrations($reset = NULL) {
           $dependencies = $migration->getDependencies();
           $dependencies_list[$row->machine_name] = $dependencies;
           if (count($dependencies) > 0) {
-            // Set classes with dependencies aside for reordering
+            // Set classes with dependencies aside for reordering.
             $dependent_migrations[$row->machine_name] = $migration;
             $required_migrations += $dependencies;
           }
           else {
-            // No dependencies, just add
+            // No dependencies, just add.
             $migrations[$row->machine_name] = $migration;
           }
         }
@@ -106,8 +87,8 @@ function migrate_migrations($reset = NULL) {
     }
   }
 
-  // The migrations are now ordered according to their own dependencies - now order
-  // them by group
+  // The migrations are now ordered according to their own dependencies - now
+  // reorder them by group.
   $groups = MigrateGroup::groups();
   // Seed the final list by properly-ordered groups.
   $final_migrations = array();
@@ -149,28 +130,19 @@ function migrate_config_info() {
 }
 
 /**
- * Implements hook_config_info().
- */
-function migrate_config_info() {
-  $prefixes['migrate.settings'] = array(
-    'label' => t('Module name settings'),
-    'group' => t('Configuration'),
-  );
-}
-
-/**
- * Invoke any available handlers attached to a given destination type.
+ * Invokes any available handlers attached to a given destination type.
+ *
  * If any handlers have dependencies defined, they will be invoked after
  * the specified handlers.
  *
- * @param $destination
- *  Destination type ('Node', 'User', etc.) - generally the same string as
- *  the destination class name without the MigrateDestination prefix.
- * @param $method
- *  Method name such as 'prepare' (called at the beginning of an import
+ * @param string $destination
+ *   Destination type ('Node', 'User', etc.) - generally the same string as
+ *   the destination class name without the MigrateDestination prefix.
+ * @param string $method
+ *   Method name such as 'prepare' (called at the beginning of an import
  *   operation) or 'complete' (called at the end of an import operation).
  * @param ...
- *  Parameters to be passed to the handler.
+ *   Parameters to be passed to the handler.
  */
 function migrate_handler_invoke_all($destination, $method) {
   $args = func_get_args();
@@ -180,8 +152,10 @@ function migrate_handler_invoke_all($destination, $method) {
   $class_list = _migrate_class_list('MigrateDestinationHandler');
   $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
   foreach ($class_list as $class_name => $handler) {
-    if (!in_array($class_name, $disabled) && $handler->handlesType($destination)
-         && method_exists($handler, $method)) {
+    if (!in_array($class_name, $disabled)
+      && $handler->handlesType($destination)
+      && method_exists($handler, $method)) {
+
       migrate_instrument_start($class_name . '->' . $method);
       $result = call_user_func_array(array($handler, $method), $args);
       migrate_instrument_stop($class_name . '->' . $method);
@@ -197,27 +171,27 @@ function migrate_handler_invoke_all($destination, $method) {
 }
 
 /**
- * Invoke any available handlers attached to a given field type.
+ * Invokes any available handlers attached to a given field type.
  *
- * @param $entity
- *  The object we are building up before calling example_save().
- * @param $field_info
- *  Array of info on the field, from field_info_field().
- * @param $instance
- *  Array of info in the field instance, from field_info_instances().
- * @param $values
- *  Array of incoming values, to be transformed into the appropriate structure
- *  for the field type.
- * @param $method
- *  Handler method to call (defaults to prepare()).
+ * @param object $entity
+ *   The object we are building up before calling example_save().
+ * @param array $field_info
+ *   Array of info on the field, from field_info_field().
+ * @param array $instance
+ *   Array of info in the field instance, from field_info_instances().
+ * @param array $values
+ *   Array of incoming values, to be transformed into the appropriate structure
+ *   for the field type.
+ * @param string $method
+ *   Handler method to call (defaults to prepare()).
  */
 function migrate_field_handler_invoke_all($entity, array $field_info, array $instance, array $values, $method = 'prepare') {
   static $types_handled = array();
   static $methods_handled = array();
-  static $disabled = null;
+  static $disabled = NULL;
   $return = array();
   $type = $field_info['type'];
-  static $class_list = null;
+  static $class_list = NULL;
   if (!$class_list) {
     $class_list = _migrate_class_list('MigrateFieldHandler');
   }
@@ -229,7 +203,7 @@ function migrate_field_handler_invoke_all($entity, array $field_info, array $ins
   // This function is called a lot. Rather than determine if the field type is
   // handled once for every record, the value should be determined once per
   // execution.
-  // The same can go for whether the handler/method pair exists
+  // The same can go for whether the handler/method pair exists.
   if (!isset($types_handled[$type])) {
     foreach ($class_list as $class_name => $handler) {
       $types_handled[$type][$class_name] = $handler->handlesType($type);
@@ -275,20 +249,22 @@ function migrate_field_handler_invoke_all($entity, array $field_info, array $ins
 }
 
 /**
- * For a given parent class, identify and instantiate objects for any
- * non-abstract classes derived from the parent, returning an array of the
- * objects indexed by class name. The array will be ordered such that any
+ * Identifies and instantiates objects for classes derived from the parent.
+ *
+ * For a given parent class, this function identifies and instantiates objects
+ * for non-abstract classes derived from the parent, returning an array of the
+ * objects, indexed by class name. The array will be ordered such that any
  * classes with dependencies are listed after the classes they are dependent
  * on.
  *
- * @param $parent_class
- *  Name of a class from which results will be derived.
+ * @param string $parent_class
+ *   Name of a class from which results will be derived.
  *
- * @return
- *  Array of objects, keyed by the class name.
+ * @return array
+ *   Array of objects, keyed by the class name.
  */
 function _migrate_class_list($parent_class) {
-  // Get info on modules implementing Migrate API
+  // Get info on modules implementing Migrate API.
   static $module_info;
   if (!isset($module_info)) {
     $module_info = migrate_get_module_apis();
@@ -303,7 +279,7 @@ function _migrate_class_list($parent_class) {
     else {
       $handler_key = 'field handlers';
     }
-    // Add explicitly-registered handler classes
+    // Add explicitly-registered handler classes.
     foreach ($module_info as $info) {
       if (isset($info[$handler_key]) && is_array($info[$handler_key])) {
         foreach ($info[$handler_key] as $handler_class) {
@@ -344,7 +320,11 @@ function migrate_permission() {
 }
 
 /**
- * Get a list of modules that support the current migrate API.
+ * Gets a list of modules that support the current migrate API.
+ *
+ * @param bool $reset
+ *   If TRUE, the static cache will be flushed before getting the list of
+ *   modules.
  */
 function migrate_get_module_apis($reset = FALSE) {
   static $cache = NULL;
@@ -366,7 +346,8 @@ function migrate_get_module_apis($reset = FALSE) {
           '%function' => $function,
           '%modversion' => $info['api'],
           '%version' => MIGRATE_API_VERSION,
-        )));
+        )
+        ));
       }
     }
 
@@ -378,10 +359,10 @@ function migrate_get_module_apis($reset = FALSE) {
 }
 
 /**
- * Register any migrations defined in hook_migrate_api().
+ * Registers any migrations defined in hook_migrate_api().
  *
  * @param array $machine_names
- *  If populated, only (re)register the specified migrations.
+ *   If populated, only (re)register the specified migrations.
  */
 function migrate_static_registration($machine_names = array()) {
   $module_info = migrate_get_module_apis(TRUE);
@@ -421,6 +402,8 @@ function migrate_static_registration($machine_names = array()) {
 
 /**
  * Do a topological sort on our dependencies graph.
+ *
+ * @param array $dependencies
  */
 function migrate_order_dependencies($dependencies) {
   $visited = array();
@@ -439,6 +422,11 @@ function migrate_order_dependencies($dependencies) {
 
 /**
  * Depth-first search for independent migrations.
+ *
+ * @param array $dependencies
+ * @param string $name
+ * @param array $list
+ * @param array $visited
  */
 function migrate_visit_dependent($dependencies, $name, &$list, &$visited) {
   if ($visited[$name]) {
@@ -462,9 +450,8 @@ function migrate_visit_dependent($dependencies, $name, &$list, &$visited) {
 
 /**
  * Implements hook_watchdog().
- * Find the migration that is currently running and notify it.
  *
- * @param array $log_entry
+ * Find the migration that is currently running and notify it.
  */
 function migrate_watchdog($log_entry) {
   // Ensure that the Migration class exists, as different bootstrap phases may
@@ -477,12 +464,15 @@ function migrate_watchdog($log_entry) {
       case WATCHDOG_ERROR:
         $severity = MigrationBase::MESSAGE_ERROR;
         break;
+
       case WATCHDOG_WARNING:
         $severity = MigrationBase::MESSAGE_WARNING;
         break;
+
       case WATCHDOG_NOTICE:
         $severity = MigrationBase::MESSAGE_NOTICE;
         break;
+
       case WATCHDOG_DEBUG:
       case WATCHDOG_INFO:
       default:
@@ -499,27 +489,27 @@ function migrate_watchdog($log_entry) {
  */
 
 /**
- * Save memory usage with the specified name. If you start and stop the same
- * memory name multiple times, the measured differences will be accumulated.
+ * Saves memory usage with the specified name.
  *
- * @param name
+ * If you start and stop the same memory name multiple times, the measured
+ * differences will be accumulated.
+ *
+ * @param string $name
  *   The name of the memory measurement.
  */
 function migrate_memory_start($name) {
   global $_migrate_memory;
-
   $_migrate_memory[$name]['start'] = memory_get_usage();
-  $_migrate_memory[$name]['count'] =
-    isset($_migrate_memory[$name]['count']) ? ++$_migrate_memory[$name]['count'] : 1;
+  $_migrate_memory[$name]['count'] = isset($_migrate_memory[$name]['count']) ? ++$_migrate_memory[$name]['count'] : 1;
 }
 
 /**
- * Read the current memory value without recording the change.
+ * Reads the current memory value without recording the change.
  *
- * @param name
+ * @param string $name
  *   The name of the memory measurement.
  *
- * @return
+ * @return int
  *   The change in bytes since the last start.
  */
 function migrate_memory_read($name) {
@@ -538,12 +528,12 @@ function migrate_memory_read($name) {
 }
 
 /**
- * Stop the memory counter with the specified name.
+ * Stops the memory counter with the specified name.
  *
- * @param name
+ * @param string $name
  *   The name of the memory measurement.
  *
- * @return
+ * @return array
  *   A memory array. The array contains the number of times the memory has been
  *   started and stopped (count) and the accumulated memory difference value in
  *   bytes.
@@ -569,16 +559,17 @@ function migrate_memory_stop($name) {
 }
 
 /**
- * Start measuring time and (optionally) memory consumption over a section of
- * code. Note that the memory consumption measurement is generally not useful
- * in lower areas of the code, where data is being generated that will be freed
- * by the next call to the same area. For example, measuring the memory
- * consumption of db_query is not going to be helpful.
+ * Measures time and (optionally) memory consumption over a section of code.
  *
- * @param $name
- *  The name of the measurement.
- * @param $include_memory
- *  Measure both memory and timers. Defaults to FALSE (timers only).
+ * Note that the memory consumption measurement is generally not useful in lower
+ * areas of the code, where data is being generated that will be freed by the
+ * next call to the same area. For example, measuring the memory consumption of
+ * db_query is not going to be helpful.
+ *
+ * @param string $name
+ *   The name of the measurement.
+ * @param bool $include_memory
+ *   Measure both memory and timers. Defaults to FALSE (timers only).
  */
 function migrate_instrument_start($name, $include_memory = FALSE) {
   global $_migrate_track_memory, $_migrate_track_timer;
@@ -591,10 +582,10 @@ function migrate_instrument_start($name, $include_memory = FALSE) {
 }
 
 /**
- * Stop measuring both memory and time consumption over a section of code.
+ * Stops measuring both memory and time consumption over a section of code.
  *
- * @param $name
- *  The name of the measurement.
+ * @param string $name
+ *   The name of the measurement.
  */
 function migrate_instrument_stop($name) {
   global $_migrate_track_memory, $_migrate_track_timer;
@@ -607,8 +598,7 @@ function migrate_instrument_stop($name) {
 }
 
 /**
- * Call hook_migrate_overview for overall documentation on implemented
- * migrations.
+ * Calls hook_migrate_overview for documentation on implemented migrations.
  */
 function migrate_overview() {
   $overview = '';

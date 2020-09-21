@@ -2,12 +2,11 @@
 
 /**
  * @file
- * Migrate module installation
+ * Migrate module installation, update, and uninstallation routines.
  */
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_schema().
  */
 function migrate_schema() {
   $schema = array();
@@ -19,8 +18,10 @@ function migrate_schema() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Defines the schema for the migrate_status database table.
+ *
+ * @return array
+ *   The schema definition.
  */
 function migrate_schema_status() {
   return array(
@@ -72,8 +73,10 @@ function migrate_schema_status() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Defines the schema for the migrate_log database table.
+ *
+ * @return array
+ *   The schema definition.
  */
 function migrate_schema_log() {
   return array(
@@ -136,8 +139,10 @@ function migrate_schema_log() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Defines the schema for the migrate_group database table.
+ *
+ * @return array
+ *   The schema definition.
  */
 function migrate_schema_group() {
   return array(
@@ -168,8 +173,10 @@ function migrate_schema_group() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Defines the schema for the migrate_field_mapping database table.
+ *
+ * @return array
+ *   The schema definition.
  */
 function migrate_schema_field_mapping() {
   return array(
@@ -213,13 +220,14 @@ function migrate_schema_field_mapping() {
 
 /**
  * Implements hook_uninstall().
+ *
  * Drop map/message tables, in case implementing classes did not.
  */
 function migrate_uninstall() {
   // Note: If a derived Migration class defined its own map or message
   // table name not fitting this pattern, that class is solely responsible for
-  // cleaning up
-  // TODO: Prefix table names (db_find_tables does not do it)
+  // cleaning up.
+  // TODO: Prefix table names (db_find_tables does not do it).
   foreach (db_find_tables('migrate_map_%') as $tablename) {
     db_drop_table($tablename);
   }
@@ -227,14 +235,14 @@ function migrate_uninstall() {
     db_drop_table($tablename);
   }
 
-  // Remove any file_usage entries we've written
+  // Remove any file_usage entries we've written.
   if (db_table_exists('file_usage')) {
     db_delete('file_usage')
       ->condition('module', 'migrate')
       ->execute();
   }
 
-  // Remove variables
+  // Remove variables.
   config_clear('migrate.settings', 'migrate_disable_autoregistration');
   config_clear('migrate.settings', 'migrate_disabled_handlers');
   config_clear('migrate.settings', 'migrate_deprecation_warnings');

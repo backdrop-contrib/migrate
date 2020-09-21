@@ -43,7 +43,7 @@ class MigrateSQLMap extends MigrateMap {
 
       if (!empty($options['driver']) && $options['driver'] == 'mysql') {
         // Backtick the db name on mysql to ensure dbs with hyphens work.
-        $dbname = "`{$dbname`";
+        $dbname = "`{$dbname}`";
       }
       return $dbname . '.' . $this->mapTable;
     }

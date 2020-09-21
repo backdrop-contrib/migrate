@@ -3,26 +3,32 @@
 include_once('migrate_example_oracle.features.inc');
 
 /**
- * Generate a text string of reproducible contents for a given length.
+ * Generates a text string of reproducible contents for a given length.
  *
  * @param int $length
- *  Number of characters to generate.
+ *   Number of characters to generate.
  *
- * $return
- *  String of the given length.
+ * $return string
+ *   String of the given length.
  */
 function migrate_example_oracle_generate($length) {
-  $base = 'word '; // Five characters long
-  $multiplier = ($length / 5) + 1; // 80% chance of going a bit long, thus substr below
+  // Five characters long.
+  $base = 'word ';
+  // 80% chance of going a bit long, thus substr below.
+  $multiplier = ($length / 5) + 1;
   $data = str_repeat($base, $multiplier);
   $data = substr($data, 0, $length);
   return $data;
 }
 
 /**
- * Return an array of data rows for testing Oracle import. Note that 4000 is a
- * magic number for Oracle LOB datatypes, so we testing lengths above and below
- * that limit.
+ * Returns an array of data rows for testing Oracle import.
+ *
+ * Note that 4000 is a magic number for Oracle LOB datatypes, so we are testing
+ * lengths above and below that limit.
+ *
+ * $return array
+ *   The test data.
  */
 function migrate_example_oracle_sample_data() {
   $image = file_get_contents('misc/druplicon.png');

@@ -5,6 +5,9 @@
  * Null-op mail class, to keep migration from spamming innocent users.
  */
 
+/**
+ * MigrateMailIgnore class.
+ */
 class MigrateMailIgnore extends DefaultMailSystem {
 
   /**
@@ -13,10 +16,10 @@ class MigrateMailIgnore extends DefaultMailSystem {
    * @see http://php.net/manual/en/function.mail.php
    * @see backdrop_mail()
    *
-   * @param $message
+   * @param array $message
    *   A message array, as described in hook_mail_alter().
    *
-   * @return
+   * @return bool
    *   TRUE if the mail was successfully accepted, otherwise FALSE.
    */
   public function mail(array $message) {

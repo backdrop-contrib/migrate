@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Pages for managing migration processes.
@@ -46,10 +47,12 @@ function migrate_ui_migrate_dashboard($form, &$form_state) {
           $status = t('Importing');
           $idle = FALSE;
           break;
+
         case MigrationBase::STATUS_ROLLING_BACK:
           $status = t('Rolling back');
           $idle = FALSE;
           break;
+
         case MigrationBase::STATUS_STOPPING:
           $status = t('Stopping');
           $idle = FALSE;
@@ -58,7 +61,8 @@ function migrate_ui_migrate_dashboard($form, &$form_state) {
       $machine_names[] = $migration_row->machine_name;
     }
 
-    // If we're not in the middle of an operaton, what's the status of the import?
+    // If we're not in the middle of an operaton, what's the status of the
+    // import?
     if ($idle) {
       $ready = TRUE;
       $complete = TRUE;
@@ -96,8 +100,7 @@ function migrate_ui_migrate_dashboard($form, &$form_state) {
     }
 
     $row['status'] = $status;
-    $row['machinename'] =
-      l($group_row->title, 'admin/content/migrate/groups/' . $group_row->name);
+    $row['machinename'] = l($group_row->title, 'admin/content/migrate/groups/' . $group_row->name);
     $arguments = unserialize($group_row->arguments);
     if (!empty($arguments['source_system'])) {
       $row['source_system'] = filter_xss_admin($arguments['source_system']);
@@ -121,7 +124,7 @@ function migrate_ui_migrate_dashboard($form, &$form_state) {
 }
 
 /**
- * Menu callback
+ * Menu callback.
  */
 function migrate_ui_migrate_group($form, &$form_state, $group_name) {
   $group = MigrateGroup::getInstance($group_name);
@@ -182,18 +185,23 @@ function migrate_ui_migrate_group($form, &$form_state, $group_name) {
       case MigrationBase::STATUS_IDLE:
         $status = t('Idle');
         break;
+
       case MigrationBase::STATUS_IMPORTING:
         $status = t('Importing');
         break;
+
       case MigrationBase::STATUS_ROLLING_BACK:
         $status = t('Rolling back');
         break;
+
       case MigrationBase::STATUS_STOPPING:
         $status = t('Stopping');
         break;
+
       case MigrationBase::STATUS_DISABLED:
         $status = t('Disabled');
         break;
+
       default:
         $status = t('Unknown');
         break;
@@ -201,17 +209,14 @@ function migrate_ui_migrate_group($form, &$form_state, $group_name) {
 
     $row['status'] = $status;
     $machine_name = $migration->getMachineName();
-    $row['machinename'] =
-      l($machine_name, "admin/content/migrate/groups/$group_name/$machine_name");
+    $row['machinename'] = l($machine_name, "admin/content/migrate/groups/$group_name/$machine_name");
     $row['importrows'] = (int) $total;
     $row['imported'] = (int) $imported;
     $row['unprocessed'] = (int) $unprocessed;
     if (user_access(MIGRATE_ACCESS_ADVANCED)) {
       if (is_subclass_of($migration, 'Migration')) {
         $num_messages = $migration->messageCount();
-        $row['messages'] = $num_messages ?
-          l($num_messages, "admin/content/migrate/groups/$group_name/$machine_name/messages")
-          : 0;
+        $row['messages'] = $num_messages ? l($num_messages, "admin/content/migrate/groups/$group_name/$machine_name/messages") : 0;
       }
       else {
         $row['messages'] = t('N/A');
@@ -247,7 +252,10 @@ function migrate_ui_migrate_group($form, &$form_state, $group_name) {
 }
 
 /**
+ * Creates a list of operations.
+ *
  * @return array
+ *   The list of operations.
  */
 function _migrate_ui_migrate_operations() {
   // Build the 'Update options' form.
@@ -256,7 +264,6 @@ function _migrate_ui_migrate_operations() {
     '#title' => t('Operations'),
   );
 
-  //
   // TODO This variable was probably removed in Backdrop without replacement.
   switch (variable_get('migrate_import_method', 0)) {
     case 1:
@@ -265,6 +272,7 @@ function _migrate_ui_migrate_operations() {
         'rollback_background' => t('Rollback'),
       );
       break;
+
     case 2:
       $options = array(
         'import_immediate' => t('Import immediately'),
@@ -273,6 +281,7 @@ function _migrate_ui_migrate_operations() {
         'rollback_background' => t('Rollback in background'),
       );
       break;
+
     case 0:
     default:
       $options = array(
@@ -376,12 +385,15 @@ function migrate_ui_migrate_validate($form, &$form_state) {
 }
 
 /**
- * Determine what migrations are selected (whether directly on a group page, or
- * via group selections on the dashboard).
+ * Determines which migrations are selected.
  *
- * @param $values
+ * Whether directly on a group page, or via group selections on the dashboard.
+ *
+ * @param array $values
+ *   The form values for determining the selected migrations.
  *
  * @return array
+ *   The list of selected migrations.
  */
 function _migrate_ui_selected_migrations($values) {
   if (isset($values['migrations'])) {
@@ -434,7 +446,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     $machine_names = array_reverse($machine_names);
   }
 
-  // Special case: when deregistering a group, go through the group API
+  // Special case: when deregistering a group, go through the group API.
   if ($operation == 'deregister' && isset($values['tasks'])) {
     foreach ($values['tasks'] as $task) {
       MigrateGroup::deregister($task);
@@ -448,7 +460,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     if ($migration) {
       switch ($operation) {
         case 'import_immediate':
-          // Update (if necessary) once, before starting
+          // Update (if necessary) once, before starting.
           if ($update && method_exists($migration, 'prepareUpdate')) {
             $migration->prepareUpdate();
           }
@@ -457,22 +469,27 @@ function migrate_ui_migrate_submit($form, &$form_state) {
             array('import', $machine_name, $limit, $force),
           );
           break;
+
         case 'rollback_immediate':
           $operations[] = array(
             'migrate_ui_batch',
             array('rollback', $machine_name, $limit, $force),
           );
           break;
+
         case 'import_background':
         case 'rollback_background':
           $drush_arguments[] = $machine_name;
           break;
+
         case 'stop':
           $migration->stopProcess();
           break;
+
         case 'reset':
           $migration->resetStatus();
           break;
+
         case 'deregister':
           migrate_ui_deregister_migration($machine_name);
           break;
@@ -480,14 +497,15 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     }
   }
 
-  // Only immediate rollback and import operations will need to go through Batch API.
+  // Only immediate rollback and import operations will need to go through Batch
+  // API.
   if (count($operations) > 0) {
     $batch = array(
       'operations' => $operations,
       'title' => t('Import processing'),
       'file' => backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.pages.inc',
       'init_message' => t('Starting import process'),
-      'progress_message' => t(''),
+      'progress_message' => '',
       'error_message' => t('An error occurred. Some or all of the import processing has failed.'),
       'finished' => 'migrate_ui_batch_finish',
     );
@@ -521,7 +539,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     }
     $migrations = implode(',', $drush_arguments);
     // If on Acquia, call required shell script to add environment variables.
-    $drush_command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']/{$_ENV['AH_SITE_ENVIRONMENT'].shell " : '';
+    $drush_command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']}/{$_ENV['AH_SITE_ENVIRONMENT']}.shell " : '';
     $drush_command .= "$drush_path $command $migrations --user=$uid --uri=$uri " .
       '--root=' . BACKDROP_ROOT;
     if ($force) {
@@ -558,19 +576,21 @@ function migrate_ui_migrate_submit($form, &$form_state) {
  * Process all enabled migration processes in a browser, using the Batch API
  * to break it into manageable chunks.
  *
- * @param $operation
- *  Operation to perform - 'import', 'rollback', 'stop', or 'reset'.
- * @param $machine_name
- *  Machine name of migration to process.
- * @param $limit
- *  An array indicating the number of items to import or rollback, or the
- *  number of seconds to process. Should include 'unit' (either 'items' or
- *  'seconds') and 'value'.
- * @param $context
- *  Batch API context structure
+ * @param string $operation
+ *   Operation to perform - 'import', 'rollback', 'stop', or 'reset'.
+ * @param string $machine_name
+ *   Machine name of migration to process.
+ * @param array $limit
+ *   An array indicating the number of items to import or rollback, or the
+ *   number of seconds to process. Should include 'unit' (either 'items' or
+ *   'seconds') and 'value'.
+ * @param bool $force
+ *   Whether to force the operation or not.
+ * @param array $context
+ *   Batch API context structure
  */
-function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$context) {
-  // If we got a stop message, skip everything else
+function migrate_ui_batch($operation, $machine_name, array $limit, $force = FALSE, array &$context = array()) {
+  // If we got a stop message, skip everything else.
   if (isset($context['results']['stopped'])) {
     $context['finished'] = 1;
     return;
@@ -582,7 +602,7 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
     return;
   }
 
-  // Messages generated by migration processes will be captured in this global
+  // Messages generated by migration processes will be captured in this global.
   global $_migrate_messages;
   $_migrate_messages = array();
   Migration::setDisplayFunction('migrate_ui_capture_message');
@@ -590,7 +610,7 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
   // Try to allocate enough time to run the full operation.
   $migration->setBatchTimeLimit();
 
-  // Perform the requested operation
+  // Perform the requested operation.
   switch ($operation) {
     case 'import':
       $result = $migration->processImport(array(
@@ -598,6 +618,7 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
         'force' => $force,
       ));
       break;
+
     case 'rollback':
       $result = $migration->processRollback(array(
         'limit' => $limit,
@@ -608,7 +629,7 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
 
   switch ($result) {
     case Migration::RESULT_INCOMPLETE:
-      // Default to half-done, in case we can't get a more precise fix
+      // Default to half-done, in case we can't get a more precise fix.
       $context['finished'] = .5;
       if (method_exists($migration, 'sourceCount')) {
         $total = $migration->sourceCount();
@@ -619,6 +640,7 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
               $to_update = $migration->updateCount();
               $context['finished'] = ($processed - $to_update) / $total;
               break;
+
             case 'rollback':
               $context['finished'] = ($total - $migration->importedCount()) / $total;
               break;
@@ -626,6 +648,7 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
         }
       }
       break;
+
     case MigrationBase::RESULT_SKIPPED:
       $_migrate_messages[] = array(
         'message' => t("Skipped !name due to unfulfilled dependencies: !depends",
@@ -636,22 +659,24 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
       );
       $context['finished'] = 1;
       break;
+
     case MigrationBase::RESULT_STOPPED:
       $context['finished'] = 1;
-      // Skip any further operations
+      // Skip any further operations.
       $context['results']['stopped'] = TRUE;
       break;
+
     default:
       $context['finished'] = 1;
       break;
   }
 
-  // Add any messages generated in this batch to the cumulative list
+  // Add any messages generated in this batch to the cumulative list.
   foreach ($_migrate_messages as $message_data) {
     $context['results'][] = $message_data;
   }
 
-  // While in progress, show the cumulative list of messages
+  // While in progress, show the cumulative list of messages.
   $full_message = '';
   foreach ($context['results'] as $message_data) {
     $full_message .= $message_data['message'] . '<br />';
@@ -664,14 +689,14 @@ function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$c
  *
  * Report results.
  *
- * @param $success
- *  Ignored
- * @param $results
- *  List of results from batch processing
- * @param $operations
- *  Ignored
+ * @param bool $success
+ *   Ignored - not used anymore.
+ * @param array $results
+ *   List of results from batch processing
+ * @param array $operations
+ *   Ignored - not used anymore.
  */
-function migrate_ui_batch_finish($success, $results, $operations) {
+function migrate_ui_batch_finish($success, array $results, array $operations) {
   unset($results['stopped']);
 
   foreach ($results as $result) {
@@ -697,15 +722,15 @@ function migrate_ui_batch_finish($success, $results, $operations) {
 }
 
 /**
- * Store a message to be displayed later.
+ * Stores a message to be displayed later.
  *
  * Ignore the message if $level is set to 'debug'.
  *
  * @param string $message
- *   the message to be displayed
+ *   The message to be displayed.
  * @param string $level
- *   the type of the message: 'debug', 'completed', 'failed', or a valid $type
- *   used by backdrop_set_message()
+ *   The type of the message: 'debug', 'completed', 'failed', or a valid $type
+ *   used by backdrop_set_message().
  */
 function migrate_ui_capture_message($message, $level) {
   if ($level != 'debug') {
@@ -729,7 +754,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
 
   if ($has_mappings) {
     $field_mappings = $migration->getFieldMappings();
-    // Identify what destination and source fields are mapped
+    // Identify what destination and source fields are mapped.
     foreach ($field_mappings as $mapping) {
       $source_field = $mapping->getSourceField();
       $destination_field = $mapping->getDestinationField();
@@ -764,8 +789,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
   $team = array();
   foreach ($migration->getTeam() as $member) {
     $email_address = $member->getEmailAddress();
-    $team[$member->getGroup()][] =
-      $member->getName() . ' <' . l($email_address, 'mailto:' . $email_address) . '>';
+    $team[$member->getGroup()][] = $member->getName() . ' <' . l($email_address, 'mailto:' . $email_address) . '>';
   }
 
   foreach ($team as $group => $list) {
@@ -804,9 +828,11 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       case Migration::SOURCE:
         $system_of_record = t('Source data');
         break;
+
       case Migration::DESTINATION:
         $system_of_record = t('Destination data');
         break;
+
       default:
         $system_of_record = t('Unknown');
         break;
@@ -825,15 +851,15 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
   );
 
   if ($has_mappings) {
-    // Destination field information
+    // Destination field information.
     $form['destination'] = array(
       '#type' => 'fieldset',
       '#title' => t('Destination'),
       '#group' => 'detail',
       '#description' => t('<p>These are the fields available in the destination of this migration
-           task. The machine names listed here are those available to be used
-           as the first parameter to $this->addFieldMapping() in your Migration
-           class constructor. <span class="error">Unmapped fields are red</span>.</p>'),
+        task. The machine names listed here are those available to be used
+        as the first parameter to $this->addFieldMapping() in your Migration
+        class constructor. <span class="error">Unmapped fields are red</span>.</p>'),
     );
     $destination = $migration->getDestination();
     $form['destination']['type'] = array(
@@ -847,7 +873,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
     foreach ($destination->fields($migration) as $machine_name => $description) {
       $classes = array();
       if (isset($dest_key[$machine_name])) {
-        // Identify primary key
+        // Identify primary key.
         $machine_name .= ' ' . t('(PK)');
       }
       else {
@@ -874,15 +900,15 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       '#empty' => t('No fields'),
     );
 
-    // TODO: Get source_fields from arguments
+    // TODO: Get source_fields from arguments.
     $form['source'] = array(
       '#type' => 'fieldset',
       '#title' => t('Source'),
       '#group' => 'detail',
       '#description' => t('<p>These are the fields available from the source of this migration
-           task. The machine names listed here are those available to be used
-           as the second parameter to $this->addFieldMapping() in your Migration
-           class constructor. <span class="error">Unmapped fields are red</span>.</p>'),
+        task. The machine names listed here are those available to be used
+        as the second parameter to $this->addFieldMapping() in your Migration
+        class constructor. <span class="error">Unmapped fields are red</span>.</p>'),
     );
     $source = $migration->getSource();
     $form['source']['query'] = array(
@@ -895,7 +921,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
     $rows = array();
     foreach ($source->fields() as $machine_name => $description) {
       if (isset($source_key[$machine_name])) {
-        // Identify primary key
+        // Identify primary key.
         $machine_name .= ' ' . t('(PK)');
       }
       else {
@@ -930,35 +956,35 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       t('Priority'),
     );
 
-    // First group the mappings
+    // First group the mappings.
     $descriptions = array();
     $source_fields = $source->fields();
     $destination_fields = $destination->fields($migration);
 
     foreach ($field_mappings as $mapping) {
-      // Validate source and destination fields actually exist
+      // Validate source and destination fields actually exist.
       $source_field = $mapping->getSourceField();
       $destination_field = $mapping->getDestinationField();
+      $replacements = array(
+        '!source' => filter_xss_admin($source_field),
+        '!destination' => filter_xss_admin($destination_field),
+      );
+      $message = '';
+      // Set a message if an unknown source was used.
       if (!is_null($source_field) && !isset($source_fields[$source_field])) {
-        backdrop_set_message(t('"!source" was used as source field in the
-          "!destination" mapping but is not in list of source fields', array(
-          '!source' => filter_xss_admin($source_field),
-          '!destination' => filter_xss_admin($destination_field),
-        )),
-          'warning');
+        $message = t('"!source" was used as source field in the "!destination" mapping but is not in list of source fields', $replacements);
       }
+      // Set a message if an unknown destination was used.
       if (!is_null($destination_field) && !isset($destination_fields[$destination_field])) {
-        backdrop_set_message(t('"!destination" was used as destination field in
-          "!source" mapping but is not in list of destination fields', array(
-          '!source' => filter_xss_admin($source_field),
-          '!destination' => filter_xss_admin($destination_field),
-        )),
-          'warning');
+        $message = t('"!destination" was used as destination field in "!source" mapping but is not in list of destination fields', $replacements);
+      }
+      if (!empty($message)) {
+        backdrop_set_message($message, 'warning');
       }
       $descriptions[$mapping->getIssueGroup()][] = $mapping;
     }
 
-    // Put out each group header
+    // Put out each group header.
     foreach ($descriptions as $group => $mappings) {
       $form[$group] = array(
         '#type' => 'fieldset',
@@ -1034,16 +1060,8 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
 
 /**
  * Page callback to edit field mappings for a given migration.
- *
- * @param $form
- * @param $form_state
- * @param $group_name
- * @param $migration_name
- *
- * @return array
  */
-function migrate_ui_edit_mappings($form, $form_state, $group_name,
-                                  $migration_name) {
+function migrate_ui_edit_mappings($form, $form_state, $group_name, $migration_name) {
   backdrop_set_title(t('Edit !migration', array('!migration' => filter_xss_admin($migration_name))));
 
   $form = array();
@@ -1059,7 +1077,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
     return $form;
   }
 
-  $source_migration_options = array('-1' => t(''));
+  $source_migration_options = array('-1' => '');
   $all_dependencies = array();
   foreach (migrate_migrations() as $machine_name => $migration_info) {
     $source_migration_options[$machine_name] = $machine_name;
@@ -1095,18 +1113,16 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
       '#description' => t('Check off any source fields that are not being mapped to destination fields. They will be removed from the select lists above.'),
     );
 
-    $base_options = array(
-      '-1' => t(''),
-    );
+    $base_options = array('-1' => '');
 
     $field_options = array();
     foreach ($source_fields as $name => $description) {
-      // Clean up the source field description
+      // Clean up the source field description.
       if (is_array($description)) {
         $description = reset($description);
       }
       $description = strip_tags($description);
-      // Limit the description length
+      // Limit the description length.
       if (strlen($description) > 50) {
         $short_description = substr($description, 0, 50) . '...';
       }
@@ -1130,13 +1146,13 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
 
       $dnm_value = 0;
 
-      // Check for a click of the DNM box...
+      // Check for a click of the DNM box.
       if (isset($form_state['values']) &&
         $form_state['values']['source_fields'][$name] == 1) {
         $dnm_value = 1;
       }
       else {
-        // ... or a source-only mapping with the DNM issue group.
+        // Or a source-only mapping with the DNM issue group.
         foreach ($field_mappings as $mapping) {
           if ($mapping->getSourceField() == $name &&
             $mapping->getIssueGroup() == t('DNM')) {
@@ -1165,7 +1181,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
       $default_is_new = 0;
     }
     foreach ($dest_fields as $name => $description) {
-      // Don't map the destination key unless is_new = 1 (ie, TRUE)
+      // Don't map the destination key unless is_new = 1 (ie, TRUE).
       if (isset($dest_key[$name]) && $default_is_new == 0) {
         continue;
       }
@@ -1226,8 +1242,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
 
       $form['field_mappings'][$name]['mapping'] = array(
         '#type' => 'select',
-        '#title' => t($label,
-          array('!description' => $description, '!field_name' => $name)),
+        '#title' => t($label, array('!description' => $description, '!field_name' => $name)),
         '#options' => $options,
         '#default_value' => $default_mapping,
       );
@@ -1252,7 +1267,7 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
       );
 
       if (is_a($mapping, 'MigrateXMLFieldMapping')) {
-        /** @var MigrateXMLFieldMapping $mapping */
+        // @var MigrateXMLFieldMapping $mapping.
         $form['field_mappings'][$name]['xpath'] = array(
           '#type' => 'textfield',
           '#default_value' => $mapping->getXpath(),
@@ -1277,7 +1292,6 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
 
   // Get the list of possible dependencies - it's the same as the list of
   // possible source migrations, minus the empty choice and ourselves.
-
   $dependency_options = array(
     0 => t('None'),
     1 => t('Hard'),
@@ -1323,12 +1337,15 @@ function migrate_ui_edit_mappings($form, $form_state, $group_name,
 }
 
 /**
- * Generate a list of all migrations dependent on a given migration.
+ * Generates a list of all migrations dependent on a given migration.
  *
- * @param $migration_name
+ * @param string $migration_name
+ *   The name of the migration that the list is dependent on.
  * @param array $all_dependencies
+ *   The list of migrations the specified migration is dependent on.
  *
  * @return array
+ *   The list of migrations that depend on the specified migration.
  */
 function _migrate_ui_get_descendents($migration_name, array $all_dependencies) {
   $descendents = array();
@@ -1343,11 +1360,9 @@ function _migrate_ui_get_descendents($migration_name, array $all_dependencies) {
 }
 
 /**
- * Submit callback for the edit mappings form. Save any choices made in the
- * UI which override mappings made in code.
+ * Saves any choices made in the UI which override mappings made in code.
  *
- * @param $form
- * @param $form_state
+ * Submit callback for the edit mappings form.
  */
 function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
   $machine_name = $form_state['values']['machine_name'];
@@ -1380,19 +1395,15 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
         $info['xpath'] = NULL;
       }
 
-      // If this mapping matches a coded mapping but not a stored mapping, remove
-      // it entirely (don't store it in the database) so the coded mapping is not
-      // overwritten.
+      // If this mapping matches a coded mapping but not a stored mapping,
+      // remove it entirely (don't store it in the database) so the coded
+      // mapping is not overwritten.
       if (isset($coded_mappings[$destination_field])) {
-        $coded_source_field =
-          $coded_mappings[$destination_field]->getSourceField();
-        $coded_default_value =
-          $coded_mappings[$destination_field]->getDefaultValue();
-        $coded_source_migration =
-          $coded_mappings[$destination_field]->getSourceMigration();
+        $coded_source_field = $coded_mappings[$destination_field]->getSourceField();
+        $coded_default_value = $coded_mappings[$destination_field]->getDefaultValue();
+        $coded_source_migration = $coded_mappings[$destination_field]->getSourceMigration();
         if ($xml) {
-          $coded_xpath =
-            $coded_mappings[$destination_field]->getXpath();
+          $coded_xpath = $coded_mappings[$destination_field]->getXpath();
         }
         if ($info['mapping'] == '-1') {
           $info['mapping'] = NULL;
@@ -1444,27 +1455,28 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
       $mapping = NULL;
       if (isset($existing_mappings[$destination_field]) &&
         $issue_group_values[$destination_field] != 0) {
-        /** @var MigrateFieldMapping $old_mapping */
+        // @var MigrateFieldMapping $old_mapping.
         $old_mapping = $existing_mappings[$destination_field];
         if ($source_field == $old_mapping->getSourceField() &&
           $default_values[$destination_field] == $old_mapping->getDefaultValue() &&
           $source_migrations[$destination_field] == $old_mapping->getSourceMigration() &&
           (!$xml || ($xml && ($xpaths[$destination_field] == $old_mapping->getXpath())))) {
-          // First, if this mapping matches a previously-stored mapping, we want to
-          // preserve it as it was originally stored.
+          // First, if this mapping matches a previously-stored mapping, we want
+          // to preserve it as it was originally stored.
           if ($old_mapping->getMappingSource() ==
             MigrateFieldMapping::MAPPING_SOURCE_DB) {
             $mapping = $old_mapping;
           }
-          // If it matches a coded mapping, then we don't want to save it at all.
+          // If it matches a coded mapping, then we don't want to save it at
+          // all.
           else {
             continue;
           }
         }
       }
 
-      // We're not skipping this mapping, or preserving an old one, so create the
-      // new mapping.
+      // We're not skipping this mapping, or preserving an old one, so create
+      // the new mapping.
       if (!$mapping) {
         $mapping = _migrate_ui_get_mapping_object($migration, $destination_field, $source_field);
         $mapping->defaultValue($default);
@@ -1539,16 +1551,21 @@ function migrate_ui_edit_mappings_submit(&$form, &$form_state) {
   Migration::registerMigration($class_name, $machine_name, $arguments);
 
   backdrop_set_message(t('Migration changes applied.'));
-  $form_state['redirect'] =
-    "admin/content/migrate/groups/$group_name/$machine_name";
+  $form_state['redirect'] = "admin/content/migrate/groups/$group_name/$machine_name";
 }
 
 /**
- * Create a field mapping object of the appropriate class.
+ * Creates a field mapping object of the appropriate class.
  *
- * @param $migration
+ * @param string $migration
+ *   The name of the migration to create the class for.
+ * @param string $destination
+ *   The destination of the migration.
+ * @param string $source
+ *   The source of the migration.
  *
  * @return MigrateFieldMapping
+ *   The mapping object for the specified migration.
  */
 function _migrate_ui_get_mapping_object($migration, $destination, $source) {
   if (is_a($migration, 'XMLMigration')) {
@@ -1560,11 +1577,9 @@ function _migrate_ui_get_mapping_object($migration, $destination, $source) {
 }
 
 /**
- * Revert callback for the edit mappings form. Remove any field mappings that
- * were defined through the UI.
+ * Removes any field mappings that were defined through the UI.
  *
- * @param $form
- * @param $form_state
+ * Revert callback for the edit mappings form.
  */
 function migrate_ui_edit_mappings_revert(&$form, &$form_state) {
   $machine_name = $form_state['values']['machine_name'];
@@ -1581,9 +1596,10 @@ function migrate_ui_edit_mappings_revert(&$form, &$form_state) {
  * Theme function to layout field mappings in a table.
  *
  * @param array $variables
+ *   The variables currently available for the theme.
  *
  * @return string
- *  Rendered markup.
+ *   Rendered markup.
  */
 function theme_migrate_ui_field_mapping_form($variables) {
   $output = '';
@@ -1625,9 +1641,10 @@ function theme_migrate_ui_field_mapping_form($variables) {
  * Theme function to layout dependencies in a table.
  *
  * @param array $variables
+ *   The variables currently available for the theme.
  *
  * @return string
- *  Rendered markup.
+ *   Rendered markup.
  */
 function theme_migrate_ui_field_mapping_dependencies($variables) {
   $output = '';
@@ -1654,7 +1671,7 @@ function theme_migrate_ui_field_mapping_dependencies($variables) {
 }
 
 /**
- * Menu callback for messages page
+ * Menu callback for messages page.
  */
 function migrate_ui_messages($group_name, $migration_name) {
   backdrop_set_title(t('Import messages for !migration',
@@ -1690,7 +1707,7 @@ function migrate_ui_messages($group_name, $migration_name) {
     'field' => 'message',
   );
 
-  // TODO: need a general MigrateMap API
+  // TODO: need a general MigrateMap API.
   $messages = $migration->getMap()->getConnection()
     ->select($migration->getMap()->getMessageTable(), 'msg')
     ->extend('PagerDefault')
@@ -1738,9 +1755,11 @@ function migrate_ui_messages($group_name, $migration_name) {
 }
 
 /**
- * Given a migration machine name, remove its tracking from the database.
+ * Given a migration machine name, removes its tracking from the database.
  *
- * @param $machine_name
+ * @param string $machine_name
+ *   The machine name for the migration to remove its tracking from the
+ *   database.
  */
 function migrate_ui_deregister_migration($machine_name) {
   // The class is gone, so we'll manually clear migrate_status, and make
@@ -1758,7 +1777,7 @@ function migrate_ui_deregister_migration($machine_name) {
 }
 
 /**
- * Menu callback
+ * Menu callback.
  */
 function migrate_ui_configure() {
   backdrop_set_title(t('Configure migration settings'));
@@ -1844,7 +1863,7 @@ function migrate_ui_configure_form($form, &$form_state) {
     $uri = $GLOBALS['base_url'];
     $uid = $GLOBALS['user']->uid;
     // If on Acquia, call required shell script to add environment variables.
-    $command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']/{$_ENV['AH_SITE_ENVIRONMENT'].shell " : '';
+    $command = isset($_ENV['AH_SITE_ENVIRONMENT']) ? "/mnt/users/{$_ENV['AH_SITE_GROUP']}/{$_ENV['AH_SITE_ENVIRONMENT']}.shell " : '';
     $command .= "$drush_path status --user=$uid --uri=$uri --root=" . BACKDROP_ROOT;
     exec($command, $output, $status);
     if ($status == 0) {
@@ -1971,20 +1990,27 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   // TODO This variable was probably removed in Backdrop without replacement.
-  $disabled = unserialize(variable_get('migrate_disabled_handlers',
-    serialize(array())));
+  $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
+
   $class_list = _migrate_class_list('MigrateDestinationHandler');
   $rows = array();
   $default_values = array();
+  watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
   foreach ($class_list as $class_name => $handler) {
+    watchdog('jasons test', '$class_name = <pre>' . print_r($class_name, TRUE) . '</pre>');
+    watchdog('jasons test', '$handler = <pre>' . print_r($handler, TRUE) . '</pre>');
     $row = array();
-    $module = db_select('registry', 'r')
-      ->fields('r', array('module'))
-      ->condition('name', $class_name)
-      ->condition('type', 'class')
-      ->execute()
-      ->fetchField();
-    $row['module'] = check_plain($module);
+    // $module = db_select('registry', 'r')
+    // ->fields('r', array('module'))
+    // ->condition('name', $class_name)
+    // ->condition('type', 'class')
+    // ->execute()
+    // ->fetchField();
+    // $row['module'] = check_plain($module);
+    $migrate_classes = migrate_autoload_info();
+    watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
+    $migrate_ui_classes = migrate_ui_autoload_info();
+    watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
     $default_values[$class_name] = !in_array($class_name, $disabled);
@@ -2013,15 +2039,22 @@ function migrate_ui_configure_form($form, &$form_state) {
   $class_list = _migrate_class_list('MigrateFieldHandler');
   $rows = array();
   $default_values = array();
+  watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
   foreach ($class_list as $class_name => $handler) {
+    watchdog('jasons test', '$class_name = <pre>' . print_r($class_name, TRUE) . '</pre>');
+    watchdog('jasons test', '$handler = <pre>' . print_r($handler, TRUE) . '</pre>');
     $row = array();
-    $module = db_select('registry', 'r')
-      ->fields('r', array('module'))
-      ->condition('name', $class_name)
-      ->condition('type', 'class')
-      ->execute()
-      ->fetchField();
-    $row['module'] = check_plain($module);
+    // $module = db_select('registry', 'r')
+    // ->fields('r', array('module'))
+    // ->condition('name', $class_name)
+    // ->condition('type', 'class')
+    // ->execute()
+    // ->fetchField();
+    // $row['module'] = check_plain($module);
+    $migrate_classes = migrate_autoload_info();
+    watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
+    $migrate_ui_classes = migrate_ui_autoload_info();
+    watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
     $default_values[$class_name] = !in_array($class_name, $disabled);

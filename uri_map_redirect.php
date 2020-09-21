@@ -2,10 +2,11 @@
 
 /**
  * @file
- * Sample file for handling redirection from old to new URIs. Use an Apache
- * rewrite rule (or equivalent) to map legacy requests to this file. To use,
- *   copy or symlink this file to the root of your backdrop site. Customize this
- *   file to your needs.
+ * Sample file for handling redirection from old to new URIs.
+ *
+ * Use an Apache rewrite rule (or equivalent) to map legacy requests to this
+ * file. To use, copy or symlink this file to the root of your backdrop site.
+ * Customize this file to your needs.
  *
  * CREATE TABLE `migrate_source_uri_map` (
  * `source_uri` varchar(255) NOT NULL DEFAULT '',
@@ -13,16 +14,21 @@
  *  `source_id` int(11) NOT NULL, -- can be varchar for some migrations
  * PRIMARY KEY (`source_uri`)
  * )
- *
  */
 
 // For security, this script is disabled by default.
 die('Comment out this line when you are ready to use this script');
 
-// Based on custom patterns, build the destination_uri for given source_uri
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Based on custom patterns, builds the destination_uri for given source_uri.
+ *
+ * @param string $destid1
+ *   The source URI.
+ * @param string $migration_name
+ *   The name of the migration to build the URL for.
+ *
+ * @return string
+ *   The destination URI.
  */
 function migrate_build_url($destid1, $migration_name) {
   global $base_url;
@@ -64,7 +70,8 @@ $uri_table = config_get('migrate.settings', 'migrate_source_uri_table');
 
 if ($uri_map = db_query("SELECT migration_name, source_id FROM $uri_table WHERE source_uri = :source_uri", array(':source_uri' => $source_uri))->fetchObject()) {
   // Hurray, we do recognize this URI.
-  // Consult migrate_map_x table to determine corresponding Backdrop nid/tid/cid/etc.
+  // Consult migrate_map_x table to determine corresponding Backdrop
+  // nid/tid/cid/etc.
   $map_table = 'migrate_map_' . backdrop_strtolower($uri_map->migration_name);
   $sql = "SELECT destid1 FROM $map_table WHERE sourceid1 = :source_id";
   if ($destid1 = $migrate_map = db_query($sql, array(':source_id' => $uri_map->source_id))->fetchField()) {
