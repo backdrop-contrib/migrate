@@ -130,6 +130,6 @@ MAINTAINERS
 
 - [Jason Flatt](https://github.com/oadaeh)
 
-Original ported to Backdrop CMS started by:
+Original port to Backdrop CMS started by:
 
 - [biolithic](https://github.com/biolithic)
