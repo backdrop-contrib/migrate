@@ -140,11 +140,10 @@ function migrate_ui_mail($key, &$message, $params) {
   $options['language'] = $message['language'];
   user_mail_tokens($variables, array(), $options);
   $langcode = $message['language']->language;
-  // TODO This variable was probably removed in Backdrop without replacement.
-  $subject = variable_get('migrate_drush_mail_subject', '');
+  $config = config('migrate_ui.settings');
+  $subject = $config->get('migrate_drush_mail_subject');
   $message['subject'] = t($subject, array(), array('langcode' => $langcode));
-  // TODO This variable was probably removed in Backdrop without replacement.
-  $body = variable_get('migrate_drush_mail_body', '');
+  $body = $config->get('migrate_drush_mail_body');
   $body .= "\n" . $params['output'];
   $message['body'][] = t($body, array(), array('langcode' => $langcode));
 }
@@ -181,4 +180,15 @@ function migrate_ui_autoload_info() {
     'MigrateUIStep' => 'migrate_ui.wizard.inc',
     'MigrateUIWizardExtender' => 'migrate_ui.wizard.inc',
   );
+}
+
+/**
+ * Implements hook_config_info().
+ */
+function migrate_ui_config_info() {
+  $prefixes['migrate_ui.settings'] = array(
+    'label' => t('Migrate UI settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
 }

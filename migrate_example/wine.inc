@@ -1204,7 +1204,7 @@ class WineProducerNamespaceXMLPullMigration extends XMLMigration {
   }
 }
 
-// TODO: Add node_reference field pointing to producer
+// @todo: Add node_reference field pointing to producer
 class WineWineMigration extends AdvancedExampleMigration {
 
   public function __construct($arguments) {

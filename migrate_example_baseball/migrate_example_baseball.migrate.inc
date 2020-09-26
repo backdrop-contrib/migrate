@@ -2,17 +2,14 @@
 
 /**
  * @file
- *   A baseball game migration example.
+ * A baseball game migration example.
  */
 
-
-/*
+/**
+ * Implements hook_migrate_api().
+ *
  * You must implement hook_migrate_api(), setting the API level to 2, for
  * your migration classes to be recognized by the Migrate module.
- */
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
  */
 function migrate_example_baseball_migrate_api() {
   $api = array(

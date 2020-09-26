@@ -6,12 +6,14 @@
  * into a Backdrop installation.
  */
 
-// TODO:
-// Continue hook_schema_alter() for map & message tables?
-// Views hooks for map/message tables
-// xlat support?
-// Documentation
-// Tests
+/**
+ * @todo:
+ * Continue hook_schema_alter() for map & message tables?
+ * Views hooks for map/message tables
+ * xlat support?
+ * Documentation
+ * Tests
+ */
 
 define('MIGRATE_API_VERSION', 2);
 
@@ -124,9 +126,10 @@ function migrate_migrations($reset = NULL) {
  */
 function migrate_config_info() {
   $prefixes['migrate.settings'] = array(
-    'label' => t('Module name settings'),
+    'label' => t('Migrate settings'),
     'group' => t('Configuration'),
   );
+  return $prefixes;
 }
 
 /**

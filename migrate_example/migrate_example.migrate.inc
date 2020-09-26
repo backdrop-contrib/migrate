@@ -7,7 +7,9 @@
  * loaded - thus, you don't need to implement your hook in the .module file.
  */
 
-/*
+/**
+ * Implements hook_migrate_api().
+ *
  * You must implement hook_migrate_api(), setting the API level to 2, if you are
  * implementing any migration classes. If your migration application is static -
  * that is, you know at implementation time exactly what migrations must be
@@ -16,10 +18,6 @@
  * exactly what migrations need to be instantiated), then you would register
  * your migrations using registerMigration() - see migrate_example_baseball for
  * more information.
- */
-/**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
  */
 function migrate_example_migrate_api() {
   // Usually field mappings are established by code in the migration constructor -

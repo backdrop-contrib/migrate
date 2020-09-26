@@ -1,0 +1,8 @@
+{
+  "_config_name": "migrate_ui.settings",
+  "migrate_import_method": "0",
+  "migrate_drush_path": "",
+  "migrate_drush_mail": "0",
+  "migrate_drush_mail_subject": "Migration operation completed",
+  "migrate_drush_mail_body": "The migration operation is complete. Please review the results on your dashboard."
+}

@@ -698,7 +698,7 @@ abstract class Migration extends MigrationBase {
           $this->successes_since_feedback++;
         }
         catch (Exception $e) {
-          // TODO: At least count failures
+          // @todo: At least count failures
           continue;
         }
         $this->total_processed++;
@@ -711,8 +711,8 @@ abstract class Migration extends MigrationBase {
     $this->progressMessage($return);
 
     // If we're using highwater marks, reset at completion of a full rollback
-    // TODO: What about partial rollbacks? Probably little we can do to make
-    // that work cleanly...
+    // @todo: What about partial rollbacks? Probably little we can do to make
+    // that work cleanly.
     if ($this->highwaterField) {
       $this->saveHighwater('', TRUE);
     }
@@ -777,8 +777,9 @@ abstract class Migration extends MigrationBase {
       unset($this->sourceValues, $this->destinationValues);
       $this->needsUpdate = MigrateMap::STATUS_IMPORTED;
 
-      // TODO: Temporary. Remove when http://drupal.org/node/375494 is committed.
-      // TODO: Should be done in MigrateDestinationEntity
+      // @todo: Temporary. Remove when http://drupal.org/node/375494 is
+      // committed.
+      // @todo: Should be done in MigrateDestinationEntity
       if (!empty($this->destination->entityType)) {
         entity_get_controller($this->destination->entityType)->resetCache();
       }
@@ -1128,7 +1129,8 @@ abstract class Migration extends MigrationBase {
 
   /**
    * Get the number of source records which failed to import.
-   * TODO: Doesn't yet account for informationals, or multiple errors for
+   *
+   * @todo: Doesn't yet account for informationals, or multiple errors for
    * a source record.
    *
    * @return int
@@ -1368,8 +1370,8 @@ abstract class Migration extends MigrationBase {
             if (!is_array($destination_values)) {
               $destination_values = array($destination_values);
             }
-            // TODO: Stuffing arguments into the destination field is gross - can
-            // we come up with a better way to communicate them to the field
+            // @todo: Stuffing arguments into the destination field is gross -
+            // can we come up with a better way to communicate them to the field
             // handlers?
             $destination_values['arguments'] = array();
             foreach ($arguments as $argname => $destarg) {
@@ -1614,7 +1616,7 @@ abstract class Migration extends MigrationBase {
       ->rowCount() > 0) {
       // We already have the candidate value. Find a non-existing value.
       $i++;
-      // @TODO: support custom replacement pattern instead of just append.
+      // @todo: support custom replacement pattern instead of just append.
       $candidate = $original . '_' . $i;
     }
     if ($i > 1) {

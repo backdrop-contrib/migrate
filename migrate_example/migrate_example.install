@@ -5,14 +5,11 @@
  * Set up the migration example module.
  */
 
-require_once BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') .
-  '/beer.install.inc';
-require_once BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') .
-  '/wine.install.inc';
+require_once BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') . '/beer.install.inc';
+require_once BACKDROP_ROOT . '/' . backdrop_get_path('module', 'migrate_example') . '/wine.install.inc';
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_schema().
  */
 function migrate_example_schema() {
   $schema = migrate_example_beer_schema();
@@ -21,8 +18,7 @@ function migrate_example_schema() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_install().
  */
 function migrate_example_install() {
   migrate_example_beer_install();
@@ -46,8 +42,7 @@ function migrate_example_install() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_uninstall().
  */
 function migrate_example_uninstall() {
   migrate_example_beer_uninstall();
@@ -58,38 +53,16 @@ function migrate_example_uninstall() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_disable().
  */
 function migrate_example_disable() {
   migrate_example_beer_disable();
   migrate_example_wine_disable();
 }
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7001() { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7002() { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7003() { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7004() { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7005() { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7006() { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_update_7007() { }
+/**
+ * Implements hook_update_last_removed().
+ */
+function migrate_example_update_last_removed() {
+  return 7007;
+}

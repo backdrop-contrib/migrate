@@ -264,8 +264,8 @@ function _migrate_ui_migrate_operations() {
     '#title' => t('Operations'),
   );
 
-  // TODO This variable was probably removed in Backdrop without replacement.
-  switch (variable_get('migrate_import_method', 0)) {
+  $config = config('migrate_ui.settings');
+  switch ($config->get('migrate_import_method')) {
     case 1:
       $options = array(
         'import_background' => t('Import'),
@@ -512,8 +512,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     batch_set($batch);
   }
   elseif (count($drush_arguments) > 0) {
-    // TODO This variable was probably removed in Backdrop without replacement.
-    $drush_path = trim(variable_get('migrate_drush_path', ''));
+    $drush_path = trim(config_get('migrate_ui.settings', 'migrate_drush_path'));
     // Check that $drush_path works. See migrate_ui_configure_form().
     if (!is_executable($drush_path)) {
       $message = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
@@ -548,8 +547,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     if ($update) {
       $drush_command .= ' --update';
     }
-    // TODO This variable was probably removed in Backdrop without replacement.
-    if (variable_get('migrate_drush_mail', 0)) {
+    if (config_get('migrate_ui.settings', 'migrate_drush_mail')) {
       $drush_command .= ' --notify';
     }
     if (!empty($limit['value'])) {
@@ -559,8 +557,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     $log_file = backdrop_realpath('temporary://' . $drush_arguments[0] . $log_suffix);
     $drush_command .= " >$log_file 2>&1 &";
     exec($drush_command, $output, $status);
-    // TODO This variable was probably removed in Backdrop without replacement.
-    if (variable_get('migrate_drush_mail', 0)) {
+    if (config_get('migrate_ui.settings', 'migrate_drush_mail')) {
       backdrop_set_message('Your operation is running in the background. You will receive an email message when it is complete.');
     }
     else {
@@ -1845,11 +1842,10 @@ function migrate_ui_configure_form($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Settings'),
   );
-  // TODO This variable was probably removed in Backdrop without replacement.
   $build['settings']['deprecation_warnings'] = array(
     '#type' => 'checkbox',
     '#title' => t('Warn on usage of deprecated patterns'),
-    '#default_value' => variable_get('migrate_deprecation_warnings', 1),
+    '#default_value' => config_get('migrate_ui.settings', 'migrate_deprecation_warnings'),
     '#description' => t('When checked, you will receive warnings when using methods and patterns that are deprecated as of Migrate 2.6.'),
   );
   $build['settings']['submit'] = array(
@@ -1859,8 +1855,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   // Configure background imports if the drush command has been set.
-  // TODO This variable was probably removed in Backdrop without replacement.
-  $drush_path = trim(variable_get('migrate_drush_path', ''));
+  $drush_path = trim(config_get('migrate_ui.settings', 'migrate_drush_path'));
   $drush_validated = FALSE;
   if ($drush_path && is_executable($drush_path)) {
     // Try running a drush status command to verify it's properly configured.
@@ -1918,32 +1913,30 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   if ($drush_validated) {
+    $config = config('migrate_ui.settings');
+
     $options = array(
       0 => t('Immediate operation only'),
       1 => t('Background operation only'),
       2 => t('Allows both immediate and background operations'),
     );
-    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_import_method'] = array(
       '#type' => 'select',
       '#options' => $options,
-      '#default_value' => variable_get('migrate_import_method', 0),
+      '#default_value' => $config->get('migrate_import_method'),
       '#title' => t('Import method'),
       '#description' => t('Choose whether the dashboard will perform operations immediately, in the background via drush, or offer a choice.'),
     );
 
-    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_drush_mail'] = array(
       '#type' => 'checkbox',
-      '#default_value' => variable_get('migrate_drush_mail', 0),
+      '#default_value' => $config->get('migrate_drush_mail'),
       '#title' => t('Send email notification when a background operation completes.'),
     );
 
-    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_drush_mail_subject'] = array(
       '#type' => 'textfield',
-      '#default_value' => variable_get('migrate_drush_mail_subject',
-        t('Migration operation completed')),
+      '#default_value' => $config->get('migrate_drush_mail_subject'),
       '#title' => t('Subject'),
       '#states' => array(
         'visible' => array(
@@ -1952,12 +1945,10 @@ function migrate_ui_configure_form($form, &$form_state) {
       ),
     );
 
-    // TODO This variable was probably removed in Backdrop without replacement.
     $build['drush']['migrate_drush_mail_body'] = array(
       '#type' => 'textarea',
       '#rows' => 10,
-      '#default_value' => variable_get('migrate_drush_mail_body',
-        t('The migration operation is complete. Please review the results on your dashboard')),
+      '#default_value' => $config->get('migrate_drush_mail_body'),
       '#title' => t('Body'),
       '#states' => array(
         'visible' => array(
@@ -1993,13 +1984,12 @@ function migrate_ui_configure_form($form, &$form_state) {
     'types' => array('data' => t('Destination types handled')),
   );
 
-  // TODO This variable was probably removed in Backdrop without replacement.
-  $disabled = unserialize(variable_get('migrate_disabled_handlers', serialize(array())));
+  $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
 
   $class_list = _migrate_class_list('MigrateDestinationHandler');
   $rows = array();
   $default_values = array();
-  watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
+watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
   foreach ($class_list as $class_name => $handler) {
     watchdog('jasons test', '$class_name = <pre>' . print_r($class_name, TRUE) . '</pre>');
     watchdog('jasons test', '$handler = <pre>' . print_r($handler, TRUE) . '</pre>');
@@ -2012,9 +2002,9 @@ function migrate_ui_configure_form($form, &$form_state) {
     // ->fetchField();
     // $row['module'] = check_plain($module);
     $migrate_classes = migrate_autoload_info();
-    watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
+watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
     $migrate_ui_classes = migrate_ui_autoload_info();
-    watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
+watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
     $default_values[$class_name] = !in_array($class_name, $disabled);
@@ -2043,7 +2033,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   $class_list = _migrate_class_list('MigrateFieldHandler');
   $rows = array();
   $default_values = array();
-  watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
+watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
   foreach ($class_list as $class_name => $handler) {
     watchdog('jasons test', '$class_name = <pre>' . print_r($class_name, TRUE) . '</pre>');
     watchdog('jasons test', '$handler = <pre>' . print_r($handler, TRUE) . '</pre>');
@@ -2056,9 +2046,9 @@ function migrate_ui_configure_form($form, &$form_state) {
     // ->fetchField();
     // $row['module'] = check_plain($module);
     $migrate_classes = migrate_autoload_info();
-    watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
+watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
     $migrate_ui_classes = migrate_ui_autoload_info();
-    watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
+watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
     $default_values[$class_name] = !in_array($class_name, $disabled);
@@ -2109,9 +2099,9 @@ function migrate_ui_configure_deregister_submit($form, &$form_state) {
  * Submit callback for the configuration form settings fieldset.
  */
 function migrate_ui_configure_settings_submit($form, &$form_state) {
-  // TODO This variable was probably removed in Backdrop without replacement.
-  variable_set('migrate_deprecation_warnings',
-    $form_state['values']['deprecation_warnings']);
+  $config = config('migrate.settings');
+  $config->set('migrate_deprecation_warnings', $form_state['values']['deprecation_warnings']);
+  $config->save();
   backdrop_set_message(t('Migration settings saved.'));
 }
 
@@ -2119,15 +2109,13 @@ function migrate_ui_configure_settings_submit($form, &$form_state) {
  * Submit callback for the drush configuration form handler fieldset.
  */
 function migrate_ui_configure_drush_submit($form, &$form_state) {
+  $config = config('migrate_ui.settings');
   $values = $form_state['values'];
-  // TODO This variable was probably removed in Backdrop without replacement.
-  variable_set('migrate_import_method', $values['migrate_import_method']);
-  // TODO This variable was probably removed in Backdrop without replacement.
-  variable_set('migrate_drush_mail', $values['migrate_drush_mail']);
-  // TODO This variable was probably removed in Backdrop without replacement.
-  variable_set('migrate_drush_mail_subject', $values['migrate_drush_mail_subject']);
-  // TODO This variable was probably removed in Backdrop without replacement.
-  variable_set('migrate_drush_mail_body', $values['migrate_drush_mail_body']);
+  $config->set('migrate_import_method', $values['migrate_import_method']);
+  $config->set('migrate_drush_mail', $values['migrate_drush_mail']);
+  $config->set('migrate_drush_mail_subject', $values['migrate_drush_mail_subject']);
+  $config->set('migrate_drush_mail_body', $values['migrate_drush_mail_body']);
+  $config->save();
 }
 
 /**
@@ -2145,8 +2133,9 @@ function migrate_ui_configure_submit($form, &$form_state) {
       $disabled[] = $class;
     }
   }
-  // TODO This variable was probably removed in Backdrop without replacement.
-  variable_set('migrate_disabled_handlers', serialize($disabled));
+  $config = config('migrate.settings');
+  $config->set('migrate_disabled_handlers', serialize($disabled));
+  $config->save();
   if (!empty($disabled)) {
     backdrop_set_message(t('The following handler classes are disabled: @classes',
       array('@classes' => implode(', ', $disabled))));

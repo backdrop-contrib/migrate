@@ -730,7 +730,8 @@ abstract class MigrationBase {
 
   /**
    * Custom PHP error handler.
-   * TODO: Redundant with hook_watchdog?
+   *
+   * @todo: Redundant with hook_watchdog?
    *
    * @param $error_level
    *   The level of the error raised.

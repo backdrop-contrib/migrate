@@ -6,8 +6,7 @@
  */
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_enable().
  */
 function migrate_example_baseball_enable() {
   $path = dirname(__FILE__) . '/data';
@@ -42,8 +41,7 @@ function migrate_example_baseball_get_files($path) {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_uninstall().
  */
 function migrate_example_baseball_uninstall() {
   $bundle = 'migrate_example_baseball';
@@ -72,13 +70,15 @@ function migrate_example_baseball_uninstall() {
 }
 
 /**
- * @todo Please document this function.
- * @see http://drupal.org/node/1354
+ * Implements hook_disable().
  */
 function migrate_example_baseball_disable() {
   MigrateGroup::deregister('baseball');
 }
 
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function migrate_example_baseball_update_7201() { }
+/**
+ * Implements hook_update_last_removed().
+ */
+function migrate_example_baseball_update_last_removed() {
+  return 7201;
+}

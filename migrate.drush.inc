@@ -426,7 +426,7 @@ function drush_migrate_status($name = NULL) {
 }
 
 /**
- * TODO: Use drush_choice for detailed field info.
+ * @todo: Use drush_choice for detailed field info.
  *
  * @param array|null $args
  *   Any additional arguments that were specified.
