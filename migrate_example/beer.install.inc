@@ -668,6 +668,7 @@ function migrate_example_beer_data_node() {
     ->fields($fields);
   // Use high bid numbers to avoid overwriting an existing node id.
   $data = array(
+    // Comes with migrate_example project.
     array(
       99999999,
       'Heineken',
@@ -679,7 +680,7 @@ function migrate_example_beer_data_node() {
       'Heinekin alt',
       'Heinekin title',
       'Heinekin description',
-    ), // comes with migrate_example project.
+    ),
     array(
       99999998,
       'Miller Lite',

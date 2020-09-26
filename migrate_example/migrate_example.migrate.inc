@@ -20,12 +20,12 @@
  * more information.
  */
 function migrate_example_migrate_api() {
-  // Usually field mappings are established by code in the migration constructor -
-  // a call to addFieldMapping(). They may also be passed as arguments when
-  // registering a migration - in this case, they are stored in the database
-  // and override any mappings for the same field in the code. To do this,
-  // construct the field mapping object and configure it similarly to when
-  // you call addFieldMapping, and pass your mappings as an array below.
+  // Usually field mappings are established by code in the migration
+  // constructor - a call to addFieldMapping(). They may also be passed as
+  // arguments when registering a migration - in this case, they are stored in
+  // the database and override any mappings for the same field in the code. To
+  // do this, construct the field mapping object and configure it similarly to
+  // when you call addFieldMapping, and pass your mappings as an array below.
   $translate_mapping = new MigrateFieldMapping('translate', NULL);
   $translate_mapping->defaultValue(0);
   $ignore_mapping = new MigrateFieldMapping('migrate_example_beer_styles:ignore_case', NULL);
@@ -37,7 +37,7 @@ function migrate_example_migrate_api() {
     'api' => 2,
     // Migrations can be organized into groups. The key used here will be the
     // machine name of the group, which can be used in Drush:
-    //  drush migrate-import --group=wine
+    // drush migrate-import --group=wine
     // The title is a required argument which is displayed for the group in the
     // UI. You may also have additional arguments for any other data which is
     // common to all migrations in the group.
@@ -51,8 +51,8 @@ function migrate_example_migrate_api() {
     ),
     // Here we register the individual migrations. The keys (BeerTerm, BeerUser,
     // etc.) are the machine names of the migrations, and the class_name
-    // argument is required. The group_name is optional (defaulting to 'default')
-    // but specifying it is a best practice.
+    // argument is required. The group_name is optional (defaulting to
+    // 'default') but specifying it is a best practice.
     'migrations' => array(
       'BeerTerm' => array(
         'class_name' => 'BeerTermMigration',
@@ -66,9 +66,9 @@ function migrate_example_migrate_api() {
         'class_name' => 'BeerNodeMigration',
         'group_name' => 'beer',
         // You may optionally declare dependencies for your migration - other
-        // migrations which should run first. In this case, terms assigned to our
-        // nodes and the authors of the nodes should be migrated before the nodes
-        // themselves.
+        // migrations which should run first. In this case, terms assigned to
+        // our nodes and the authors of the nodes should be migrated before the
+        // nodes themselves.
         'dependencies' => array(
           'BeerTerm',
           'BeerUser',

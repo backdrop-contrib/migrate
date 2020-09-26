@@ -28,17 +28,17 @@ class MigrateExampleOracleNode extends Migration {
     parent::__construct();
     $this->description = t('Example migration from Oracle into nodes.');
 
-    // Note that Oracle by default upper-cases all identifiers, so use upper-case
-    // for the key name and for source fields below.
+    // Note that Oracle by default upper-cases all identifiers, so use upper-
+    // case for the key name and for source fields below.
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-      'OID' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'Content ID',
+        'OID' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => 'Content ID',
+        ),
       ),
-    ),
       MigrateDestinationNode::getKeySchema()
     );
 
@@ -66,7 +66,7 @@ class MigrateExampleOracleNode extends Migration {
       $count_query, $fields);
     $this->destination = new MigrateDestinationNode('migrate_example_oracle');
 
-    // Basic fields
+    // Basic fields.
     $this->addFieldMapping('title', 'TITLE');
     $this->addFieldMapping('uid')
       ->defaultValue(1);
@@ -81,8 +81,7 @@ class MigrateExampleOracleNode extends Migration {
     $this->addFieldMapping('created', 'CREATED');
     $this->addFieldMapping('changed', 'UPDATED');
 
-
-    // Unmapped destination fields
+    // Unmapped destination fields.
     $this->addUnmigratedDestinations(array(
       'is_new',
       'status',

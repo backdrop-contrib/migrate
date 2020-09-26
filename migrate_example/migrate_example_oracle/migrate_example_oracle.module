@@ -1,6 +1,6 @@
 <?php
 
-include_once('migrate_example_oracle.features.inc');
+include_once 'migrate_example_oracle.features.inc';
 
 /**
  * Generates a text string of reproducible contents for a given length.

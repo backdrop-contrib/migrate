@@ -407,6 +407,7 @@ function migrate_static_registration($machine_names = array()) {
  * Do a topological sort on our dependencies graph.
  *
  * @param array $dependencies
+ *   A list of dependent migrations.
  */
 function migrate_order_dependencies($dependencies) {
   $visited = array();
@@ -427,9 +428,13 @@ function migrate_order_dependencies($dependencies) {
  * Depth-first search for independent migrations.
  *
  * @param array $dependencies
+ *   A list of dependent migrations.
  * @param string $name
+ *   The migration currently being processed.
  * @param array $list
+ *   The list of independent migrations.
  * @param array $visited
+ *   The list of migrations that have been checked.
  */
 function migrate_visit_dependent($dependencies, $name, &$list, &$visited) {
   if ($visited[$name]) {

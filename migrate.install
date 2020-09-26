@@ -227,11 +227,11 @@ function migrate_uninstall() {
   // Note: If a derived Migration class defined its own map or message
   // table name not fitting this pattern, that class is solely responsible for
   // cleaning up.
-  foreach (db_find_tables(Database::getConnection()->prefixTables('{migrate_map_}' ) . '%') as $tablename) {
+  foreach (db_find_tables(Database::getConnection()->prefixTables('{migrate_map_}') . '%') as $tablename) {
     watchdog('migrate', 'Dropping table !tablename.', array('!tablename' => $tablename));
     db_drop_table($tablename);
   }
-  foreach (db_find_tables(Database::getConnection()->prefixTables('{migrate_message_}' ) . '%') as $tablename) {
+  foreach (db_find_tables(Database::getConnection()->prefixTables('{migrate_message_}') . '%') as $tablename) {
     watchdog('migrate', 'Dropping table !tablename.', array('!tablename' => $tablename));
     db_drop_table($tablename);
   }
@@ -260,6 +260,7 @@ function migrate_update_last_removed() {
  * Implements hook_install().
  */
 function migrate_install() {
+  // @todo Determine if anyhthing needs to be done.
   // Dynamically generated variable data was detected.
   // /migrate/migrate.module line 207
   // /migrate/uri_map_redirect.php line 27

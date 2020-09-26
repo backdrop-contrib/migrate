@@ -11,7 +11,8 @@
 function migrate_example_oracle_install() {
   global $conf;
 
-  // Should never fail - we can't get here unless hook_requirements passed, right?
+  // Should never fail - we can't get here unless hook_requirements passed,
+  // right?
   $connection = @oci_connect($conf['oracle_db']['username'], $conf['oracle_db']['password'],
     $conf['oracle_db']['connection_string'], 'UTF8');
   if (!$connection) {
@@ -19,7 +20,7 @@ function migrate_example_oracle_install() {
     throw new Exception($e['message']);
   }
 
-  // Create a table to hold test data
+  // Create a table to hold test data.
   $query = "CREATE TABLE ORACLE_CONTENT
             (OID     NUMBER NOT NULL,
              TITLE   VARCHAR2(255) NOT NULL,
@@ -40,7 +41,7 @@ function migrate_example_oracle_install() {
     throw new Exception($e['message'] . "\n" . $e['sqltext']);
   }
 
-  // Insert a test row or three
+  // Insert a test row or three.
   $query = "INSERT INTO ORACLE_CONTENT
             (OID, TITLE, BODY, MAINIMAGE, CREATED, UPDATED)
             VALUES(:oid, :title, EMPTY_CLOB(), EMPTY_BLOB(),
@@ -112,12 +113,13 @@ function migrate_example_oracle_requirements($phase) {
   $t = get_t();
   switch ($phase) {
     case 'install':
-      // Check that the OCI8 extension is loaded
+      // Check that the OCI8 extension is loaded.
       $requirements['oci8'] = array('title' => $t('Oracle extension'));
       if (!extension_loaded('oci8')) {
+        $t = get_t();
         $requirements['oci8']['description'] = $t('Migrating from an Oracle
           database requires that you have the !link extension loaded in PHP.',
-          array('!link' => l('oci8', 'http://us.php.net/manual/en/book.oci8.php')));
+          array('!link' => l($t('oci8'), 'http://us.php.net/manual/en/book.oci8.php')));
         $requirements['oci8']['severity'] = REQUIREMENT_ERROR;
         break;
       }
@@ -130,7 +132,7 @@ $conf[\'oracle_db\'] = array(
   \'connection_string\' => \'//Oracle_host/SID\',
 );
 </pre>';
-      // Check that there is an Oracle database configured for use
+      // Check that there is an Oracle database configured for use.
       $requirements['oracle_db'] = array('title' => $t('Oracle configuration'));
       global $conf;
       if (empty($conf['oracle_db']) || empty($conf['oracle_db']['username']) ||
@@ -151,14 +153,15 @@ $conf[\'oracle_db\'] = array(
         $requirements['oracle_connect']['description'] = $t('Could not connect to configured
           Oracle database at !conn_string. Oracle error message: !message',
           array(
-          '!conn_string' => $conf['oracle_db']['connection_string'],
-          '!message' => $e['message'],
-        ));
+            '!conn_string' => $conf['oracle_db']['connection_string'],
+            '!message' => $e['message'],
+          )
+        );
         $requirements['oracle_connect']['severity'] = REQUIREMENT_ERROR;
         break;
       }
 
-      // Check for necessary privileges
+      // Check for necessary privileges.
       $requirements['oracle_privs'] = array('title' => $t('Necessary Oracle privileges are assigned'));
       $statement = oci_parse($connection, 'SELECT * FROM SESSION_PRIVS');
       if (!$statement) {
@@ -191,8 +194,10 @@ $conf[\'oracle_db\'] = array(
         break;
       }
       break;
+
     case 'update':
       break;
+
     case 'runtime':
       break;
   }

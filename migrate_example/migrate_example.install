@@ -23,7 +23,7 @@ function migrate_example_schema() {
 function migrate_example_install() {
   migrate_example_beer_install();
   migrate_example_wine_install();
-  // A simple format for testing migration of format
+  // A simple format for testing migration of format.
   $example_format = array(
     'format' => 'migrate_example',
     'name' => 'Migrate example format',
