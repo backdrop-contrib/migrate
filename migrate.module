@@ -153,7 +153,13 @@ function migrate_handler_invoke_all($destination, $method) {
   array_shift($args);
   $return = array();
   $class_list = _migrate_class_list('MigrateDestinationHandler');
-  $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
+
+  $disabled = array();
+  $unserialized = config_get('migrate.settings', 'migrate_disabled_handlers');
+  if (!empty($unserialized) && is_string($unserialized)) {
+    $disabled = unserialize($unserialized);
+  }
+
   foreach ($class_list as $class_name => $handler) {
     if (!in_array($class_name, $disabled)
       && $handler->handlesType($destination)
@@ -201,7 +207,11 @@ function migrate_field_handler_invoke_all($entity, array $field_info, array $ins
   // No need to do this unserialize/variable_get/serialize so often,
   // it never changes.
   if (!is_array($disabled)) {
-    $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
+    $disabled = array();
+    $unserialized = config_get('migrate.settings', 'migrate_disabled_handlers');
+    if (!empty($unserialized) && is_string($unserialized)) {
+      $disabled = unserialize($unserialized);
+    }
   }
   // This function is called a lot. Rather than determine if the field type is
   // handled once for every record, the value should be determined once per

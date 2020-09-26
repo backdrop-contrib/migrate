@@ -30,7 +30,13 @@ class MigrateFieldsEntityHandler extends MigrateDestinationHandler {
 
       // Look for subfields.
       $class_list = _migrate_class_list('MigrateFieldHandler');
-      $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
+
+      $disabled = array();
+      $unserialized = config_get('migrate.settings', 'migrate_disabled_handlers');
+      if (!empty($unserialized) && is_string($unserialized)) {
+        $disabled = unserialize($unserialized);
+      }
+
       $fields_found = FALSE;
       foreach ($class_list as $class_name => $handler) {
         if (!in_array($class_name, $disabled) && $handler->handlesType($type)

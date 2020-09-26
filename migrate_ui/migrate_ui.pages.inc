@@ -1984,7 +1984,11 @@ function migrate_ui_configure_form($form, &$form_state) {
     'types' => array('data' => t('Destination types handled')),
   );
 
-  $disabled = unserialize(config_get('migrate.settings', 'migrate_disabled_handlers'));
+  $disabled = array();
+  $unserialized = config_get('migrate.settings', 'migrate_disabled_handlers');
+  if (!empty($unserialized) && is_string($unserialized)) {
+    $disabled = unserialize($unserialized);
+  }
 
   $class_list = _migrate_class_list('MigrateDestinationHandler');
   $rows = array();
