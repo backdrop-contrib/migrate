@@ -49,7 +49,8 @@ function migrate_example_beer_install() {
  * Implements hook_uninstall().
  */
 function migrate_example_beer_uninstall() {
-  if ($vids = taxonomy_vocabulary_load_multiple(array(), array('machine_name' => 'migrate_example_beer_styles'))) {
+  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_beer_styles'));
+  if (!empty($vids['migrate_example_beer_styles'])) {
     // Grab key of the first returned vocabulary.
     taxonomy_vocabulary_delete(key($vids));
   }
@@ -405,12 +406,12 @@ function migrate_example_beer_content_type() {
 function migrate_example_beer_tags() {
   $description = st('Use tags to group beers on similar topics into categories.');
   $help = st('Enter a comma-separated list of words to describe your content.');
-  $vocabulary = (object) array(
+  $vocabulary = new TaxonomyVocabulary(array(
     'name' => 'Migrate Example Beer Styles',
     'description' => $description,
     'machine_name' => 'migrate_example_beer_styles',
     'help' => $help,
-  );
+  ));
   taxonomy_vocabulary_save($vocabulary);
 
   if (!field_info_field('migrate_example_beer_styles')) {
@@ -631,8 +632,12 @@ function migrate_example_beer_content_type_delete() {
   );
   foreach ($field_names as $field_name) {
     $instance = field_info_instance('node', $field_name, $bundle);
-    field_delete_instance($instance);
-    field_delete_field($field_name);
+    if (!empty($instance)) {
+      field_delete_instance($instance);
+    }
+    if (!empty(field_info_field($field_name))) {
+      field_delete_field($field_name);
+    }
   }
   node_type_delete($bundle);
 
@@ -643,8 +648,12 @@ function migrate_example_beer_content_type_delete() {
   }
   foreach ($field_names as $field_name) {
     $instance = field_info_instance('user', $field_name, $bundle);
-    field_delete_instance($instance);
-    field_delete_field($field_name);
+    if (!empty($instance)) {
+      field_delete_instance($instance);
+    }
+    if (!empty(field_info_field($field_name))) {
+      field_delete_field($field_name);
+    }
   }
 }
 
