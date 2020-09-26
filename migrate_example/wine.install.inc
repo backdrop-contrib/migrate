@@ -60,15 +60,18 @@ function migrate_example_wine_install() {
  */
 function migrate_example_wine_uninstall() {
   migrate_example_wine_content_type_delete();
-  if ($vids = taxonomy_vocabulary_load_multiple(array(), array('machine_name' => 'migrate_example_wine_varieties'))) {
+  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_wine_varieties'));
+  if (!empty($vids['migrate_example_wine_varieties'])) {
     // Grab key of the first returned vocabulary.
     taxonomy_vocabulary_delete(key($vids));
   }
-  if ($vids = taxonomy_vocabulary_load_multiple(array(), array('machine_name' => 'migrate_example_wine_regions'))) {
+  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_wine_regions'));
+  if (!empty($vids['migrate_example_wine_regions'])) {
     // Grab key of the first returned vocabulary.
     taxonomy_vocabulary_delete(key($vids));
   }
-  if ($vids = taxonomy_vocabulary_load_multiple(array(), array('machine_name' => 'migrate_example_wine_best_with'))) {
+  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_wine_best_with'));
+  if (!empty($vids['migrate_example_wine_best_with'])) {
     // Grab key of the first returned vocabulary.
     taxonomy_vocabulary_delete(key($vids));
   }
@@ -786,12 +789,12 @@ function migrate_example_wine_content_types() {
 function migrate_example_wine_categories() {
   $description = st('Wine varieties');
   $help = st('Select the variety of this wine');
-  $vocabulary = (object) array(
+  $vocabulary = new TaxonomyVocabulary(array(
     'name' => 'Migrate Example Wine Varieties',
     'description' => $description,
     'machine_name' => 'migrate_example_wine_varieties',
     'help' => $help,
-  );
+  ));
   taxonomy_vocabulary_save($vocabulary);
   if (!field_info_field('migrate_example_wine_varieties')) {
     $field = array(
@@ -826,12 +829,12 @@ function migrate_example_wine_categories() {
 
   $description = st('Wine regions');
   $help = st('Select the region this wine comes from');
-  $vocabulary = (object) array(
+  $vocabulary = new TaxonomyVocabulary(array(
     'name' => 'Migrate Example Wine Regions',
     'description' => $description,
     'machine_name' => 'migrate_example_wine_regions',
     'help' => $help,
-  );
+  ));
   taxonomy_vocabulary_save($vocabulary);
   if (!field_info_field('migrate_example_wine_regions')) {
     $field = array(
@@ -879,12 +882,12 @@ function migrate_example_wine_categories() {
 
   $description = st('Foods the wine goes best with');
   $help = st('Enter any foods this wine may be paired with, separated by commas');
-  $vocabulary = (object) array(
+  $vocabulary = new TaxonomyVocabulary(array(
     'name' => 'Migrate Example Wine Best With',
     'description' => $description,
     'machine_name' => 'migrate_example_wine_best_with',
     'help' => $help,
-  );
+  ));
   taxonomy_vocabulary_save($vocabulary);
   if (!field_info_field('migrate_example_wine_best_with')) {
     $field = array(
@@ -1069,16 +1072,25 @@ function migrate_example_wine_content_type_delete() {
   );
   foreach ($field_names as $field_name) {
     $instance = field_info_instance('node', $field_name, $bundle);
-    field_delete_instance($instance);
-    field_delete_field($field_name);
+    if (!empty($instance)) {
+      field_delete_instance($instance);
+    }
+    if (!empty(field_info_field($field_name))) {
+      field_delete_field($field_name);
+    }
   }
   node_type_delete($bundle);
+
   $bundle = 'migrate_example_producer';
   $field_names = array('migrate_example_wine_regions');
   foreach ($field_names as $field_name) {
     $instance = field_info_instance('node', $field_name, $bundle);
-    field_delete_instance($instance);
-    field_delete_field($field_name);
+    if (!empty($instance)) {
+      field_delete_instance($instance);
+    }
+    if (!empty(field_info_field($field_name))) {
+      field_delete_field($field_name);
+    }
   }
   node_type_delete($bundle);
 }
