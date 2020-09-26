@@ -152,7 +152,7 @@ class MigrateSourceSQL extends MigrateSource {
       $this->mapJoinable = $options['map_joinable'];
     }
     else {
-      // TODO: We want to automatically determine if the map table can be joined
+      // @todo We want to automatically determine if the map table can be joined
       // directly to the query, but this won't work unless/until
       // http://drupal.org/node/802514 is committed, assume joinable for now
       $this->mapJoinable = TRUE;
@@ -226,7 +226,7 @@ class MigrateSourceSQL extends MigrateSource {
 
     /*
      * Handle queries without explicit field lists
-     * TODO: Waiting on http://drupal.org/node/814312
+     * @todo Waiting on http://drupal.org/node/814312
      $info = Database::getConnectionInfo($query->getConnection());
      $database = $info['default']['database'];
      foreach ($this->query->getTables() as $table) {

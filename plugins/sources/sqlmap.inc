@@ -162,7 +162,7 @@ class MigrateSQLMap extends MigrateMap {
         $fields = $source_key_schema;
 
         // Add destination keys to map table.
-        // TODO: How do we discover the destination schema?
+        // @todo How do we discover the destination schema?
         $count = 1;
         foreach ($this->destinationKey as $field_schema) {
           // Allow dest key fields to be NULL (for IGNORED/FAILED cases).
@@ -483,7 +483,7 @@ class MigrateSQLMap extends MigrateMap {
         ->execute();
     }
     else {
-      // TODO: What else can we do?
+      // @todo: What else can we do?
       // Display Message with correct level instead of default level 'error'.
       MigrationBase::saveMessage($message, $level);
     }
@@ -697,7 +697,8 @@ class MigrateSQLMap extends MigrateMap {
 
   /**
    * Implementation of Iterator::rewind() - called before beginning a foreach
-   * loop. TODO: Support idlist, itemlimit.
+   * loop.
+   * @todo Support idlist, itemlimit.
    */
   public function rewind() {
     $this->currentRow = NULL;
@@ -756,7 +757,7 @@ class MigrateSQLMap extends MigrateMap {
    * returning TRUE to process the loop and FALSE to terminate it.
    */
   public function valid() {
-    // TODO: Check numProcessed against itemlimit
+    // @todo Check numProcessed against itemlimit
     return !is_null($this->currentRow);
   }
 }

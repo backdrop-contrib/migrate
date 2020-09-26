@@ -69,7 +69,7 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
   }
 
   public function __toString() {
-    // TODO: Link to configuration page
+    // @todo Link to configuration page
     if ($this->entityType == $this->bundle) {
       $output = t('%type', array('%type' => $this->entityType));
     }
@@ -77,7 +77,7 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
       $output = t('%type (%bundle)',
         array('%type' => $this->entityType, '%bundle' => $this->bundle));
     }
-    // TODO: Non-default language, input format
+    // @todo Non-default language, input format
     return $output;
   }
 
@@ -128,7 +128,7 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
    */
   public function prepare($entity, stdClass $source_row) {
     // Add source keys for debugging and identification of migrated data by hooks.
-    /* TODO: Restore
+    /* @todo Restore
      foreach ($migration->sourceKeyMap() as $field_name => $key_name) {
      $keys[$key_name] = $source_row->{$field_name};
      }

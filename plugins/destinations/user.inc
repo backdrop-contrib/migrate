@@ -5,9 +5,11 @@
  * Support for user destinations.
  */
 
-// TODO:
-// Make sure this works with updates, explicit destination keys
-// Speed up password generation a ton: $conf['password_count_log2'] = 1;
+/**
+ * @todo
+ * Make sure this works with updates, explicit destination keys
+ * Speed up password generation a ton: $conf['password_count_log2'] = 1;
+ */
 
 /**
  * Destination class implementing migration into users.

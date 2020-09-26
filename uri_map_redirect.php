@@ -33,7 +33,7 @@ die('Comment out this line when you are ready to use this script');
 function migrate_build_url($destid1, $migration_name) {
   global $base_url;
 
-  // TODO: Add an entry for each migration that we need to redirect.
+  // @todo Add an entry for each migration that we need to redirect.
   $patterns = config_get('migrate.settings', 'migrate_patterns');
   $pattern = $patterns[$migration_name];
 
@@ -83,7 +83,8 @@ if ($uri_map = db_query("SELECT migration_name, source_id FROM $uri_table WHERE 
   }
 }
 else {
-  // Can't find the source URI. TODO: Make nice 404 page.
+  // Can't find the source URI.
+  // @todo Make nice 404 page.
   header('Status=Not Found', TRUE, 404);
   print 'Sorry folks. Park is closed.';
 }

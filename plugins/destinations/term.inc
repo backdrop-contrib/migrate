@@ -5,9 +5,12 @@
  * Support for taxonomy term destinations.
  */
 
-// TODO:
-// Make sure this works with updates, explicit destination keys
-// taxonomy_term_save() is doing a cache_clear_all and an automatic insertion for parent.
+/**
+ * @todo
+ * Make sure this works with updates, explicit destination keys
+ * taxonomy_term_save() is doing a cache_clear_all and an automatic insertion
+ * for parent.
+ */
 
 /**
  * Destination class implementing migration into terms.
@@ -81,7 +84,7 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
       array('@doc' => 'http://drupal.org/node/1349702#description'));
     $fields['parent'] = t('<a href="@doc">Parent (by Backdrop term ID)</a>',
       array('@doc' => 'http://drupal.org/node/1349702#parent'));
-    // TODO: Remove parent_name, implement via arguments
+    // @todo Remove parent_name, implement via arguments
     $fields['parent_name'] = t('<a href="@doc">Parent (by name)</a>',
       array('@doc' => 'http://drupal.org/node/1349702#parent_name'));
     $fields['format'] = t('<a href="@doc">Format</a>',

@@ -898,7 +898,7 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
       '#empty' => t('No fields'),
     );
 
-    // TODO: Get source_fields from arguments.
+    // @todo Get source_fields from arguments.
     $form['source'] = array(
       '#type' => 'fieldset',
       '#title' => t('Source'),
@@ -1707,7 +1707,7 @@ function migrate_ui_messages($group_name, $migration_name) {
     'field' => 'message',
   );
 
-  // TODO: need a general MigrateMap API.
+  // @todo need a general MigrateMap API.
   $messages = $migration->getMap()->getConnection()
     ->select($migration->getMap()->getMessageTable(), 'msg')
     ->extend('PagerDefault')

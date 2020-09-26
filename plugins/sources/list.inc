@@ -2,12 +2,16 @@
 
 /**
  * @file
- * Support for migration from sources with distinct means of listing items to
- * import and obtaining the items themselves.
  *
- * TODO: multiple-field source keys
+ * Support for migration from sources with distinct means of listing items.
+ *
+ * For both importing and obtaining the items themselves.
  */
 
+/**
+ * @todo
+ * multiple-field source keys
+ */
 
 /**
  * Extend the MigrateList class to provide a means to obtain a list of IDs to

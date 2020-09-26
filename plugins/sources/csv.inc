@@ -377,7 +377,7 @@ class MigrateSourceCSV extends MigrateSource {
       $this->csvHandle = NULL;
     }
     else {
-      // TODO. If this takes too much time/memory, use exec('wc -l')
+      // @todo If this takes too much time/memory, use exec('wc -l')
       $count = count(file($this->file));
       $count -= $this->headerRows;
     }

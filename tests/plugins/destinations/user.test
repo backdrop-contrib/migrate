@@ -132,7 +132,7 @@ class MigrateUserUnitTest extends BackdropWebTestCase {
     $this->assertNotNull($users['fonzie']->roles[$roles['Taster']], t('Taster role'));
     $this->assertNotNull($users['fonzie']->roles[$roles['Vintner']], t('Vintner role'));
 
-    // TODO: Theme, timezone, language
+    // @todo Theme, timezone, language
 
     // Test updates
     // Capture original users

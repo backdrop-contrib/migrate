@@ -5,8 +5,10 @@
  * Support for comment destinations.
  */
 
-// TODO:
-// Make sure this works with updates, explicit destination keys
+/**
+ * @todo
+ * Make sure this works with updates, explicit destination keys
+ */
 
 /**
  * Destination class implementing migration into comments.

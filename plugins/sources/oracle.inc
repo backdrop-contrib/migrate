@@ -170,7 +170,7 @@ class MigrateSourceOracle extends MigrateSource {
      * instead.
      */
     if (!empty($this->idList)) {
-      // TODO: Sanitize. not critical as this is admin supplied data in drush.
+      // @todo Sanitize. not critical as this is admin supplied data in drush.
       $this->query = str_replace(':criteria',
         $keys[0] . ' IN (' . implode(',', $this->idList) . ')', $this->query);
     }
