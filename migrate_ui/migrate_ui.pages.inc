@@ -1970,69 +1970,15 @@ function migrate_ui_configure_form($form, &$form_state) {
     '#collapsed' => TRUE,
   );
 
-  $build['handlers']['destination'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Destination handlers'),
-    '#collapsible' => TRUE,
-  );
-
-  $header = array(
-    'class' => array('data' => t('Class')),
-    'types' => array('data' => t('Destination types handled')),
-  );
-
   $disabled = array();
   $unserialized = $config->get('migrate_disabled_handlers');
   if (!empty($unserialized)) {
     $disabled = unserialize($unserialized);
   }
 
-  $class_list = _migrate_class_list('MigrateDestinationHandler');
-  $rows = array();
-  $default_values = array();
-  foreach ($class_list as $class_name => $handler) {
-    $row = array();
-    $row['class'] = check_plain($class_name);
-    $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
-    $default_values[$class_name] = !in_array($class_name, $disabled);
-    $rows[$class_name] = $row;
-  }
-  $build['handlers']['destination']['destination_handlers'] = array(
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#options' => $rows,
-    '#default_value' => $default_values,
-    '#empty' => t('No destination handlers found'),
-  );
+  $build['handlers']['destination'] = _migrate_ui_fill_migrate_handler_table('Destination', $disabled);
 
-  $build['handlers']['field'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Field handlers'),
-    '#collapsible' => TRUE,
-  );
-
-  $header = array(
-    'class' => array('data' => t('Class')),
-    'types' => array('data' => t('Field types handled')),
-  );
-
-  $class_list = _migrate_class_list('MigrateFieldHandler');
-  $rows = array();
-  $default_values = array();
-  foreach ($class_list as $class_name => $handler) {
-    $row = array();
-    $row['class'] = check_plain($class_name);
-    $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
-    $default_values[$class_name] = !in_array($class_name, $disabled);
-    $rows[$class_name] = $row;
-  }
-  $build['handlers']['field']['field_handlers'] = array(
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#options' => $rows,
-    '#default_value' => $default_values,
-    '#empty' => t('No field handlers found'),
-  );
+  $build['handlers']['field'] = _migrate_ui_fill_migrate_handler_table('Field', $disabled);
 
   $build['handlers']['submit'] = array(
     '#type' => 'submit',
@@ -2041,6 +1987,55 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   return $build;
+}
+
+/**
+ * Creates a render array of table data for one of two types of handlers.
+ *
+ * This is for displaying on the Configure migration settings page (usually
+ * found at /admin/content/migrate/configure) in the Handlers fieldset.
+ *
+ * @param string $type
+ *   The type of migration handler to create the table data for. Currenly, only
+ *   'Destination' and 'Field' are supported.
+ * @param array $disabled
+ *   A list of any handlers that are currently disabled.
+ *
+ * @return array
+ *   A render array for creating a table to display the data in.
+ */
+function _migrate_ui_fill_migrate_handler_table($type, $disabled) {
+  $table_data = array(
+    '#type' => 'fieldset',
+    '#title' => t($type . ' handlers'),
+    '#collapsible' => TRUE,
+  );
+
+  $header = array(
+    'class' => array('data' => t('Class')),
+    'types' => array('data' => t($type . ' types handled')),
+  );
+
+  $class_list = _migrate_class_list('Migrate' . $type . 'Handler');
+  $rows = array();
+  $default_values = array();
+  foreach ($class_list as $class_name => $handler) {
+    $row = array();
+    $row['class'] = check_plain($class_name);
+    $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
+    $default_values[$class_name] = !in_array($class_name, $disabled);
+    $rows[$class_name] = $row;
+  }
+
+  $table_data[strtolower($type) . '_handlers'] = array(
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $rows,
+    '#default_value' => $default_values,
+    '#empty' => t('No ' . strtolower($type) . ' handlers found'),
+  );
+
+  return $table_data;
 }
 
 /**
