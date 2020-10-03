@@ -32,12 +32,12 @@ CONTENTS OF THIS FILE
 TESTED
 ------
 
-While basic functionality might be working, higher thought like "what/where is
-the registry table in Backdrop", "converting from non-MySQL databases to a MySQL
-database", "using Migrate with Drush in Backdrop", "do (generally enterprise)
-Oracle websystems want to migrate to Backdrop currently?", "what to do when
-migrating Poll module data and data from other modules removed from Backdrop?"
-and other big topics have not been addressed yet.
+While basic functionality might be working, higher thought like "converting from
+non-MySQL databases to a MySQL database", "using Migrate with Drush in
+Backdrop", "do (generally enterprise) Oracle websystems want to migrate to
+Backdrop currently?", "what to do when migrating Poll module data and data from
+other modules removed from Backdrop?" and other big topics have not been
+addressed yet.
 
 
 KNOWN ISSUES
