@@ -1,8 +1,8 @@
 {
   "_config_name": "migrate.settings",
   "migrate_deprecation_warnings": "1",
-  "migrate_disabled_handlers": "dynamic value in file /migrate/migrate.module line 207",
+  "migrate_disabled_handlers": "",
   "migrate_source_json_active_url": "NULL",
-  "migrate_patterns": "dynamic value in file /migrate/uri_map_redirect.php line 27",
+  "migrate_patterns": "",
   "migrate_source_uri_table": "migrate_source_uri_map"
 }

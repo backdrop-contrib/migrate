@@ -264,8 +264,7 @@ function _migrate_ui_migrate_operations() {
     '#title' => t('Operations'),
   );
 
-  $config = config('migrate_ui.settings');
-  switch ($config->get('migrate_import_method')) {
+  switch (config_get('migrate_ui.settings', 'migrate_import_method')) {
     case 1:
       $options = array(
         'import_background' => t('Import'),
@@ -421,9 +420,10 @@ function _migrate_ui_selected_migrations($values) {
  * Submit callback for the dashboard form.
  */
 function migrate_ui_migrate_submit($form, &$form_state) {
+  $config = config('migrate_ui.settings');
+
   $values = $form_state['values'];
   $operation = $values['operation'];
-
   $limit = $values['limit'];
 
   if (isset($values['update'])) {
@@ -512,15 +512,14 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     batch_set($batch);
   }
   elseif (count($drush_arguments) > 0) {
-    $drush_path = trim(config_get('migrate_ui.settings', 'migrate_drush_path'));
+    $drush_path = trim($config->get('migrate_drush_path'));
     // Check that $drush_path works. See migrate_ui_configure_form().
     if (!is_executable($drush_path)) {
-      $message = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
+      $message = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
         array(
           '@drush' => 'http://drupal.org/project/drush',
           '@recommended' => 'http://drupal.org/node/1806824',
           '@config' => 'http://drupal.org/node/1958170',
-          '@dorg' => 'http://drupal.org/',
         )
       );
       backdrop_set_message($message);
@@ -547,7 +546,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     if ($update) {
       $drush_command .= ' --update';
     }
-    if (config_get('migrate_ui.settings', 'migrate_drush_mail')) {
+    if ($config->get('migrate_drush_mail')) {
       $drush_command .= ' --notify';
     }
     if (!empty($limit['value'])) {
@@ -557,7 +556,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     $log_file = backdrop_realpath('temporary://' . $drush_arguments[0] . $log_suffix);
     $drush_command .= " >$log_file 2>&1 &";
     exec($drush_command, $output, $status);
-    if (config_get('migrate_ui.settings', 'migrate_drush_mail')) {
+    if ($config->get('migrate_drush_mail')) {
       backdrop_set_message('Your operation is running in the background. You will receive an email message when it is complete.');
     }
     else {
@@ -1788,6 +1787,8 @@ function migrate_ui_configure() {
  * Form for reviewing migrations.
  */
 function migrate_ui_configure_form($form, &$form_state) {
+  $config = config('migrate_ui.settings');
+
   $build = array();
 
   $description = t('To register (or reregister with updated arguments) any
@@ -1845,7 +1846,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   $build['settings']['deprecation_warnings'] = array(
     '#type' => 'checkbox',
     '#title' => t('Warn on usage of deprecated patterns'),
-    '#default_value' => config_get('migrate_ui.settings', 'migrate_deprecation_warnings'),
+    '#default_value' => $config->get('migrate_deprecation_warnings'),
     '#description' => t('When checked, you will receive warnings when using methods and patterns that are deprecated as of Migrate 2.6.'),
   );
   $build['settings']['submit'] = array(
@@ -1855,7 +1856,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   // Configure background imports if the drush command has been set.
-  $drush_path = trim(config_get('migrate_ui.settings', 'migrate_drush_path'));
+  $drush_path = trim($config->get('migrate_drush_path'));
   $drush_validated = FALSE;
   if ($drush_path && is_executable($drush_path)) {
     // Try running a drush status command to verify it's properly configured.
@@ -1894,12 +1895,11 @@ function migrate_ui_configure_form($form, &$form_state) {
     }
   }
   else {
-    $description = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>.',
+    $description = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
       array(
         '@drush' => 'http://drupal.org/project/drush',
         '@recommended' => 'http://drupal.org/node/1806824',
         '@config' => 'http://drupal.org/node/1958170',
-        '@dorg' => 'http://drupal.org/',
       )
     );
   }
@@ -1913,8 +1913,6 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   if ($drush_validated) {
-    $config = config('migrate_ui.settings');
-
     $options = array(
       0 => t('Immediate operation only'),
       1 => t('Background operation only'),
@@ -1979,36 +1977,21 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   $header = array(
-    'module' => array('data' => t('Module')),
     'class' => array('data' => t('Class')),
     'types' => array('data' => t('Destination types handled')),
   );
 
   $disabled = array();
-  $unserialized = config_get('migrate.settings', 'migrate_disabled_handlers');
-  if (!empty($unserialized) && is_string($unserialized)) {
+  $unserialized = $config->get('migrate_disabled_handlers');
+  if (!empty($unserialized)) {
     $disabled = unserialize($unserialized);
   }
 
   $class_list = _migrate_class_list('MigrateDestinationHandler');
   $rows = array();
   $default_values = array();
-watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
   foreach ($class_list as $class_name => $handler) {
-    watchdog('jasons test', '$class_name = <pre>' . print_r($class_name, TRUE) . '</pre>');
-    watchdog('jasons test', '$handler = <pre>' . print_r($handler, TRUE) . '</pre>');
     $row = array();
-    // $module = db_select('registry', 'r')
-    // ->fields('r', array('module'))
-    // ->condition('name', $class_name)
-    // ->condition('type', 'class')
-    // ->execute()
-    // ->fetchField();
-    // $row['module'] = check_plain($module);
-    $migrate_classes = migrate_autoload_info();
-watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
-    $migrate_ui_classes = migrate_ui_autoload_info();
-watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
     $default_values[$class_name] = !in_array($class_name, $disabled);
@@ -2029,7 +2012,6 @@ watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_clas
   );
 
   $header = array(
-    'module' => array('data' => t('Module')),
     'class' => array('data' => t('Class')),
     'types' => array('data' => t('Field types handled')),
   );
@@ -2037,22 +2019,8 @@ watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_clas
   $class_list = _migrate_class_list('MigrateFieldHandler');
   $rows = array();
   $default_values = array();
-watchdog('jasons test', '$class_list = <pre>' . print_r($class_list, TRUE) . '</pre>');
   foreach ($class_list as $class_name => $handler) {
-    watchdog('jasons test', '$class_name = <pre>' . print_r($class_name, TRUE) . '</pre>');
-    watchdog('jasons test', '$handler = <pre>' . print_r($handler, TRUE) . '</pre>');
     $row = array();
-    // $module = db_select('registry', 'r')
-    // ->fields('r', array('module'))
-    // ->condition('name', $class_name)
-    // ->condition('type', 'class')
-    // ->execute()
-    // ->fetchField();
-    // $row['module'] = check_plain($module);
-    $migrate_classes = migrate_autoload_info();
-watchdog('jasons test', '$migrate_classes = <pre>' . print_r($migrate_classes, TRUE) . '</pre>');
-    $migrate_ui_classes = migrate_ui_autoload_info();
-watchdog('jasons test', '$migrate_ui_classes = <pre>' . print_r($migrate_ui_classes, TRUE) . '</pre>');
     $row['class'] = check_plain($class_name);
     $row['types'] = filter_xss_admin(implode(', ', $handler->getTypesHandled()));
     $default_values[$class_name] = !in_array($class_name, $disabled);
