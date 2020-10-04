@@ -255,13 +255,3 @@ function migrate_uninstall() {
 function migrate_update_last_removed() {
   return 7207;
 }
-
-/**
- * Implements hook_install().
- */
-function migrate_install() {
-  // @todo Determine if anyhthing needs to be done.
-  // Dynamically generated variable data was detected.
-  // /migrate/migrate.module line 207
-  // /migrate/uri_map_redirect.php line 27
-}
