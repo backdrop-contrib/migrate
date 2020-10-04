@@ -76,7 +76,7 @@ class MigrateExampleOracleNode extends Migration {
       ->arguments(array(
       'file_function' => 'file_blob',
       // Alternatively, specify a column here for dynamic file name.
-      'source_path' => 'druplicon.png',
+      'source_path' => 'drop-lounging.png',
     ));
     $this->addFieldMapping('created', 'CREATED');
     $this->addFieldMapping('changed', 'UPDATED');

@@ -266,7 +266,7 @@ class WineFileBlobMigration extends AdvancedExampleMigration {
 
     // The destination filename must be specified for blobs
     $this->addFieldMapping('destination_file')
-      ->defaultValue('druplicon.png');
+      ->defaultValue('drop-lounging.png');
 
     $this->addFieldMapping('uid')
       ->defaultValue(1);

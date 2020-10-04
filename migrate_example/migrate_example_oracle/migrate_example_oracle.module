@@ -31,7 +31,7 @@ function migrate_example_oracle_generate($length) {
  *   The test data.
  */
 function migrate_example_oracle_sample_data() {
-  $image = file_get_contents('misc/druplicon.png');
+  $image = file_get_contents('core/themes/basis/images/drop-lounging.png');
   return array(
     array(
       'oid' => 3,

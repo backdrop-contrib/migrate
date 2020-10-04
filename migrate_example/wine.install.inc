@@ -805,7 +805,6 @@ function migrate_example_wine_categories() {
         'allowed_values' => array(
           array(
             'vocabulary' => $vocabulary->machine_name,
-            'vid' => $vocabulary->vid,
             'parent' => 0,
           ),
         ),
@@ -845,7 +844,6 @@ function migrate_example_wine_categories() {
         'allowed_values' => array(
           array(
             'vocabulary' => $vocabulary->machine_name,
-            'vid' => $vocabulary->vid,
             'parent' => 0,
           ),
         ),
@@ -898,7 +896,6 @@ function migrate_example_wine_categories() {
         'allowed_values' => array(
           array(
             'vocabulary' => $vocabulary->machine_name,
-            'vid' => $vocabulary->vid,
             'parent' => 0,
           ),
         ),
@@ -1564,7 +1561,7 @@ function migrate_example_wine_data_files() {
  * Adds sample field data.
  */
 function migrate_example_wine_data_blobs() {
-  $blob = file_get_contents('misc/druplicon.png');
+  $blob = file_get_contents('core/themes/basis/images/drop-lounging.png');
   $fields = array('imageid', 'imageblob');
   $query = db_insert('migrate_example_wine_blobs')
     ->fields($fields);
