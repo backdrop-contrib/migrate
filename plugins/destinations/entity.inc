@@ -56,9 +56,15 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
   }
 
   /**
-   * Simply save the key schema.
+   * Constructs an object of this class.
    *
-   * @param array $key_schema
+   * @param string $entity_type
+   *   The type of entity being constructed.
+   * @param string $bundle
+   *   The type of bundle being constructed.
+   * @param array $options
+   *   Any options to pass into the entity. Currently, the only supported 
+   *   options are 'language' and 'text_format'.
    */
   public function __construct($entity_type, $bundle, array $options = array()) {
     parent::__construct();
@@ -68,6 +74,9 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
     $this->textFormat = isset($options['text_format']) ? $options['text_format'] : filter_fallback_format();
   }
 
+  /**
+   * Prints the entity type and potentially the bundle of the object.
+   */
   public function __toString() {
     // @todo Link to configuration page
     if ($this->entityType == $this->bundle) {
