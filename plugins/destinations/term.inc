@@ -130,7 +130,7 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
   }
 
   /**
-   * Import a single term.
+   * Imports a single term.
    *
    * @param object $taxonomy_term
    *   Term object to build, prefilled with any fields mapped in the Migration.
@@ -145,7 +145,14 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
    * @throws MigrateException
    */
   public function import(stdClass $taxonomy_term, stdClass $row) {
-    $term = new TaxonomyTerm(get_object_vars($taxonomy_term));
+    if ($taxonomy_term instanceof TaxonomyTerm) {
+      $term = $taxonomy_term;
+    }
+    else {
+      // Convert the stdClass object to a TaxonomyTerm object.
+      $term = new TaxonomyTerm(get_object_vars($taxonomy_term));
+    }
+
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {
