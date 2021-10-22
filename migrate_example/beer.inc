@@ -40,51 +40,70 @@
  */
 abstract class BasicExampleMigration extends Migration {
 
-  // A Migration constructor takes an array of arguments as its first parameter.
-  // The arguments must be passed through to the parent constructor.
+  /**
+   * A Migration constructor takes an array of arguments as its first parameter.
+   *
+   * The arguments must be passed through to the parent constructor.
+   *
+   * @param array $arguments
+   *   The parameters necessary for instantiating the object.
+   */
   public function __construct($arguments) {
     parent::__construct($arguments);
 
     // With migrate_ui enabled, migration pages will indicate people involved in
-    // the particular migration, with their role and contact info. We default the
-    // list in the shared class; it can be overridden for specific migrations.
+    // the particular migration, with their role and contact info. We default
+    // the list in the shared class; it can be overridden for specific
+    // migrations.
     $this->team = array(
-      new MigrateTeamMember('Liz Taster', 'ltaster@example.com',
-        t('Product Owner')),
-      new MigrateTeamMember('Larry Brewer', 'lbrewer@example.com',
-        t('Implementor')),
+      new MigrateTeamMember('Liz Taster', 'ltaster@example.com', t('Product Owner')),
+      new MigrateTeamMember('Larry Brewer', 'lbrewer@example.com', t('Implementor')),
     );
 
     // Individual mappings in a migration can be linked to a ticket or issue
     // in an external tracking system. Define the URL pattern here in the shared
     // class with ':id:' representing the position of the issue number, then add
     // ->issueNumber(1234) to a mapping.
-    $this->issuePattern = 'http://drupal.org/node/:id:';
+    $this->issuePattern = 'https://backdropcms.org/node/:id:';
   }
+
 }
 
 /**
  * There are four essential components to set up in your constructor:
- *  $this->source - An instance of a class derived from MigrateSource, this
- *    will feed data to the migration.
- *  $this->destination - An instance of a class derived from MigrateDestination,
- *    this will receive data that originated from the source and has been mapped
- *    by the Migration class, and create Backdrop objects.
- *  $this->map - An instance of a class derived from MigrateMap, this will keep
- *    track of which source items have been imported and what destination
- *    objects they map to.
- *  Field mappings - Use $this->addFieldMapping to tell the Migration class what
- *    source fields correspond to what destination fields, and additional
- *    information associated with the mappings.
+ * - $this->source - An instance of a class derived from MigrateSource, this
+ *   will feed data to the migration.
+ * - $this->destination - An instance of a class derived from
+ *   MigrateDestination, this will receive data that originated from the source
+ *   and has been mapped by the Migration class, and create Backdrop objects.
+ * - $this->map - An instance of a class derived from MigrateMap, this will keep
+ *   track of which source items have been imported and what destination
+ *   objects they map to.
+ * - Field mappings - Use $this->addFieldMapping to tell the Migration class
+ *   what source fields correspond to what destination fields, and additional
+ *   information associated with the mappings.
+ *
+ * For a simple migration, all you have to do is define the source, the
+ * destination, and mappings between the two - to import the data you simply do:
+ * drush migrate-import BeerTerm
+ *
+ * However, in real-world migrations not everything can be represented simply
+ * through static mappings - you will frequently need to do some run-time
+ * transformations of the data.
  */
 class BeerTermMigration extends BasicExampleMigration {
 
+  /**
+   * Instantiates a new object of this class.
+   *
+   * @param array $arguments
+   *   The parameters necessary for instantiating the object.
+   */
   public function __construct($arguments) {
     parent::__construct($arguments);
     // Human-friendly description of your migration process. Be as detailed as
     // you like.
-    $this->description =
-      t('Migrate styles from the source database to taxonomy terms');
+    $this->description = t('Migrate styles from the source database to taxonomy terms.');
 
     // In this example, we're using tables that have been added to the existing
     // Backdrop database but which are not Backdrop tables. You can examine the
@@ -109,32 +128,29 @@ class BeerTermMigration extends BasicExampleMigration {
 
     // Set up our destination - terms in the migrate_example_beer_styles
     // vocabulary (note that we pass the machine name of the vocabulary).
-    $this->destination =
-      new MigrateDestinationTerm('migrate_example_beer_styles');
+    $this->destination = new MigrateDestinationTerm('migrate_example_beer_styles');
 
     // Create a map object for tracking the relationships between source rows
-    // and their resulting Backdrop objects. We will use the MigrateSQLMap class,
-    // which uses database tables for tracking. Pass the machine name (BeerTerm)
-    // of this migration to use in generating map and message table names.
-    // And, pass schema definitions for the primary keys of the source and
-    // destination - we need to be explicit for our source, but the destination
-    // class knows its schema already.
-    $this->map = new MigrateSQLMap($this->machineName,
-      array(
+    // and their resulting Backdrop objects. We will use the MigrateSQLMap
+    // class, which uses database tables for tracking. Pass the machine name
+    // (BeerTerm) of this migration to use in generating map and message table
+    // names. And, pass schema definitions for the primary keys of the source
+    // and destination - we need to be explicit for our source, but the
+    // destination class knows its schema already.
+    $source_key = array(
       'style' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'Topic ID',
       ),
-    ),
-      MigrateDestinationTerm::getKeySchema()
     );
+    $this->map = new MigrateSQLMap($this->machineName, $source_key, MigrateDestinationTerm::getKeySchema());
 
-    // Assign mappings TO destination fields FROM source fields. To discover
-    // the names used in these calls, use the drush commands
-//  drush migrate-fields-destination BeerTerm
-//  drush migrate-fields-source BeerTerm
+    // Assign mappings TO destination fields FROM source fields. To discover the
+    // names used in these calls, use the drush commands:
+    // `drush migrate-fields-destination BeerTerm`
+    // `drush migrate-fields-source BeerTerm`
     // or review the detail pages in the UI.
     $this->addFieldMapping('name', 'style');
     $this->addFieldMapping('description', 'details');
@@ -142,21 +158,21 @@ class BeerTermMigration extends BasicExampleMigration {
     // Documenting your mappings makes it easier for the whole team to see
     // exactly what the status is when developing a migration process.
     $this->addFieldMapping('parent_name', 'style_parent')
-      ->description(t('The incoming style_parent field is the name of the term parent'));
+      ->description(t('The incoming style_parent field is the name of the term parent.'));
 
     // Mappings are assigned issue groups, by which they are grouped on the
     // migration info page when the migrate_ui module is enabled. The default
     // is 'Done', indicating active mappings which need no attention. A
     // suggested practice is to use groups of:
-    // Do Not Migrate (or DNM) to indicate source fields which are not being
-//  used, or destination fields not to be populated by migration.
-    // Client Issues to indicate input from the client is needed to determine
-//  how a given field is to be migrated.
-    // Implementor Issues to indicate that the client has provided all the
-//  necessary information, and now the implementor needs to complete the
-//  work.
+    // - Do Not Migrate (or DNM) to indicate source fields which are not being
+    //   used, or destination fields not to be populated by migration.
+    // - Client Issues to indicate input from the client is needed to determine
+    //   how a given field is to be migrated.
+    // - Implementor Issues to indicate that the client has provided all the
+    //   necessary information, and now the implementor needs to complete the
+    //   work.
     $this->addFieldMapping(NULL, 'hoppiness')
-      ->description(t('This info will not be maintained in Backdrop'))
+      ->description(t('This info will not be maintained in Backdrop CMS.'))
       ->issueGroup(t('DNM'));
 
     // Open mapping issues can be assigned priorities (the default is
@@ -200,21 +216,20 @@ class BeerTermMigration extends BasicExampleMigration {
 }
 
 /**
- * And that's it for the BeerTerm migration! For a simple migration, all you
- * have to do is define the source, the destination, and mappings between the
- * two - to import the data you simply do:
- * drush migrate-import BeerTerm
- *
- * However, in real-world migrations not everything can be represented simply
- * through static mappings - you will frequently need to do some run-time
- * transformations of the data.
+ * Defines the user migration class for this module.
  */
 class BeerUserMigration extends BasicExampleMigration {
 
+  /**
+   * Instantiates a new object of this class.
+   *
+   * @param array $arguments
+   *   The parameters necessary for instantiating the object.
+   */
   public function __construct($arguments) {
-    // The basic setup is similar to BeerTermMigraiton
+    // The basic setup is similar to BeerTermMigraiton.
     parent::__construct($arguments);
-    $this->description = t('Beer Drinkers of the world');
+    $this->description = t('Beer Drinkers of the world.');
     $query = db_select('migrate_example_beer_account', 'mea')
       ->fields('mea', array(
       'aid',
@@ -229,22 +244,20 @@ class BeerUserMigration extends BasicExampleMigration {
     ));
     $this->source = new MigrateSourceSQL($query);
     $this->destination = new MigrateDestinationUser();
-    $this->map = new MigrateSQLMap($this->machineName,
-      array(
+    $source_key = array(
       'aid' => array(
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Account ID.',
       ),
-    ),
-      MigrateDestinationUser::getKeySchema()
     );
+    $this->map = new MigrateSQLMap($this->machineName, $source_key, MigrateDestinationUser::getKeySchema());
 
     // One good way to organize your mappings in the constructor is in three
     // groups - mapped fields, unmapped source fields, and unmapped destination
     // fields.
 
-    // Mapped fields
+    // Mapped fields.
 
     // This is a shortcut you can use when the source and destination field
     // names are identical (e.g., the email address field is named 'mail' in
@@ -272,7 +285,7 @@ class BeerUserMigration extends BasicExampleMigration {
     // value is provided in addition to a source field, the default value will
     // be applied to any rows where the source field is empty or NULL.
     $this->addFieldMapping('roles')
-      ->defaultValue(BACKDROP_AUTHENTICATED_RID);
+      ->defaultValue(BACKDROP_AUTHENTICATED_ROLE);
 
     $this->addFieldMapping('field_migrate_example_gender', 'sex');
 
@@ -289,11 +302,11 @@ class BeerUserMigration extends BasicExampleMigration {
         ->issueGroup(t('DNM'));
     }
 
-    // Unmapped source fields
+    // Unmapped source fields.
     $this->addFieldMapping(NULL, 'nickname')
       ->issueGroup(t('DNM'));
 
-    // Unmapped destination fields
+    // Unmapped destination fields.
 
     // This is a shortcut you can use to mark several destination fields as DNM
     // at once.
@@ -314,8 +327,8 @@ class BeerUserMigration extends BasicExampleMigration {
     // Oops, we made a typo - this should have been 'init'! If you have
     // migrate_ui enabled, look at the BeerUser info page - you'll see that it
     // displays a warning "int used as destination field in mapping but not in
-    // list of destination fields", and also lists "1 unmapped" under Destination,
-    // where it highlights "init" as unmapped.
+    // list of destination fields", and also lists "1 unmapped" under
+    // Destination, where it highlights "init" as unmapped.
     $this->addFieldMapping('int')
       ->issueGroup(t('DNM'));
 
@@ -337,9 +350,15 @@ class BeerUserMigration extends BasicExampleMigration {
  */
 class BeerNodeMigration extends BasicExampleMigration {
 
+  /**
+   * Instantiates a new object of this class.
+   *
+   * @param array $arguments
+   *   The parameters necessary for instantiating the object.
+   */
   public function __construct($arguments) {
     parent::__construct($arguments);
-    $this->description = t('Beers of the world');
+    $this->description = t('Beers of the world.');
 
     // We have a more complicated query. The Migration class fundamentally
     // depends on taking a single source row and turning it into a single
@@ -360,12 +379,12 @@ class BeerNodeMigration extends BasicExampleMigration {
       'image_description',
     ));
     $query->leftJoin('migrate_example_beer_topic_node', 'tb', 'b.bid = tb.bid');
-    // Gives a single comma-separated list of related terms
+    // Gives a single comma-separated list of related terms.
     $query->groupBy('tb.bid');
     $query->addExpression('GROUP_CONCAT(tb.style)', 'terms');
 
     // By default, MigrateSourceSQL derives a count query from the main query -
-    // but we can override it if we know a simpler way
+    // but we can override it if we know a simpler way.
     $count_query = db_select('migrate_example_beer_node', 'b');
     $count_query->addExpression('COUNT(bid)', 'cnt');
 
@@ -378,21 +397,19 @@ class BeerNodeMigration extends BasicExampleMigration {
     // Set up our destination - nodes of type migrate_example_beer
     $this->destination = new MigrateDestinationNode('migrate_example_beer');
 
-    $this->map = new MigrateSQLMap($this->machineName,
-      array(
+    $source_key = array(
       'bid' => array(
         'type' => 'int',
         'not null' => TRUE,
         'description' => 'Beer ID.',
         'alias' => 'b',
       ),
-    ),
-      MigrateDestinationNode::getKeySchema()
     );
+    $this->map = new MigrateSQLMap($this->machineName, $source_key, MigrateDestinationNode::getKeySchema());
 
-    // Mapped fields
+    // Mapped fields.
     $this->addFieldMapping('title', 'name')
-      ->description(t('Mapping beer name in source to node title'));
+      ->description(t('Mapping beer name in source to node title.'));
     $this->addFieldMapping('sticky')
       ->description(t('Should we default this to 0 or 1?'))
       ->issueGroup(t('Client questions'))
@@ -404,8 +421,8 @@ class BeerNodeMigration extends BasicExampleMigration {
     // identifiers (such as uids). You can use the mapping from the relevant
     // migration to translate from the old ID to the Backdrop identifier.
     // Note that we also provide a default value of 1 - if the lookup fails to
-    // find a corresponding uid for the aid, the owner will be the administrative
-    // account.
+    // find a corresponding uid for the aid, the owner will be the
+    // administrative account.
     $this->addFieldMapping('uid', 'aid')
       // Note this is the machine name of the user migration.
       ->sourceMigration('BeerUser')
@@ -441,14 +458,16 @@ class BeerNodeMigration extends BasicExampleMigration {
     // Here we specify the directory containing the source files.
     $this->addFieldMapping('field_migrate_example_image:source_dir')
       ->defaultValue(backdrop_get_path('module', 'migrate_example'));
-    // And we map the alt and title values in the database to those on the image.
+    // And we map the alt and title values in the database to those on the
+    // image.
     $this->addFieldMapping('field_migrate_example_image:alt', 'image_alt');
     $this->addFieldMapping('field_migrate_example_image:title', 'image_title');
 
-    // No description for images, only alt and title
+    // No description for images, only alt and title.
     $this->addUnmigratedSources(array('image_description'));
 
-    // Unmapped destination fields
+    // Unmapped destination fields.
+    //
     // Some conventions we use here: with a long list of fields to ignore, we
     // arrange them alphabetically, one distinct field per line (although
     // subfields of the same field may be grouped on the same line), and indent
@@ -497,6 +516,12 @@ class BeerNodeMigration extends BasicExampleMigration {
  */
 class BeerCommentMigration extends BasicExampleMigration {
 
+  /**
+   * Instantiates a new object of this class.
+   *
+   * @param array $arguments
+   *   The parameters necessary for instantiating the object.
+   */
   public function __construct($arguments) {
     parent::__construct($arguments);
     $this->description = 'Comments about beers';
@@ -517,20 +542,17 @@ class BeerCommentMigration extends BasicExampleMigration {
     // Note that the machine name passed for comment migrations is
     // 'comment_node_' followed by the machine name of the node type these
     // comments are attached to.
-    $this->destination =
-      new MigrateDestinationComment('comment_node_migrate_example_beer');
+    $this->destination = new MigrateDestinationComment('comment_node_migrate_example_beer');
 
-    $this->map = new MigrateSQLMap($this->machineName,
-      array(
+    $source_key = array(
       'cid' => array(
         'type' => 'int',
         'not null' => TRUE,
       ),
-    ),
-      MigrateDestinationComment::getKeySchema()
     );
+    $this->map = new MigrateSQLMap($this->machineName, $source_key, MigrateDestinationComment::getKeySchema());
 
-    // Mapped fields
+    // Mapped fields.
     $this->addSimpleMappings(array('name', 'subject', 'mail'));
     $this->addFieldMapping('status')
       ->defaultValue(COMMENT_PUBLISHED);
@@ -548,9 +570,9 @@ class BeerCommentMigration extends BasicExampleMigration {
 
     $this->addFieldMapping('comment_body', 'body');
 
-    // No unmapped source fields
+    // No unmapped source fields.
 
-    // Unmapped destination fields
+    // Unmapped destination fields.
     $this->addUnmigratedDestinations(array(
       'changed',
       'comment_body:format',

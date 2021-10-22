@@ -15,7 +15,7 @@
 abstract class MigrateSource implements Iterator {
 
   /**
-   * The current row from the quey
+   * The current row from the query.
    *
    * @var stdClass
    */
