@@ -39,13 +39,17 @@ class MigrateSQLMap extends MigrateMap {
       return $this->mapTable;
     }
     else {
-      $dbname = $options['database'];
-
-      if (!empty($options['driver']) && $options['driver'] == 'mysql') {
-        // Backtick the db name on mysql to ensure dbs with hyphens work.
-        $dbname = "`{$dbname}`";
-      }
-      return $dbname . '.' . $this->mapTable;
+      // This has been commented out until a real solution for cross database
+      // joins in Backdrop can be found, because the way it is nowm, it causes
+      // an exception when trying to access a joined table with a map of
+      // $database.$database.$table.
+//      $dbname = $options['database'];
+//      if (!empty($options['driver']) && $options['driver'] == 'mysql') {
+//        // Backtick the db name on mysql to ensure dbs with hyphens work.
+//        $dbname = "`{$dbname}`";
+//      }
+//      return $dbname . '.' . $this->mapTable;
+      return $this->mapTable;
     }
   }
 
