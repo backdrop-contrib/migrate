@@ -1,3 +1,12 @@
 <?php
 
 include_once('migrate_example_baseball.features.inc');
+
+/**
+ * Implements hook_autoload_info().
+ */
+function migrate_example_oracle_autoload_info() {
+  return array(
+    'GameBaseball' => 'migrate_example_baseball.migrate.inc',
+  );
+}
