@@ -32,11 +32,9 @@ CONTENTS OF THIS FILE
 TESTED
 ------
 
-While basic functionality might be working, higher thought like "converting from
-non-MySQL databases to a MySQL database", "using Migrate with Drush in
-Backdrop", "do (generally enterprise) Oracle websystems want to migrate to
-Backdrop currently?", "what to do when migrating Poll module data and data from
-other modules removed from Backdrop?" and other big topics have not been
+While basic functionality might be working, higher thought like "using Migrate
+with Drush in Backdrop", "what to do when migrating Poll module data and data
+from other modules removed from Backdrop?" and other big topics have not been
 addressed yet.
 
 
@@ -45,6 +43,8 @@ KNOWN ISSUES
 
 See above.
 
+This might have been fixed, since the core bug has been fixed, but I have not
+yet tested it:
 A user migration with systemOfRecord == DESTINATION will drop pictures from user
 records due to core bug http://drupal.org/node/935592 - the SimpleTests report
 an error reflecting this. We have not developed a work-around.
