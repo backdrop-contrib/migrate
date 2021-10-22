@@ -157,29 +157,29 @@ class MigrateSourceSQL extends MigrateSource {
       // http://drupal.org/node/802514 is committed, assume joinable for now
       $this->mapJoinable = TRUE;
       /*      // To be able to join the map directly, it must be a PDO map on the same
-       // connection, or a compatible connection
-       $map = $migration->getMap();
-       if (is_a($map, 'MigrateSQLMap')) {
-       $map_options = $map->getConnection()->getConnectionOptions();
-       $query_options = $this->query->connection()->getConnectionOptions();
+            // connection, or a compatible connection
+            $map = $migration->getMap();
+            if (is_a($map, 'MigrateSQLMap')) {
+              $map_options = $map->getConnection()->getConnectionOptions();
+              $query_options = $this->query->connection()->getConnectionOptions();
 
-       // Identical options means it will work
-       if ($map_options == $query_options) {
-       $this->mapJoinable = TRUE;
-       }
-       else {
-       // Otherwise, the one scenario we know will work is if it's MySQL and
-       // the credentials match (SQLite too?)
-       if ($map_options['driver'] == 'mysql' && $query_options['driver'] == 'mysql') {
-       if ($map_options['host'] == $query_options['host'] &&
-       $map_options['port'] == $query_options['port'] &&
-       $map_options['username'] == $query_options['username'] &&
-       $map_options['password'] == $query_options['password']) {
-       $this->mapJoinable = TRUE;
-       }
-       }
-       }
-       }*/
+              // Identical options means it will work
+              if ($map_options == $query_options) {
+                $this->mapJoinable = TRUE;
+              }
+              else {
+                // Otherwise, the one scenario we know will work is if it's MySQL and
+                // the credentials match (SQLite too?)
+                if ($map_options['driver'] == 'mysql' && $query_options['driver'] == 'mysql') {
+                  if ($map_options['host'] == $query_options['host'] &&
+                      $map_options['port'] == $query_options['port'] &&
+                      $map_options['username'] == $query_options['username'] &&
+                      $map_options['password'] == $query_options['password']) {
+                    $this->mapJoinable = TRUE;
+                  }
+                }
+              }
+            }*/
     }
   }
 
@@ -226,24 +226,24 @@ class MigrateSourceSQL extends MigrateSource {
 
     /*
      * Handle queries without explicit field lists
-     * @todo Waiting on http://drupal.org/node/814312
-     $info = Database::getConnectionInfo($query->getConnection());
-     $database = $info['default']['database'];
-     foreach ($this->query->getTables() as $table) {
-     if (isset($table['all_fields']) && $table['all_fields']) {
+     * TODO: Waiting on http://drupal.org/node/814312
+        $info = Database::getConnectionInfo($query->getConnection());
+        $database = $info['default']['database'];
+        foreach ($this->query->getTables() as $table) {
+          if (isset($table['all_fields']) && $table['all_fields']) {
 
-     $database = 'plants';
-     $table = $table['table'];
-     $sql = 'SELECT column_name
-     FROM information_schema.columns
-     WHERE table_schema=:database AND table_name = :table
-     ORDER BY ordinal_position';
-     $result = dbtng_query($sql, array(':database' => $database, ':table' => $table));
-     foreach ($result as $row) {
-     $fields[$row->column_name] = $table . '.' . $row->column_name;
-     }
-     }
-     }*/
+            $database = 'plants';
+            $table = $table['table'];
+            $sql = 'SELECT column_name
+                    FROM information_schema.columns
+                    WHERE table_schema=:database AND table_name = :table
+                    ORDER BY ordinal_position';
+            $result = dbtng_query($sql, array(':database' => $database, ':table' => $table));
+            foreach ($result as $row) {
+              $fields[$row->column_name] = $table . '.' . $row->column_name;
+            }
+          }
+        }*/
     $expressionFields = $this->query->getExpressions();
     foreach ($expressionFields as $field_name => $field_info) {
       $fields[$field_name] = $field_info['alias'];
@@ -344,23 +344,17 @@ class MigrateSourceSQL extends MigrateSource {
         // Build the join to the map table. Because the source key could have
         // multiple fields, we need to build things up.
         $count = 1;
-
+        $map_joins = array();
         foreach ($this->activeMap->getSourceKey() as $field_name => $field_schema) {
           if (isset($field_schema['alias'])) {
             $field_name = $field_schema['alias'] . '.' . $field_name;
           }
           $map_key = 'sourceid' . $count++;
-          if (!isset($map_join)) {
-            $map_join = '';
-          }
-          else {
-            $map_join .= ' AND ';
-          }
-          $map_join .= "$field_name = map.$map_key";
+          $map_joins[] = "$field_name = map.$map_key";
         }
-
-        $alias = $this->query->leftJoin($this->activeMap->getQualifiedMapTable(),
-          'map', $map_join);
+        $map_join = implode(' AND ', $map_joins);
+        $qualified_map_table = $this->activeMap->getQualifiedMapTable();
+        $alias = $this->query->leftJoin($qualified_map_table, 'map', $map_join);
         $conditions->isNull($alias . '.sourceid1');
         $conditions->condition($alias . '.needs_update', MigrateMap::STATUS_NEEDS_UPDATE);
         $condition_added = TRUE;
