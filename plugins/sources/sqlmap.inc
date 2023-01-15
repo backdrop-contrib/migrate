@@ -30,24 +30,13 @@ class MigrateSQLMap extends MigrateMap {
    * (prefixed) database (in particular, for simpletest), but not if the primary
    * query is in an external database.
    *
-   * @param $add_braces (optional)
-   *   Whether to surround the table name with braces for prefixing.
-   * @param $add_dbname (optional)
-   *   Whether to prepend the database to the table.
-   *
    * @return string
    */
-  public function getQualifiedMapTable($add_braces = FALSE, $add_dbname = TRUE) {
+  public function getQualifiedMapTable() {
     $options = $this->connection->getConnectionOptions();
     $prefix = $this->connection->tablePrefix($this->mapTable);
-
-    $table_name = $this->mapTable;
-    if ($add_braces) {
-      $table_name = '{' . $table_name . '}';
-    }
-
-    if ($prefix || !$add_dbname) {
-      return $table_name;
+    if ($prefix) {
+      return $this->mapTable;
     }
     else {
       $dbname = $options['database'];
@@ -56,8 +45,7 @@ class MigrateSQLMap extends MigrateMap {
         // Backtick the db name on mysql to ensure dbs with hyphens work.
         $dbname = "`{$dbname}`";
       }
-
-      return $dbname . '.' . $table_name;
+      return $dbname . '.' . $this->mapTable;
     }
   }
 

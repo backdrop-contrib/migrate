@@ -359,7 +359,7 @@ class MigrateSourceSQL extends MigrateSource {
           $map_join .= "$field_name = map.$map_key";
         }
 
-        $alias = $this->query->leftJoin($this->activeMap->getQualifiedMapTable(FALSE, FALSE),
+        $alias = $this->query->leftJoin($this->activeMap->getQualifiedMapTable(),
           'map', $map_join);
         $conditions->isNull($alias . '.sourceid1');
         $conditions->condition($alias . '.needs_update', MigrateMap::STATUS_NEEDS_UPDATE);
@@ -387,8 +387,8 @@ class MigrateSourceSQL extends MigrateSource {
         // optimization to the query.
         $add_highwater_condition = TRUE;
         if (!$this->mapJoinable) {
-          $count_needs_update = db_query('SELECT COUNT(*) FROM ' .
-            $this->activeMap->getQualifiedMapTable(TRUE) . ' WHERE needs_update = 1')
+          $count_needs_update = db_query('SELECT COUNT(*) FROM {' .
+            $this->activeMap->getQualifiedMapTable() . '} WHERE needs_update = 1')
             ->fetchField();
           if ($count_needs_update > 0) {
             $add_highwater_condition = FALSE;
