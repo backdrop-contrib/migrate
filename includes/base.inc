@@ -810,7 +810,7 @@ abstract class MigrationBase {
       ->execute()
       ->fetchField();
     if ($last_imported) {
-      $last_imported = date('Y-m-d H:i:s', $last_imported / 1000);
+      $last_imported = date('Y-m-d H:i:s', (int) ($last_imported / 1000));
     }
     else {
       $last_imported = '';
