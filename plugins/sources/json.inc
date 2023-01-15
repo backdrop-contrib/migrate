@@ -229,6 +229,7 @@ class MigrateJSONReader implements Iterator {
    *
    * @return void
    */
+  #[\ReturnTypeWillChange]
   public function rewind() {
     // Close any open file - we open the files lazily in next().
     if ($this->fileHandle) {
@@ -262,6 +263,7 @@ class MigrateJSONReader implements Iterator {
    *
    * @return void
    */
+  #[\ReturnTypeWillChange]
   public function next() {
     migrate_instrument_start('MigrateJSONReader::next');
 
@@ -372,6 +374,7 @@ class MigrateJSONReader implements Iterator {
    *
    * @return null|object
    */
+  #[\ReturnTypeWillChange]
   public function current() {
     return $this->currentElement;
   }
@@ -381,6 +384,7 @@ class MigrateJSONReader implements Iterator {
    *
    * @return null|string
    */
+  #[\ReturnTypeWillChange]
   public function key() {
     return $this->currentId;
   }
@@ -390,6 +394,7 @@ class MigrateJSONReader implements Iterator {
    *
    * @return bool
    */
+  #[\ReturnTypeWillChange]
   public function valid() {
     return !empty($this->currentElement);
   }
