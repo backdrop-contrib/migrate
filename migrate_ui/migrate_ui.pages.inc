@@ -565,7 +565,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
  * @param $context
  *  Batch API context structure
  */
-function migrate_ui_batch($operation, $machine_name, $limit, $force = FALSE, &$context) {
+function migrate_ui_batch($operation, $machine_name, $limit, $force, &$context) {
   // If we got a stop message, skip everything else
   if (isset($context['results']['stopped'])) {
     $context['finished'] = 1;
