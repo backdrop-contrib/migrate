@@ -485,7 +485,7 @@ class MigrateSQLMap extends MigrateMap {
     else {
       // TODO: What else can we do?
       // Display Message with correct level instead of default level 'error'.
-      MigrationBase::saveMessage($message, $level);
+      Migration::displayMessage($message, $level);
     }
   }
 
