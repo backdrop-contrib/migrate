@@ -684,6 +684,7 @@ function migrate_autoload_info() {
     'MigrateFileFieldBaseHandler' => 'plugins/destinations/fields.inc',
     'MigrateFileFieldHandler' => 'plugins/destinations/fields.inc',
     'MigrateImageFieldHandler' => 'plugins/destinations/fields.inc',
+    'MigrateEntityReferenceFieldHandler' => 'plugins/destinations/fields.inc',
     'MigrateNodeReferenceFieldHandler' => 'plugins/destinations/fields.inc',
     'MigrateUserReferenceFieldHandler' => 'plugins/destinations/fields.inc',
     'MigrateFileInterface' => 'plugins/destinations/file.inc',

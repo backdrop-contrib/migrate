@@ -922,6 +922,24 @@ class MigrateImageFieldHandler extends MigrateFileFieldBaseHandler {
   }
 }
 
+/**
+ * Extended class for handling Entity Reference fields.
+ */
+class MigrateEntityReferenceFieldHandler extends MigrateSimpleFieldHandler {
+
+  /**
+   * Constructor.
+   */
+  public function __construct() {
+    parent::__construct(array(
+      'value_key' => 'target_id',
+      'skip_empty' => TRUE,
+    ));
+
+    $this->registerTypes(array('entityreference'));
+  }
+}
+
 class MigrateNodeReferenceFieldHandler extends MigrateSimpleFieldHandler {
 
   public function __construct() {
