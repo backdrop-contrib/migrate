@@ -9,7 +9,7 @@ Out-of-the-box, support for creating Backdrop CMS nodes, taxonomy terms,
 comments, and users are included. Plugins permit migration of other types of
 content.
 
-*The port of the mofule from Drupal 7 to Backdrop CMS is still in process, and
+*The port of the module from Drupal 7 to Backdrop CMS is still in process, and
 not everything has been tested.*
 
 

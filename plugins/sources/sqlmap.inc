@@ -489,7 +489,7 @@ class MigrateSQLMap extends MigrateMap {
     else {
       // @todo: What else can we do?
       // Display Message with correct level instead of default level 'error'.
-      MigrationBase::saveMessage($message, $level);
+      Migration::displayMessage($message, $level);
     }
   }
 
@@ -704,6 +704,7 @@ class MigrateSQLMap extends MigrateMap {
    * loop.
    * @todo Support idlist, itemlimit.
    */
+  #[\ReturnTypeWillChange]
   public function rewind() {
     $this->currentRow = NULL;
     $fields = array();
@@ -723,6 +724,7 @@ class MigrateSQLMap extends MigrateMap {
    * Implementation of Iterator::current() - called when entering a loop
    * iteration, returning the current row.
    */
+  #[\ReturnTypeWillChange]
   public function current() {
     return $this->currentRow;
   }
@@ -733,6 +735,7 @@ class MigrateSQLMap extends MigrateMap {
    * serialize to fulfill the requirement, but using getCurrentKey() is
    * preferable.
    */
+  #[\ReturnTypeWillChange]
   public function key() {
     return serialize($this->currentKey);
   }
@@ -741,6 +744,7 @@ class MigrateSQLMap extends MigrateMap {
    * Implementation of Iterator::next() - called at the bottom of the loop
    * implicitly, as well as explicitly from rewind().
    */
+  #[\ReturnTypeWillChange]
   public function next() {
     $this->currentRow = $this->result->fetchObject();
     $this->currentKey = array();
@@ -760,6 +764,7 @@ class MigrateSQLMap extends MigrateMap {
    * Implementation of Iterator::valid() - called at the top of the loop,
    * returning TRUE to process the loop and FALSE to terminate it.
    */
+  #[\ReturnTypeWillChange]
   public function valid() {
     // @todo Check numProcessed against itemlimit
     return !is_null($this->currentRow);

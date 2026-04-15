@@ -692,6 +692,19 @@ abstract class MigrationBase {
    *  Optional message severity (defaults to MESSAGE_ERROR).
    */
   public function saveMessage($message, $level = MigrationBase::MESSAGE_ERROR) {
+    self::displayMessage($message, $level);
+  }
+
+  /**
+   * Output the given message appropriately
+   * (bee_print_messages/backdrop_set_message/etc.)
+   *
+   * @param string $message
+   *  The message to output.
+   * @param int $level
+   *  Optional message severity (defaults to 'error').
+   */
+  static public function displayMessage($message, $level = 'error') {
     switch ($level) {
       case MigrationBase::MESSAGE_ERROR:
         $level = 'error';
@@ -709,22 +722,6 @@ abstract class MigrationBase {
         $level = 'status';
         break;
     }
-
-    self::displayMessage($message, $level);
-  }
-
-  /**
-   * Output the given message appropriately
-   * (drush_print/backdrop_set_message/etc.)
-   *
-   * @param string $message
-   *  The message to output.
-   * @param int $level
-   *  Optional message severity as understood by backdrop_set_message and
-   *   drush_log
-   *  (defaults to 'error').
-   */
-  static public function displayMessage($message, $level = 'error') {
     call_user_func(self::$displayFunction, $message, $level);
   }
 
@@ -745,7 +742,7 @@ abstract class MigrationBase {
    *   An array that points to the active symbol table at the point the error
    *   occurred.
    */
-  public function errorHandler($error_level, $message, $filename, $line, $context) {
+  public function errorHandler($error_level, $message, $filename, $line, $context = array()) {
     if ($error_level & error_reporting()) {
       $message .= "\n" . t('File !file, line !line',
           array('!line' => $line, '!file' => $filename));
@@ -819,7 +816,7 @@ abstract class MigrationBase {
       ->execute()
       ->fetchField();
     if ($last_imported) {
-      $last_imported = date('Y-m-d H:i:s', $last_imported / 1000);
+      $last_imported = date('Y-m-d H:i:s', (int) ($last_imported / 1000));
     }
     else {
       $last_imported = '';
