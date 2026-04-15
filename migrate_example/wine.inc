@@ -404,7 +404,7 @@ class WineUserMigration extends AdvancedExampleMigration {
       'data',
       'is_new',
       'language',
-      'role_names',
+      'roles',
       'theme',
       'timezone',
     ));
@@ -1808,7 +1808,6 @@ class WineUserUpdatesMigration extends AdvancedExampleMigration {
       'name',
       'pass',
       'picture',
-      'role_names',
       'roles',
       'signature',
       'signature_format',

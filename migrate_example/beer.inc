@@ -317,7 +317,7 @@ class BeerUserMigration extends BasicExampleMigration {
       'language',
       'login',
       'picture',
-      'role_names',
+      'roles',
       'signature',
       'signature_format',
       'theme',

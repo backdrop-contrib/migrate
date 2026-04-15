@@ -97,7 +97,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['roles'] = t('<a href="@doc">Role IDs</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
-    $fields['role_names'] = t('<a href="@doc">Role Names</a>',
+    $fields['roles'] = t('<a href="@doc">Roles</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['picture'] = t('<a href="@doc">Picture</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
@@ -185,19 +185,6 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
       $old_account = $account;
     }
 
-    // Roles must be arrays keyed by the role id, which isn't how the data
-    // naturally comes in. Fix them up.
-
-    // First, if names instead of IDs are presented, translate them
-    if (!empty($account->role_names)) {
-      $role_names = is_array($account->role_names) ? $account->role_names : array($account->role_names);
-      foreach ($role_names as $role_name) {
-        $role = user_role_load_by_name($role_name);
-        if ($role) {
-          $account->roles[] = $role->rid;
-        }
-      }
-    }
     if (!empty($account->roles)) {
       if (!is_array($account->roles)) {
         $account->roles = array($account->roles);
