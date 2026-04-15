@@ -30,7 +30,7 @@ abstract class AdvancedExampleMigration extends Migration {
       new MigrateTeamMember('Linda Madison', 'lmadison@example.com',
         t('Winemaker')),
     );
-    $this->issuePattern = 'http://drupal.org/node/:id:';
+    $this->issuePattern = 'https://github.com/backdrop-contrib/migrate/issues/:id:';
 
     // A format of our own, for testing migration of formats
     $this->basicFormat = filter_format_load('migrate_example');

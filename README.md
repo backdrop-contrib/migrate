@@ -98,8 +98,10 @@ PERMISSIONS
 USAGE
 -----
 
-Documentation is currently at http://drupal.org/migrate, but will eventually be
-copied to https://github.com/backdrop-contrib/migrate/wiki.
+The [wiki](https://github.com/backdrop-contrib/migrate/wiki) is the preferred
+place for documentation, and some has been transferred there from the
+[Drupal 7 documentation](https://drupal.org/migrate). Feel free to add more and
+edit what is there.
 
 To get started, enable the migrate_example module and navigate in your web
 browser to admin/content/migrate to see its dashboard. The code for that

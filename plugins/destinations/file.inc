@@ -89,7 +89,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
   static public function fields() {
     return array(
       'preserve_files' => t('Option: <a href="@doc">Boolean indicating whether files should be preserved or deleted on rollback</a>',
-        array('@doc' => 'http://drupal.org/node/1540106#preserve_files')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
     );
   }
 
@@ -239,11 +239,11 @@ abstract class MigrateFile extends MigrateFileBase {
   static public function fields() {
     return parent::fields() + array(
       'destination_dir' => t('Subfield: <a href="@doc">Path within Backdrop files directory to store file</a>',
-          array('@doc' => 'http://drupal.org/node/1540106#destination_dir')),
+          array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
       'destination_file' => t('Subfield: <a href="@doc">Path within destination_dir to store the file.</a>',
-          array('@doc' => 'http://drupal.org/node/1540106#destination_file')),
+          array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
       'file_replace' => t('Option: <a href="@doc">Value of $replace in that file function. Defaults to FILE_EXISTS_RENAME.</a>',
-          array('@doc' => 'http://drupal.org/node/1540106#file_replace')),
+          array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
     );
   }
 
@@ -378,9 +378,9 @@ class MigrateFileUri extends MigrateFile {
     return parent::fields() +
       array(
       'source_dir' => t('Subfield: <a href="@doc">Path to source file.</a>',
-          array('@doc' => 'http://drupal.org/node/1540106#source_dir')),
+          array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
       'urlencode' => t('Option: <a href="@doc">Encode all segments of the incoming path (defaults to TRUE).</a>',
-          array('@doc' => 'http://drupal.org/node/1540106#urlencode')),
+          array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
     );
   }
 

@@ -65,39 +65,39 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
     $fields = array();
     // First the core (node table) properties
     $fields['nid'] = t('Node: <a href="@doc">Existing node ID</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#nid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $node_type = node_type_load($this->bundle);
     if ($node_type->has_title) {
       $fields['title'] = t('Node: <a href="@doc">',
-          array('@doc' => 'http://drupal.org/node/1349696#title'))
+          array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'))
         . $node_type->title_label . '</a>';
     }
     $fields['uid'] = t('<a href="@doc">Authored by (uid)</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#uid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['created'] = t('<a href="@doc">Created timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#created'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['changed'] = t('<a href="@doc">Modified timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#changed'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['status'] = t('<a href="@doc">Published</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#status'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['promote'] = t('<a href="@doc">Promoted to front page</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#promote'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['sticky'] = t('<a href="@doc">Sticky at top of lists</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#sticky'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['revision'] = t('<a href="@doc">Create new revision</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#revision'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['log'] = t('<a href="@doc">Revision Log message</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#log'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['language'] = t('<a href="@doc">Language (fr, en, ...)</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#language'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['tnid'] = t('<a href="@doc">The translation set id for this node</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#tnid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['translate'] = t('<a href="@doc">A boolean indicating whether this translation page needs to be updated</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#translate'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['revision_uid'] = t('<a href="@doc">Modified (uid)</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#revision_uid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['is_new'] = t('Option: <a href="@doc">Indicates a new node with the specified nid should be created</a>',
-      array('@doc' => 'http://drupal.org/node/1349696#is_new'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
 
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);
@@ -382,7 +382,7 @@ class MigrateDestinationNodeRevision extends MigrateDestinationNode {
    */
   public function fields($migration = NULL) {
     $fields = parent::fields($migration);
-    $fields['vid'] = t('Node: <a href="@doc">Revision (vid)</a>', array('@doc' => 'http://drupal.org/node/1298724'));
+    $fields['vid'] = t('Node: <a href="@doc">Revision (vid)</a>', array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-revision-fields'));
     return $fields;
   }
 

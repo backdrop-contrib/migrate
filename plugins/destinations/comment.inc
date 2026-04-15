@@ -71,33 +71,33 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
     $fields = array();
     // First the core (comment table) properties
     $fields['cid'] = t('<a href="@doc">Existing comment ID</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#cid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['nid'] = t('<a href="@doc">Node (by Backdrop ID)</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#nid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['uid'] = t('<a href="@doc">User (by Backdrop ID)</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#uid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['pid'] = t('<a href="@doc">Parent (by Backdrop ID)</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#pid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['subject'] = t('<a href="@doc">Subject</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#subject'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['created'] = t('<a href="@doc">Created timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#created'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['changed'] = t('<a href="@doc">Modified timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#changed'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['status'] = t('<a href="@doc">Status</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#status'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['hostname'] = t('<a href="@doc">Hostname/IP address</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#hostname'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['name'] = t('<a href="@doc">User name (not username)</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#name'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['mail'] = t('<a href="@doc">Email address</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#mail'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['homepage'] = t('<a href="@doc">Homepage</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#homepage'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['language'] = t('<a href="@doc">Language</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#language'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['thread'] = t('<a href="@doc">Thread</a>',
-      array('@doc' => 'http://drupal.org/node/1349714#thread'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
 
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);

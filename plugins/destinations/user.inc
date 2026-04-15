@@ -80,43 +80,43 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
     $fields = array();
     // First the core (users table) properties
     $fields['uid'] = t('<a href="@doc">Existing user ID</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#uid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['mail'] = t('<a href="@doc">Email address</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#mail'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['name'] = t('<a href="@doc">Username</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#name'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['pass'] = t('<a href="@doc">Password</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#pass'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['status'] = t('<a href="@doc">Status</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#status'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['created'] = t('<a href="@doc">Registered timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#created'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['access'] = t('<a href="@doc">Last access timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#access'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['login'] = t('<a href="@doc">Last login timestamp</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#login'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['roles'] = t('<a href="@doc">Role IDs</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#roles'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['role_names'] = t('<a href="@doc">Role Names</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#role_names'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['picture'] = t('<a href="@doc">Picture</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#picture'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['signature'] = t('<a href="@doc">Signature</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#signature'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['signature_format'] = t('<a href="@doc">Signature format</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#signature_format'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['timezone'] = t('<a href="@doc">Timezone</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#timezone'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['language'] = t('<a href="@doc">Language</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#language'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['theme'] = t('<a href="@doc">Default theme</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#theme'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['init'] = t('<a href="@doc">Init</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#init'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['data'] = t('<a href="@doc">Data</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#init'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['is_new'] = t('Option: <a href="@doc">Indicates a new user with the specified uid should be created</a>',
-      array('@doc' => 'http://drupal.org/node/1349632#is_new'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
 
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);

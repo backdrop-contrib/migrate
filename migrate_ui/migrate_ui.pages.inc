@@ -515,11 +515,11 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     $drush_path = trim($config->get('migrate_drush_path'));
     // Check that $drush_path works. See migrate_ui_configure_form().
     if (!is_executable($drush_path)) {
-      $message = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
+      $message = t('To enable running operations in the background with <a href="@bee">Bee</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
         array(
-          '@drush' => 'http://drupal.org/project/drush',
-          '@recommended' => 'http://drupal.org/node/1806824',
-          '@config' => 'http://drupal.org/node/1958170',
+          '@bee' => 'https://github.com/backdrop-contrib/bee/',
+          '@recommended' => 'https://github.com/backdrop-contrib/migrate/wiki/Why-you-should-run-migrations-in-Bee-rather-than-the-UI',
+          '@config' => 'https://github.com/backdrop-contrib/migrate/wiki/Why-you-should-run-migrations-in-Bee-rather-than-the-UI#running-imports-and-rollbacks-from-the-ui-via-bee',
         )
       );
       backdrop_set_message($message);
@@ -1886,20 +1886,20 @@ function migrate_ui_configure_form($form, &$form_state) {
       );
     }
     else {
-      $description = t('<a href="@drush">Drush</a> is misconfigured on the server. Please review the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>, and make sure everything is set up correctly.',
+      $description = t('<a href="@bee">Bee</a> is misconfigured on the server. Please review the <a href="@config">documentation</a> on <a href="@dorg">drupal.org</a>, and make sure everything is set up correctly.',
         array(
-          '@drush' => 'http://drupal.org/project/drush',
-          '@config' => 'http://drupal.org/node/1958170',
+          '@bee' => 'https://github.com/backdrop-contrib/bee/',
+          '@config' => 'https://github.com/backdrop-contrib/migrate/wiki/Why-you-should-run-migrations-in-Bee-rather-than-the-UI#running-imports-and-rollbacks-from-the-ui-via-bee',
         )
       );
     }
   }
   else {
-    $description = t('To enable running operations in the background with <a href="@drush">drush</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
+    $description = t('To enable running operations in the background with <a href="@bee">Bee</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
       array(
-        '@drush' => 'http://drupal.org/project/drush',
-        '@recommended' => 'http://drupal.org/node/1806824',
-        '@config' => 'http://drupal.org/node/1958170',
+        '@bee' => 'https://github.com/backdrop-contrib/bee/',
+        '@recommended' => 'https://github.com/backdrop-contrib/migrate/wiki/Why-you-should-run-migrations-in-Bee-rather-than-the-UI',
+        '@config' => 'https://github.com/backdrop-contrib/migrate/wiki/Why-you-should-run-migrations-in-Bee-rather-than-the-UI#running-imports-and-rollbacks-from-the-ui-via-bee',
       )
     );
   }

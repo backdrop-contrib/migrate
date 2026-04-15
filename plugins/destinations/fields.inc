@@ -355,16 +355,16 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
     $fields = array();
     if ($type == 'text_with_summary') {
       $fields['summary'] = t('Subfield: <a href="@doc">Summary of field contents</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#summary'));
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings'));
     }
     if ($instance['settings']['text_processing']) {
       $fields['format'] = t('Subfield: <a href="@doc">Text format for the field</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#format'));
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings'));
     }
     $field = field_info_field($instance['field_name']);
     if (field_is_translatable($instance['entity_type'], $field)) {
       $fields['language'] = t('Subfield: <a href="@doc">Language for the field</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#language'));
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings'));
     }
     return $fields;
   }
@@ -495,11 +495,11 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
   public function fields($type, $instance, $migration = NULL) {
     return array(
       'source_type' => t('Option: <a href="@doc">Set to \'tid\' when the value is a source ID</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#source_type')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
       'create_term' => t('Option: <a href="@doc">Set to TRUE to create referenced terms when necessary</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#create_term')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
       'ignore_case' => t('Option: <a href="@doc">Set to TRUE to ignore case differences between source data and existing term names</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#ignore_case')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
       'not_empty' => t('Option: Set to TRUE to ignore empty terms to get created in case of multiple term names per row.'),
     );
   }
@@ -644,7 +644,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
   public function fields($type, $instance, $migration = NULL) {
     $fields = array(
       'file_class' => t('Option: <a href="@doc">Implementation of MigrateFile to use</a>',
-        array('@doc' => 'http://drupal.org/node/1540106#file_class')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-file-classes')),
     );
 
     $field = field_info_field($instance['field_name']);
@@ -826,9 +826,9 @@ class MigrateFileFieldHandler extends MigrateFileFieldBaseHandler {
     $fields = parent::fields($type, $instance, $migration);
     $fields += array(
       'description' => t('Subfield: <a href="@doc">String to be used as the description value</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#description')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
       'display' => t('Subfield: <a href="@doc">String to be used as the display value</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#display')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
     );
     return $fields;
   }
@@ -891,9 +891,9 @@ class MigrateImageFieldHandler extends MigrateFileFieldBaseHandler {
     $fields = parent::fields($type, $instance, $migration);
     $fields += array(
       'alt' => t('Subfield: <a href="@doc">String to be used as the alt value</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#alt')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
       'title' => t('Subfield: <a href="@doc">String to be used as the title value</a>',
-        array('@doc' => 'http://drupal.org/node/1224042#title')),
+        array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings')),
     );
     return $fields;
   }

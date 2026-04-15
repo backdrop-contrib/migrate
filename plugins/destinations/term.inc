@@ -77,20 +77,20 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
     $fields = array();
     // First the core (taxonomy_term_data table) properties
     $fields['tid'] = t('<a href="@doc">Existing term ID</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#tid'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
     $fields['name'] = t('<a href="@doc">Name</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#name'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
     $fields['description'] = t('<a href="@doc">Description</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#description'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
     $fields['parent'] = t('<a href="@doc">Parent (by Backdrop term ID)</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#parent'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
     // @todo Remove parent_name, implement via arguments
     $fields['parent_name'] = t('<a href="@doc">Parent (by name)</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#parent_name'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
     $fields['format'] = t('<a href="@doc">Format</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#format'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
     $fields['weight'] = t('<a href="@doc">Weight</a>',
-      array('@doc' => 'http://drupal.org/node/1349702#weight'));
+      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-term-fields'));
 
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('entity', 'fields', $this->entityType, $this->bundle, $migration);
