@@ -157,12 +157,12 @@ class MigrateListFiles extends MigrateList {
    *   Options that will be passed on to file_scan_directory(). See docs of
    *   that
    *   core Backdrop function for more information.
-   * @param MigrateContentParser $parser
+   * @param ?MigrateContentParser $parser
    *   Content parser class to use.
    * @param $get_contents
    *   Whether to load the contents of files.
    */
-  public function __construct($list_dirs, $base_dir, $file_mask = '//', $options = array(), MigrateContentParser $parser = NULL, $get_contents = TRUE) {
+  public function __construct($list_dirs, $base_dir, $file_mask = '//', $options = array(), ?MigrateContentParser $parser = NULL, $get_contents = TRUE) {
     if (!$parser) {
       $parser = new MigrateSimpleContentParser();
     }
@@ -267,8 +267,10 @@ class MigrateItemFile extends MigrateItem {
    * @param $get_contents
    *   TRUE if we should try load the contents of each file (in the case
    *   of a text file), or FALSE if we just want to confirm it exists (binary).
+   * @param ?MigrateContentParser $parser
+   *   Content parser class to use.
    */
-  public function __construct($base_dir, $get_contents = TRUE, MigrateContentParser $parser = NULL) {
+  public function __construct($base_dir, $get_contents = TRUE, ?MigrateContentParser $parser = NULL) {
     parent::__construct();
     if (!$parser) {
       $parser = new MigrateSimpleContentParser();

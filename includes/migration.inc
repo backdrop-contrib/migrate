@@ -1696,7 +1696,7 @@ abstract class Migration extends MigrationBase {
   /**
    * Set the specified row to be updated, if it exists.
    */
-  public function setUpdate(array $source_key = NULL) {
+  public function setUpdate(?array $source_key = NULL) {
     if (!$source_key) {
       $source_key = $this->currentSourceKey();
     }

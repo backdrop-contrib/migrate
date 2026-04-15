@@ -296,7 +296,7 @@ abstract class MigrateUIWizard {
    *   name of a MigrateUIWizard method, or a callable array specifying a method
    *   on a wizard extender. The validation method is formed from the method's
    *   name with the suffix 'Validate' added.
-   * @param MigrateUIStep $after
+   * @param ?MigrateUIStep $after
    *   Optional step after which to insert the new step. If omitted, add it at
    *   the end.
    * @param mixed $context
@@ -305,7 +305,7 @@ abstract class MigrateUIWizard {
    * @return MigrateUIStep
    *   The newly added step.
    */
-  public function addStep($name, $form_method, MigrateUIStep $after = NULL, $context = NULL) {
+  public function addStep($name, $form_method, ?MigrateUIStep $after = NULL, $context = NULL) {
     if (!is_array($form_method)) {
       $form_method = array($this, $form_method);
     }
