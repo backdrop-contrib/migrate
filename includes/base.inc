@@ -752,7 +752,7 @@ abstract class MigrationBase {
       }
       // Simply ignore strict and deprecated errors
       // Note DEPRECATED constants introduced in PHP 5.3
-      elseif (!($error_level == E_STRICT || $error_level == 8192 ||
+      elseif (!($error_level == 8192 ||
         $error_level == 16384)) {
         throw new MigrateException($message, MigrationBase::MESSAGE_ERROR);
       }

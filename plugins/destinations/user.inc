@@ -303,8 +303,8 @@ class MigrateDestinationRole extends MigrateDestinationTable {
    * Get the key definition for the role table.
    *
    * @param $dummy
-   *  PHP is picky - it throws E_STRICT notices if we don't have a parameter
-   *  because MigrateDestinationTable has one.
+   *  PHP is picky - we need to have a parameter because MigrateDestinationTable
+   *  has one.
    */
   static public function getKeySchema($dummy = NULL) {
     return MigrateDestinationTable::getKeySchema('role');
