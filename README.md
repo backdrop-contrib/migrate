@@ -129,6 +129,7 @@ MAINTAINERS
 -----------
 
 - [Jason Flatt](https://github.com/oadaeh)
+- [Laryn Kragt Bakker](https://github.com/laryn)
 
 Original port to Backdrop CMS started by:
 
