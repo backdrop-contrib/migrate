@@ -1,0 +1,27 @@
+table.migrate-dashboard tr.migrate-running,
+.migrate-running {
+  background-color: #cfc;
+}
+.migrate-option-separator {
+  margin-bottom: 0.2em;
+  padding-bottom: 0.2em;
+  border-bottom: 1px solid #aaa;
+}
+#migrate-migration-info td.migrate-error {
+  background: #ffc9c9;
+}
+
+.gin {
+  table.migrate-dashboard tr.migrate-running,
+  .migrate-running {
+    background-color: var(--gin-bg-green-light);
+  }
+
+  .migrate-option-separator {
+    border-bottom-color: var(--gin-border-color);
+  }
+
+  #migrate-migration-info td.migrate-error {
+    background-color: var(--gin-bg-danger-light);
+  }
+}

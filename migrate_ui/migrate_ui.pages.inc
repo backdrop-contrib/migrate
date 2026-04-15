@@ -308,23 +308,23 @@ function _migrate_ui_migrate_operations() {
     '#submit' => array('migrate_ui_migrate_submit'),
   );
   $operations['description'] = array(
-    '#prefix' => '<p>',
+    '#prefix' => '<div class="description"><p>',
     '#markup' => t(
       'Choose an operation to run on all selections above:
        <ul>
-         <li>Import<br /> Imports all previously unprocessed records from the source, plus
+         <li><strong>Import:</strong> <br>Imports all previously unprocessed records from the source, plus
              any records marked for update, into destination Backdrop objects.</li>
-         <li>Rollback<br /> Deletes all Backdrop objects created by the import.</li>
-         <li>Stop<br /> Cleanly interrupts any import or rollback processes that may
+         <li><strong>Rollback:</strong> <br>Deletes all Backdrop objects created by the import.</li>
+         <li><strong>Stop:</strong> <br>Cleanly interrupts any import or rollback processes that may
              currently be running.</li>
-         <li>Reset<br /> Sometimes a process may fail to stop cleanly, and be
+         <li><strong>Reset:</strong> <br>Sometimes a process may fail to stop cleanly, and be
              left stuck in an Importing or Rolling Back status. Choose Reset to clear
              the status and permit other operations to proceed.</li>
-         <li>Remove migration settings<br /> Removes all information about a migration group
+         <li><strong>Remove migration settings:</strong> <br>Removes all information about a migration group
              or task, while preserving any content that has already been imported.</li>
        </ul>'
     ),
-    '#postfix' => '</p>',
+    '#suffix' => '</p></div>',
   );
 
   $operations['options'] = array(
@@ -762,8 +762,8 @@ function migrate_migration_info($form, $form_state, $group_name, $migration_name
     $form['detail'] = array(
       '#type' => 'vertical_tabs',
       '#attached' => array(
-        'js' => array(backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.js'),
-        'css' => array(backdrop_get_path('module', 'migrate_ui') . '/migrate_ui.css'),
+        'js' => array(backdrop_get_path('module', 'migrate_ui') . '/js/migrate_ui.js'),
+        'css' => array(backdrop_get_path('module', 'migrate_ui') . '/css/migrate_ui.css'),
       ),
     );
   }
