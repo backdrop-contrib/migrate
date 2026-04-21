@@ -144,14 +144,8 @@ class MigrateDestinationTerm extends MigrateDestinationEntity {
    *
    * @throws MigrateException
    */
-  public function import(stdClass $taxonomy_term, stdClass $row) {
-    if ($taxonomy_term instanceof TaxonomyTerm) {
-      $term = $taxonomy_term;
-    }
-    else {
-      // Convert the stdClass object to a TaxonomyTerm object.
-      $term = new TaxonomyTerm(get_object_vars($taxonomy_term));
-    }
+  public function import(stdClass $term, stdClass $row) {
+    $term = _migrate_cast_to_class($term, 'TaxonomyTerm');
 
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?

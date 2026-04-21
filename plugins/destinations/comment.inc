@@ -135,6 +135,7 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    *   if successful. FALSE on failure.
    */
   public function import(stdClass $comment, stdClass $row) {
+    $comment = _migrate_cast_to_class($comment, 'Comment');
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {

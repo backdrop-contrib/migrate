@@ -153,6 +153,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    *  successful. FALSE on failure.
    */
   public function import(stdClass $account, stdClass $row) {
+    $account = _migrate_cast_to_class($account, 'User');
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {

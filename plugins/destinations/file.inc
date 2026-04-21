@@ -106,6 +106,7 @@ abstract class MigrateFileBase implements MigrateFileInterface {
    */
   protected function createFileEntity($destination, $owner) {
     $file = clone $this->defaultFile;
+    $file = _migrate_cast_to_class($file, 'File');
     $file->uri = $destination;
     $file->uid = $owner;
     if (!isset($file->filename)) {
@@ -669,6 +670,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    *  successful. FALSE on failure.
    */
   public function import(stdClass $file, stdClass $row) {
+    $file = _migrate_cast_to_class($file, 'File');
     // Updating previously-migrated content?
     $migration = Migration::currentMigration();
     if (isset($row->migrate_map_destid1)) {

@@ -739,3 +739,21 @@ function migrate_autoload_info() {
     'MigrateSourceXML' => 'plugins/sources/xml.inc',
   );
 }
+
+/**
+ * Helper to cast stdClass objects to specific classes.
+ */
+function _migrate_cast_to_class($instance, $class) {
+  if (!class_exists($class)) {
+    throw new MigrateException(t('Class !class does not exist.',
+      array('!class' => $class)));
+  }
+  if (!is_object($instance)) {
+    throw new MigrateException(t('Expected an object to cast to class !class.',
+      array('!class' => $class)));
+  }
+  if (is_a($instance, $class)) {
+    return $instance;
+  }
+  return new $class(get_object_vars($instance));
+}

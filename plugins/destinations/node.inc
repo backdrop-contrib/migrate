@@ -133,6 +133,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
    *  successful. FALSE on failure.
    */
   public function import(stdClass $node, stdClass $row) {
+    $node = _migrate_cast_to_class($node, 'Node');
     // Updating previously-migrated content?
     $migration = Migration::currentMigration();
     if (isset($row->migrate_map_destid1) && !$this->bypassDestIdCheck) {
@@ -443,6 +444,7 @@ class MigrateDestinationNodeRevision extends MigrateDestinationNode {
    * @throws MigrateException
    */
   public function import(stdClass $node, stdClass $row) {
+    $node = _migrate_cast_to_class($node, 'Node');
     // We're importing revisions, this should be set.
     $node->revision = 1;
 
