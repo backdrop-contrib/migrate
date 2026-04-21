@@ -484,7 +484,7 @@ class MigrateSourceJSON extends MigrateSource {
 
     $this->sourceUrls = $urls;
 
-    $active_url = config_get('migrate.settings', 'migrate_source_json_active_url');
+    $active_url = config_get('migrate.settings', 'source_json_active_url');
     if (isset($active_url)) {
       $active_url--;
     }
@@ -550,7 +550,7 @@ class MigrateSourceJSON extends MigrateSource {
     // Set the reader back to the beginning of the file (positioned to the
     // first matching element), then apply our logic to make sure we have the
     // first element fulfilling our logic (idlist/map/prepareRow()).
-    $active_url = config_get('migrate.settings', 'migrate_source_json_active_url');
+    $active_url = config_get('migrate.settings', 'source_json_active_url');
     if (isset($active_url)) {
       $active_url--;
     }
@@ -614,7 +614,7 @@ class MigrateSourceJSON extends MigrateSource {
         $this->activeUrl = $this->activeUrl + 1;
       }
 
-      config_set('migrate.settings', 'migrate_source_json_active_url', $this->activeUrl);
+      config_set('migrate.settings', 'source_json_active_url', $this->activeUrl);
 
       $this->reader = new $this->readerClass($this->sourceUrls[$this->activeUrl], $this->idField);
       $this->reader->rewind();
@@ -627,7 +627,7 @@ class MigrateSourceJSON extends MigrateSource {
     }
 
     if ((count($this->sourceUrls) -1) == $this->activeUrl) {
-      config_clear('migrate.settings', 'migrate_source_json_active_url');
+      config_clear('migrate.settings', 'source_json_active_url');
     }
 
     migrate_instrument_stop('MigrateSourceJSON::nextSource');

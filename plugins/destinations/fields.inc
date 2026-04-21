@@ -32,7 +32,7 @@ class MigrateFieldsEntityHandler extends MigrateDestinationHandler {
       $class_list = _migrate_class_list('MigrateFieldHandler');
 
       $disabled = array();
-      $unserialized = config_get('migrate.settings', 'migrate_disabled_handlers');
+      $unserialized = config_get('migrate.settings', 'disabled_handlers');
       if (!empty($unserialized)) {
         $disabled = unserialize($unserialized);
       }

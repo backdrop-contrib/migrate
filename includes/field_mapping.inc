@@ -223,7 +223,7 @@ class MigrateFieldMapping {
   }
 
   public function arguments($arguments) {
-    if (config_get('migrate.settings', 'migrate_deprecation_warnings')) {
+    if (config_get('migrate.settings', 'deprecation_warnings')) {
       MigrationBase::displayMessage(t('The field mapping arguments() method is now deprecated - please use subfield notation instead.'));
     }
     $this->arguments = $arguments;

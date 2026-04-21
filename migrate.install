@@ -242,11 +242,6 @@ function migrate_uninstall() {
       ->condition('module', 'migrate')
       ->execute();
   }
-
-  // Remove variables.
-  config_clear('migrate.settings', 'migrate_disable_autoregistration');
-  config_clear('migrate.settings', 'migrate_disabled_handlers');
-  config_clear('migrate.settings', 'migrate_deprecation_warnings');
 }
 
 /**

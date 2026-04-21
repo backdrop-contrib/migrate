@@ -1714,7 +1714,7 @@ abstract class DynamicMigration extends Migration {
 
   public function __construct($arguments) {
     parent::__construct($arguments);
-    if (config_get('migrate.settings', 'migrate_deprecation_warnings') &&
+    if (config_get('migrate.settings', 'deprecation_warnings') &&
       !self::$deprecationWarning) {
       self::displayMessage(t('The DynamicMigration class is no longer necessary and is now deprecated - please derive your migration classes directly from Migration.'));
       self::$deprecationWarning = TRUE;

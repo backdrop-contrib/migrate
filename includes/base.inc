@@ -423,7 +423,7 @@ abstract class MigrationBase {
       $this->group = $arguments;
       $this->arguments['group_name'] = $arguments->getName();
       if (!self::$groupArgumentWarning &&
-        $config->get('migrate_deprecation_warnings')) {
+        $config->get('deprecation_warnings')) {
         self::displayMessage(t('Passing a group object to a migration constructor is now deprecated - pass through the arguments array passed to the leaf class instead.'));
         self::$groupArgumentWarning = TRUE;
       }
@@ -432,7 +432,7 @@ abstract class MigrationBase {
       if (empty($arguments)) {
         $this->arguments = array();
         if (!self::$emptyArgumentsWarning &&
-          $config->get('migrate_deprecation_warnings')) {
+          $config->get('deprecation_warnings')) {
           self::displayMessage(t('Passing an empty first parameter to a migration constructor is now deprecated - pass through the arguments array passed to the leaf class instead.'));
           self::$emptyArgumentsWarning = TRUE;
         }

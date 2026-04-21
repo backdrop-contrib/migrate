@@ -34,7 +34,7 @@ function migrate_build_url($destid1, $migration_name) {
   global $base_url;
 
   // @todo Add an entry for each migration that we need to redirect.
-  $patterns = config_get('migrate.settings', 'migrate_patterns');
+  $patterns = config_get('migrate.settings', 'patterns');
   $pattern = $patterns[$migration_name];
 
   // Swap in the destination ID.
@@ -66,7 +66,7 @@ if (!$source_uri = $_GET['migrate_source_uri']) {
 // This is a tall table mapping legacy URLs to source_id and migration_name.
 // If you can already know the migration name and source_id based on the URI,
 // then the first lookup is not needed.
-$uri_table = config_get('migrate.settings', 'migrate_source_uri_table');
+$uri_table = config_get('migrate.settings', 'source_uri_table');
 
 if ($uri_map = db_query("SELECT migration_name, source_id FROM $uri_table WHERE source_uri = :source_uri", array(':source_uri' => $source_uri))->fetchObject()) {
   // Hurray, we do recognize this URI.

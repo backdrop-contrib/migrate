@@ -264,7 +264,7 @@ function _migrate_ui_migrate_operations() {
     '#title' => t('Operations'),
   );
 
-  switch (config_get('migrate_ui.settings', 'migrate_import_method')) {
+  switch (config_get('migrate.settings', 'import_method')) {
     case 1:
       $options = array(
         'import_background' => t('Import'),
@@ -420,7 +420,7 @@ function _migrate_ui_selected_migrations($values) {
  * Submit callback for the dashboard form.
  */
 function migrate_ui_migrate_submit($form, &$form_state) {
-  $config = config('migrate_ui.settings');
+  $config = config('migrate.settings');
 
   $values = $form_state['values'];
   $operation = $values['operation'];
@@ -512,7 +512,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     batch_set($batch);
   }
   elseif (count($drush_arguments) > 0) {
-    $drush_path = trim($config->get('migrate_drush_path'));
+    $drush_path = trim($config->get('drush_path') ?? '');
     // Check that $drush_path works. See migrate_ui_configure_form().
     if (!is_executable($drush_path)) {
       $message = t('To enable running operations in the background with <a href="@bee">Bee</a>, (which is <a href="@recommended">recommended</a>), some configuration must be done on the server. See the <a href="@config">documentation</a>.',
@@ -546,7 +546,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     if ($update) {
       $drush_command .= ' --update';
     }
-    if ($config->get('migrate_drush_mail')) {
+    if ($config->get('drush_mail')) {
       $drush_command .= ' --notify';
     }
     if (!empty($limit['value'])) {
@@ -556,7 +556,7 @@ function migrate_ui_migrate_submit($form, &$form_state) {
     $log_file = backdrop_realpath('temporary://' . $drush_arguments[0] . $log_suffix);
     $drush_command .= " >$log_file 2>&1 &";
     exec($drush_command, $output, $status);
-    if ($config->get('migrate_drush_mail')) {
+    if ($config->get('drush_mail')) {
       backdrop_set_message('Your operation is running in the background. You will receive an email message when it is complete.');
     }
     else {
@@ -1787,7 +1787,7 @@ function migrate_ui_configure() {
  * Form for reviewing migrations.
  */
 function migrate_ui_configure_form($form, &$form_state) {
-  $config = config('migrate_ui.settings');
+  $config = config('migrate.settings');
 
   $build = array();
 
@@ -1846,8 +1846,8 @@ function migrate_ui_configure_form($form, &$form_state) {
   $build['settings']['deprecation_warnings'] = array(
     '#type' => 'checkbox',
     '#title' => t('Warn on usage of deprecated patterns'),
-    '#default_value' => $config->get('migrate_deprecation_warnings'),
-    '#description' => t('When checked, you will receive warnings when using methods and patterns that are deprecated as of Migrate 2.6.'),
+    '#default_value' => $config->get('deprecation_warnings'),
+    '#description' => t('When checked, you will receive warnings when using methods and patterns that are deprecated.'),
   );
   $build['settings']['submit'] = array(
     '#type' => 'submit',
@@ -1856,7 +1856,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   // Configure background imports if the drush command has been set.
-  $drush_path = trim($config->get('migrate_drush_path'));
+  $drush_path = trim($config->get('drush_path') ?? '');
   $drush_validated = FALSE;
   if ($drush_path && is_executable($drush_path)) {
     // Try running a drush status command to verify it's properly configured.
@@ -1921,20 +1921,20 @@ function migrate_ui_configure_form($form, &$form_state) {
     $build['drush']['migrate_import_method'] = array(
       '#type' => 'select',
       '#options' => $options,
-      '#default_value' => $config->get('migrate_import_method'),
+      '#default_value' => $config->get('import_method'),
       '#title' => t('Import method'),
       '#description' => t('Choose whether the dashboard will perform operations immediately, in the background via drush, or offer a choice.'),
     );
 
     $build['drush']['migrate_drush_mail'] = array(
       '#type' => 'checkbox',
-      '#default_value' => $config->get('migrate_drush_mail'),
+      '#default_value' => $config->get('drush_mail'),
       '#title' => t('Send email notification when a background operation completes.'),
     );
 
     $build['drush']['migrate_drush_mail_subject'] = array(
       '#type' => 'textfield',
-      '#default_value' => $config->get('migrate_drush_mail_subject'),
+      '#default_value' => $config->get('drush_mail_subject'),
       '#title' => t('Subject'),
       '#states' => array(
         'visible' => array(
@@ -1946,7 +1946,7 @@ function migrate_ui_configure_form($form, &$form_state) {
     $build['drush']['migrate_drush_mail_body'] = array(
       '#type' => 'textarea',
       '#rows' => 10,
-      '#default_value' => $config->get('migrate_drush_mail_body'),
+      '#default_value' => $config->get('drush_mail_body'),
       '#title' => t('Body'),
       '#states' => array(
         'visible' => array(
@@ -1971,7 +1971,7 @@ function migrate_ui_configure_form($form, &$form_state) {
   );
 
   $disabled = array();
-  $unserialized = $config->get('migrate_disabled_handlers');
+  $unserialized = $config->get('disabled_handlers');
   if (!empty($unserialized)) {
     $disabled = unserialize($unserialized);
   }
@@ -2067,7 +2067,7 @@ function migrate_ui_configure_deregister_submit($form, &$form_state) {
  */
 function migrate_ui_configure_settings_submit($form, &$form_state) {
   $config = config('migrate.settings');
-  $config->set('migrate_deprecation_warnings', $form_state['values']['deprecation_warnings']);
+  $config->set('deprecation_warnings', $form_state['values']['deprecation_warnings']);
   $config->save();
   backdrop_set_message(t('Migration settings saved.'));
 }
@@ -2076,12 +2076,12 @@ function migrate_ui_configure_settings_submit($form, &$form_state) {
  * Submit callback for the drush configuration form handler fieldset.
  */
 function migrate_ui_configure_drush_submit($form, &$form_state) {
-  $config = config('migrate_ui.settings');
+  $config = config('migrate.settings');
   $values = $form_state['values'];
-  $config->set('migrate_import_method', $values['migrate_import_method']);
-  $config->set('migrate_drush_mail', $values['migrate_drush_mail']);
-  $config->set('migrate_drush_mail_subject', $values['migrate_drush_mail_subject']);
-  $config->set('migrate_drush_mail_body', $values['migrate_drush_mail_body']);
+  $config->set('import_method', $values['import_method']);
+  $config->set('drush_mail', $values['drush_mail']);
+  $config->set('drush_mail_subject', $values['drush_mail_subject']);
+  $config->set('drush_mail_body', $values['drush_mail_body']);
   $config->save();
 }
 
@@ -2101,7 +2101,7 @@ function migrate_ui_configure_submit($form, &$form_state) {
     }
   }
   $config = config('migrate.settings');
-  $config->set('migrate_disabled_handlers', serialize($disabled));
+  $config->set('disabled_handlers', serialize($disabled));
   $config->save();
   if (!empty($disabled)) {
     backdrop_set_message(t('The following handler classes are disabled: @classes',
