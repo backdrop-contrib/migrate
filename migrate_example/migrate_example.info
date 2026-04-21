@@ -1,4 +1,4 @@
-name = "Migrate Example"
+name = "Migrate example - Beer and Wine"
 description = "Example migration data."
 package = "Migration"
 backdrop = 1.x
@@ -14,4 +14,4 @@ dependencies[] = number
 ;dependencies[] = node_reference
 
 ; For testing table_copy plugin. Since is infrequently used, we comment it out.
-; 
+;

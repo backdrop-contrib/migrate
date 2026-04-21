@@ -1,12 +1,14 @@
-backdrop = 1.x
 type = module
+name = "Migrate example - Oracle"
+description = "Content type supporting example of Oracle migration"
+package = "Migration"
+project = "migrate_example_oracle"
+backdrop = 1.x
+
 dependencies[] = "features"
 dependencies[] = "image"
 dependencies[] = "migrate"
-description = "Content type supporting example of Oracle migration"
+
 features[field][] = "node-migrate_example_oracle-body"
 features[field][] = "node-migrate_example_oracle-field_mainimage"
 features[node][] = "migrate_example_oracle"
-name = "Migrate example - Oracle"
-package = "Migration"
-project = "migrate_example_oracle"

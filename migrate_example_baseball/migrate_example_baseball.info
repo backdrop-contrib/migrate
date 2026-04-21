@@ -1,9 +1,13 @@
-backdrop = 1.x
 type = module
+name = "Migrate example - Baseball"
+description = "Import baseball box scores."
+package = "Migration"
+backdrop = 1.x
+
 dependencies[] = "features"
 dependencies[] = "migrate"
 dependencies[] = "number"
-description = "Import baseball box scores."
+
 features[field][] = "node-migrate_example_baseball-body"
 features[field][] = "node-migrate_example_baseball-field_attendance"
 features[field][] = "node-migrate_example_baseball-field_duration"
@@ -20,6 +24,3 @@ features[field][] = "node-migrate_example_baseball-field_visiting_pitcher"
 features[field][] = "node-migrate_example_baseball-field_visiting_score"
 features[field][] = "node-migrate_example_baseball-field_visiting_team"
 features[node][] = "migrate_example_baseball"
-name = "migrate_example_baseball"
-package = "Migration"
-php = "5.2.4"
