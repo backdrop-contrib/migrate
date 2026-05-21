@@ -24,6 +24,9 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    */
   protected $md5Passwords = FALSE;
 
+  /**
+ *
+ */
   static public function getKeySchema() {
     return array(
       'uid' => array(
@@ -37,22 +40,22 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
   /**
    * Return an options array for user destinations.
    *
-   * @param string $language
-   *  Default language for usrs created via this destination class.
+   * @param string $langcode
+   *   Default langcode for usrs created via this destination class.
    * @param string $text_format
-   *  Default text format for users created via this destination class.
+   *   Default text format for users created via this destination class.
    * @param boolean $md5_passwords
-   *  Set TRUE to indicate incoming passwords are md5-encrypted.
+   *   Set TRUE to indicate incoming passwords are md5-encrypted.
    */
-  static public function options($language, $text_format, $md5_passwords) {
-    return compact('language', 'text_format', 'md5_passwords');
+  static public function options($langcode, $text_format, $md5_passwords) {
+    return compact('langcode', 'text_format', 'md5_passwords');
   }
 
   /**
    * Basic initialization
    *
    * @param array $options
-   *  Options applied to comments.
+   *   Options applied to comments.
    */
   public function __construct(array $options = array()) {
     parent::__construct('user', 'user', $options);
@@ -70,15 +73,15 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    * Returns a list of fields available to be mapped for users
    *
    * @param Migration $migration
-   *  Optionally, the migration containing this destination.
+   *   Optionally, the migration containing this destination.
    *
    * @return array
-   *  Keys: machine names of the fields (to be passed to addFieldMapping)
-   *  Values: Human-friendly descriptions of the fields.
+   *   Keys: machine names of the fields (to be passed to addFieldMapping)
+   *   Values: Human-friendly descriptions of the fields.
    */
   public function fields($migration = NULL) {
     $fields = array();
-    // First the core (users table) properties
+    // First the core (users table) properties.
     $fields['uid'] = t('<a href="@doc">Existing user ID</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['mail'] = t('<a href="@doc">Email address</a>',
@@ -95,9 +98,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['login'] = t('<a href="@doc">Last login timestamp</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
-    $fields['roles'] = t('<a href="@doc">Role IDs</a>',
-      array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
-    $fields['roles'] = t('<a href="@doc">Roles</a>',
+    $fields['roles'] = t('<a href="@doc">Role names</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['picture'] = t('<a href="@doc">Picture</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
@@ -107,7 +108,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['timezone'] = t('<a href="@doc">Timezone</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
-    $fields['language'] = t('<a href="@doc">Language</a>',
+    $fields['langcode'] = t('<a href="@doc">Language</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
     $fields['theme'] = t('<a href="@doc">Default theme</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
@@ -118,7 +119,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
     $fields['is_new'] = t('Option: <a href="@doc">Indicates a new user with the specified uid should be created</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-user-fields'));
 
-    // Then add in anything provided by handlers
+    // Then add in anything provided by handlers.
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);
     $fields += migrate_handler_invoke_all('User', 'fields', $this->entityType, $this->bundle, $migration);
 
@@ -129,7 +130,7 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    * Delete a batch of users at once.
    *
    * @param $uids
-   *  Array of user IDs to be deleted.
+   *   Array of user IDs to be deleted.
    */
   public function bulkRollback(array $uids) {
     migrate_instrument_start('user_delete_multiple');
@@ -143,114 +144,115 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    * Import a single user.
    *
    * @param $account
-   *  Account object to build. Prefilled with any fields mapped in the
+   *   Account object to build. Prefilled with any fields mapped in the
    *   Migration.
    * @param $row
-   *  Raw source data object - passed through to prepare/complete handlers.
+   *   Raw source data object - passed through to prepare/complete handlers.
    *
    * @return array
-   *  Array of key fields (uid only in this case) of the user that was saved if
-   *  successful. FALSE on failure.
+   *   Array of key fields (uid only in this case) of the user that was saved if
+   *   successful. FALSE on failure.
    */
-  public function import(stdClass $account, stdClass $row) {
-    $account = _migrate_cast_to_class($account, 'User');
+  public function import(stdClass $stub_account, stdClass $row) {
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {
-      // Make sure is_new is off
-      $account->is_new = FALSE;
-      if (isset($account->uid)) {
-        if ($account->uid != $row->migrate_map_destid1) {
+      // Make sure is_new is off.
+      $stub_account->is_new = FALSE;
+      if (isset($stub_account->uid)) {
+        if ($stub_account->uid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming uid !uid and map destination uid !destid1 don't match",
             array(
-            '!uid' => $account->uid,
-            '!destid1' => $row->migrate_map_destid1,
-          )));
+              '!uid' => $stub_account->uid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
-        $account->uid = $row->migrate_map_destid1;
+        $stub_account->uid = $row->migrate_map_destid1;
       }
     }
     if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
-      if (!isset($account->uid)) {
+      if (!isset($stub_account->uid)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but no destination uid provided'));
       }
-      $old_account = user_load($account->uid, TRUE);
+      $old_account = user_load($stub_account->uid, TRUE);
       if (empty($old_account)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but user !uid does not exist',
-          array('!uid' => $account->uid)));
+          array('!uid' => $stub_account->uid)));
       }
     }
     else {
-      $old_account = $account;
+      $old_account = $stub_account;
     }
 
-    if (!empty($account->roles)) {
-      if (!is_array($account->roles)) {
-        $account->roles = array($account->roles);
+    if (!empty($stub_account->roles)) {
+      if (!is_array($stub_account->roles)) {
+        $stub_account->roles = array($stub_account->roles);
       }
-      $account->roles = backdrop_map_assoc($account->roles);
+      $stub_account->roles = backdrop_map_assoc($stub_account->roles);
     }
-    if (empty($account->roles) && empty($old_account->roles)) {
-      $account->roles = array();
+    if (empty($stub_account->roles) && empty($old_account->roles)) {
+      $stub_account->roles = array();
     }
 
-    $this->prepare($account, $row);
+    $this->prepare($stub_account, $row);
 
-    if (isset($account->uid) && !(isset($account->is_new) && $account->is_new)) {
+    if (isset($stub_account->uid) && empty($stub_account->is_new)) {
       $updating = TRUE;
     }
     else {
       $updating = FALSE;
     }
 
-    // While user_save is happy to see a fid in $account->picture on insert,
+    // While user_save is happy to see a fid in $stub_account->picture on insert,
     // when updating an existing account it wants a file object.
-    if ($updating && isset($account->picture) && ($fid = $account->picture)) {
-      $account->picture = file_load($fid);
+    if ($updating && isset($stub_account->picture) && ($fid = $stub_account->picture)) {
+      $stub_account->picture = file_load($fid);
     }
 
-    // Normalize MD5 passwords to lowercase, as generated by Backdrop 6 and previous
+    // Normalize MD5 passwords to lowercase, as generated by Drupal 6 and previous.
     if ($this->md5Passwords) {
-      $account->pass = backdrop_strtolower($account->pass);
+      $stub_account->pass = backdrop_strtolower($stub_account->pass);
     }
 
     // If any datetime values were included, ensure that they're in timestamp format.
-    if (isset($account->created)) {
-      $account->created = MigrationBase::timestamp($account->created);
+    if (isset($stub_account->created)) {
+      $stub_account->created = MigrationBase::timestamp($stub_account->created);
     }
-    if (isset($account->access)) {
-      $account->access = MigrationBase::timestamp($account->access);
+    if (isset($stub_account->access)) {
+      $stub_account->access = MigrationBase::timestamp($stub_account->access);
     }
-    if (isset($account->login)) {
-      $account->login = MigrationBase::timestamp($account->login);
+    if (isset($stub_account->login)) {
+      $stub_account->login = MigrationBase::timestamp($stub_account->login);
     }
 
     // Validate field data prior to saving.
-    MigrateDestinationEntity::fieldAttachValidate('user', $account);
+    MigrateDestinationEntity::fieldAttachValidate('user', $stub_account);
 
+    // Cast to a user object so that user_save() will recognize it.
+    $account = _migrate_cast_to_class($stub_account, $old_account, 'User');
     migrate_instrument_start('user_save');
-    $newaccount = user_save($old_account, (array) $account);
+    user_save($account);
     migrate_instrument_stop('user_save');
-    if ($newaccount) {
+    if ($account) {
       if ($this->md5Passwords && !empty($account->pass)) {
-        // Ape the Backdrop 6 -> Backdrop 7 upgrade, which encrypts the MD5 text in the
+        // Ape the Drupal 6 -> Drupal 7 upgrade, which encrypts the MD5 text in the
         // modern way, and marks it with a prepended U so it recognizes and fixes it
         // up at login time.
-        $password = 'U' . $newaccount->pass;
+        $password = 'U' . $account->pass;
         db_update('users')
           ->fields(array('pass' => $password))
-          ->condition('uid', $newaccount->uid)
+          ->condition('uid', $account->uid)
           ->execute();
       }
       // Unlike nodes and taxonomy terms, core does not automatically save an
       // alias in a user entity, we must do it ourselves.
       if (module_exists('path')) {
-        if (!empty($account->path['alias'])) {
+        if (!empty($stub_account->path['alias'])) {
           $path = array(
             'source' => 'user/' . $account->uid,
-            'alias' => $account->path['alias'],
+            'alias' => $stub_account->path['alias'],
           );
           migrate_instrument_start('path_save');
           path_save($path);
@@ -264,15 +266,15 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
         $this->numCreated++;
         // user_save() doesn't update file_usage on account creation, we have
         // to do it ourselves.
-        if (!empty($newaccount->picture)) {
-          $file = file_load($newaccount->picture);
+        if (!empty($stub_account->picture)) {
+          $file = file_load($stub_account->picture);
           if (is_object($file)) {
-            file_usage_add($file, 'user', 'user', $newaccount->uid);
+            file_usage_add($file, 'user', 'user', $account->uid);
           }
         }
       }
-      $this->complete($newaccount, $row);
-      $return = array($newaccount->uid);
+      $this->complete($account, $row);
+      $return = array($account->uid);
     }
     else {
       $return = FALSE;
@@ -280,9 +282,14 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
     return $return;
   }
 }
-
+/**
+ *
+ */
 class MigrateDestinationRole extends MigrateDestinationTable {
 
+  /**
+ *
+ */
   public function __construct() {
     parent::__construct('role');
   }
@@ -291,23 +298,29 @@ class MigrateDestinationRole extends MigrateDestinationTable {
    * Get the key definition for the role table.
    *
    * @param $dummy
-   *  PHP is picky - we need to have a parameter because MigrateDestinationTable
-   *  has one.
+   *   PHP is picky - we need to have a parameter because MigrateDestinationTable
+   *   has one.
    */
   static public function getKeySchema($dummy = NULL) {
-    return MigrateDestinationTable::getKeySchema('role');
+    return array(
+      'name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => 'Name of the role',
+      ),
+    );
   }
 
   /**
    * Delete a single row.
    *
    * @param $id
-   *  Primary key values.
+   *   Primary key values.
    */
   public function rollback(array $id) {
     migrate_instrument_start('role rollback');
-    $rid = reset($id);
-    user_role_delete((int) $rid);
+    $name = reset($id);
+    user_role_delete($name);
     migrate_instrument_stop('role rollback');
   }
 
@@ -315,13 +328,13 @@ class MigrateDestinationRole extends MigrateDestinationTable {
    * Import a single row.
    *
    * @param $entity
-   *  Object object to build. Prefilled with any fields mapped in the Migration.
+   *   Object object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
-   *  Raw source data object - passed through to prepare/complete handlers.
+   *   Raw source data object - passed through to prepare/complete handlers.
    *
    * @return array
-   *  Array of key fields of the object that was saved if
-   *  successful. FALSE on failure.
+   *   Array of key fields of the object that was saved if
+   *   successful. FALSE on failure.
    */
   public function import(stdClass $entity, stdClass $row) {
     $migration = Migration::currentMigration();
@@ -329,27 +342,27 @@ class MigrateDestinationRole extends MigrateDestinationTable {
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {
       $updating = TRUE;
-      if (isset($entity->rid)) {
-        if ($entity->rid != $row->migrate_map_destid1) {
+      if (isset($entity->name)) {
+        if ($entity->name != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming id !id and map destination id !destid don't match",
             array(
-            '!id' => $entity->rid,
-            '!destid' => $row->migrate_map_destid1,
-          )));
+              '!id' => $entity->name,
+              '!destid' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
-        $entity->rid = $row->migrate_map_destid1;
+        $entity->name = $row->migrate_map_destid1;
       }
     }
 
     if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
       $updating = TRUE;
-      if (!isset($entity->rid)) {
+      if (!isset($entity->name)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but no destination id provided'));
       }
 
-      $old_entity = user_role_load($entity->rid);
+      $old_entity = user_role_load($entity->name);
 
       foreach ($entity as $field => $value) {
         $old_entity->{$field} = $entity->{$field};
@@ -361,8 +374,8 @@ class MigrateDestinationRole extends MigrateDestinationTable {
     user_role_save($entity);
     $this->complete($entity, $row);
 
-    if (!empty($entity->rid)) {
-      $id = array($entity->rid);
+    if (!empty($entity->name)) {
+      $id = array($entity->name);
       if ($updating) {
         $this->numUpdated++;
       }

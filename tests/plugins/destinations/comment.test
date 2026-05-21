@@ -9,6 +9,9 @@
  * Test comment migration.
  */
 class MigrateCommentUnitTest extends BackdropWebTestCase {
+  /**
+ *
+ */
   function setUp() {
     parent::setUp('taxonomy', 'image', 'comment', 'migrate', 'migrate_example');
 
@@ -16,6 +19,9 @@ class MigrateCommentUnitTest extends BackdropWebTestCase {
     migrate_static_registration();
   }
 
+  /**
+ *
+ */
   function testCommentImport() {
     $migration = Migration::getInstance('WineVariety');
     $result = $migration->processImport();
@@ -60,26 +66,26 @@ class MigrateCommentUnitTest extends BackdropWebTestCase {
       $this->error($row->message);
     }
 
-    $result = db_select('migrate_example_wine_comment', 'wc')
+      $result = db_select('migrate_example_wine_comment', 'wc')
       ->fields('wc', array(
-      'commentid',
-      'comment_parent',
-      'name',
-      'mail',
-      'accountid',
-      'body',
-      'wineid',
-      'subject',
-      'commenthost',
-      'userpage',
-      'posted',
-      'lastchanged',
-    ))
+        'commentid',
+        'comment_parent',
+        'name',
+        'mail',
+        'accountid',
+        'body',
+        'wineid',
+        'subject',
+        'commenthost',
+        'userpage',
+        'posted',
+        'lastchanged',
+      ))
       ->orderBy('comment_parent')
       ->execute();
 
     $rawcomments = comment_load_multiple(FALSE);
-    // Index by subject
+    // Index by subject.
     $comments = array();
     foreach ($rawcomments as $comment) {
       $comments[$comment->subject] = $comment;
@@ -102,7 +108,7 @@ class MigrateCommentUnitTest extends BackdropWebTestCase {
     $destid = $wine_migration->getMap()
       ->lookupDestinationID(array($row->wineid));
     $this->assertEqual($comment->nid, reset($destid), t('Nid matches'));
-    $body = field_get_items('comment', $comment, 'comment_body');
+    $body = field_get_items('comment', $comment, 'field_comment_body');
     $this->assertEqual($body[0]['value'], $row->body, t('Body matches'));
     $this->assertEqual($comment->hostname, $row->commenthost, t('Hostname matches'));
     $this->assertEqual($comment->homepage, $row->userpage, t('Homepage matches'));
@@ -118,7 +124,7 @@ class MigrateCommentUnitTest extends BackdropWebTestCase {
     $this->assertEqual($comment->pid, $comments['im parent']->cid, t('Parent matches'));
 
     // Test updates
-    // Capture original comments
+    // Capture original comments.
     $original_comments = comment_load_multiple(FALSE);
     $update_migration = Migration::getInstance('WineCommentUpdates');
     $result = $update_migration->processImport();
@@ -137,16 +143,16 @@ class MigrateCommentUnitTest extends BackdropWebTestCase {
           if ($value != $final_comments[$cid]->{$field}) {
             $this->error(t('Field !field mismatch: original !value1, result !value2',
               array(
-              '!field' => $field,
-              '!value1' => print_r($value, TRUE),
-              '!value2' => print_r($final_comments[$cid]->{$field}, TRUE),
+                '!field' => $field,
+                '!value1' => print_r($value, TRUE),
+                '!value2' => print_r($final_comments[$cid]->{$field}, TRUE),
             )));
           }
         }
       }
     }
 
-    // Test rollback
+    // Test rollback.
     $result = $migration->processRollback(array('force' => TRUE));
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Comment rollback returned RESULT_COMPLETED'));

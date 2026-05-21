@@ -124,13 +124,13 @@ abstract class MigrateFieldHandler extends MigrateHandler {
   // complete($entity, array $field_info, array $instance, array $values).
 
   /**
-   * Determine the language of the field.
+   * Determine the langcode of the field.
    *
    * @param $entity
    * @param $field_info
    * @param $arguments
    *
-   * @return string language code.
+   * @return string langcode code.
    */
   function getFieldLanguage($entity, $field_info, array $arguments) {
     $migration = Migration::currentMigration();
@@ -138,10 +138,10 @@ abstract class MigrateFieldHandler extends MigrateHandler {
       case !field_is_translatable($migration->getDestination()
         ->getEntityType(), $field_info):
         return LANGUAGE_NONE;
-      case isset($arguments['language']):
-        return $arguments['language'];
-      case !empty($entity->language) && $entity->language != LANGUAGE_NONE:
-        return $entity->language;
+      case isset($arguments['langcode']):
+        return $arguments['langcode'];
+      case !empty($entity->langcode) && $entity->langcode != LANGUAGE_NONE:
+        return $entity->langcode;
         break;
       default:
         return $migration->getDestination()->getLanguage();
@@ -199,7 +199,7 @@ class MigrateDefaultFieldHandler extends MigrateFieldHandler {
       $arguments = array_filter($values['arguments']);
       unset($values['arguments']);
     }
-    $language = $this->getFieldLanguage($entity, $field_info, $arguments);
+    $langcode = $this->getFieldLanguage($entity, $field_info, $arguments);
 
     // Get the name of the primary (first) column, which is mapped separately.
     reset($field_info['columns']);
@@ -218,7 +218,7 @@ class MigrateDefaultFieldHandler extends MigrateFieldHandler {
           $delta_arguments[$name] = $argument;
         }
       }
-      $return[$language][$delta] = array($primary_column => $value) +
+      $return[$langcode][$delta] = array($primary_column => $value) +
         array_intersect_key($delta_arguments, $field_info['columns']);
       $delta++;
     }
@@ -284,7 +284,7 @@ abstract class MigrateSimpleFieldHandler extends MigrateFieldHandler {
       $arguments = $values['arguments'];
       unset($values['arguments']);
     }
-    $language = $this->getFieldLanguage($entity, $field_info, $arguments);
+    $langcode = $this->getFieldLanguage($entity, $field_info, $arguments);
 
     // Let the derived class skip empty values.
     if ($this->skipEmpty) {
@@ -294,13 +294,13 @@ abstract class MigrateSimpleFieldHandler extends MigrateFieldHandler {
     // Setup the Field API array for saving.
     $delta = 0;
     foreach ($values as $value) {
-      if (is_array($language)) {
-        $current_language = $language[$delta];
+      if (is_array($langcode)) {
+        $current_langcode = $langcode[$delta];
       }
       else {
-        $current_language = $language;
+        $current_langcode = $langcode;
       }
-      $return[$current_language][] = array($this->fieldValueKey => $value);
+      $return[$current_langcode][] = array($this->fieldValueKey => $value);
       $delta++;
     }
     return isset($return) ? $return : NULL;
@@ -324,7 +324,7 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
     $this->registerTypes(array('text', 'text_long', 'text_with_summary'));
   }
 
-  static function arguments($summary = NULL, $format = NULL, $language = NULL) {
+  static function arguments($summary = NULL, $format = NULL, $langcode = NULL) {
     $arguments = array();
     if (!is_null($summary)) {
       $arguments['summary'] = $summary;
@@ -332,8 +332,8 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
     if (!is_null($format)) {
       $arguments['format'] = $format;
     }
-    if (!is_null($language)) {
-      $arguments['language'] = $language;
+    if (!is_null($langcode)) {
+      $arguments['langcode'] = $langcode;
     }
     return $arguments;
   }
@@ -363,7 +363,7 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
     }
     $field = field_info_field($instance['field_name']);
     if (field_is_translatable($instance['entity_type'], $field)) {
-      $fields['language'] = t('Subfield: <a href="@doc">Language for the field</a>',
+      $fields['langcode'] = t('Subfield: <a href="@doc">Language for the field</a>',
         array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Field-mappings#advanced-field-mappings'));
     }
     return $fields;
@@ -381,7 +381,7 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
 
     $migration = Migration::currentMigration();
     $destination = $migration->getDestination();
-    $language = $this->getFieldLanguage($entity, $field_info, $arguments);
+    $langcode = $this->getFieldLanguage($entity, $field_info, $arguments);
     $max_length = isset($field_info['settings']['max_length']) ?
       $field_info['settings']['max_length'] : 0;
 
@@ -438,13 +438,13 @@ class MigrateTextFieldHandler extends MigrateFieldHandler {
         $item['value'] = $value;
       }
 
-      if (is_array($language)) {
-        $current_language = $language[$delta];
+      if (is_array($langcode)) {
+        $current_langcode = $langcode[$delta];
       }
       else {
-        $current_language = $language;
+        $current_langcode = $langcode;
       }
-      $return[$current_language][] = $item;
+      $return[$current_langcode][] = $item;
       $delta++;
     }
 
@@ -523,14 +523,14 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
     }
     elseif ($values) {
       $vocab_name = $field_info['settings']['allowed_values'][0]['vocabulary'];
-      $names = taxonomy_vocabulary_get_names();
+      $names = taxonomy_vocabulary_load_multiple();
 
       // Get the vocabulary for this term.
-      if (isset($field_info['settings']['allowed_values'][0]['vid'])) {
-        $vid = $field_info['settings']['allowed_values'][0]['vid'];
+      if (isset($field_info['settings']['allowed_values'][0]['vocabulary'])) {
+        $vocabulary = $field_info['settings']['allowed_values'][0]['vocabulary'];
       }
       else {
-        $vid = $names[$vocab_name]->vid;
+        $vocabulary = $names[$vocab_name]->vocabulary;
       }
 
       // Remove leading and trailing spaces in term names.
@@ -554,7 +554,7 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
       $existing_terms = db_select('taxonomy_term_data', 'td')
         ->fields('td', array('tid', 'name'))
         ->condition('td.name', $values, 'IN')
-        ->condition('td.vid', $vid)
+        ->condition('td.vocabulary', $vocabulary)
         ->execute()
         ->fetchAllKeyed(1, 0);
       // If we're ignoring case, change both the matched term name keys and the
@@ -578,7 +578,7 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
         }
         elseif (!empty($arguments['create_term'])) {
           $new_term = new stdClass();
-          $new_term->vid = $vid;
+          $new_term->vocabulary = $vocabulary;
           $new_term->name = $value;
           $new_term->vocabulary_machine_name = $vocab_name;
 
@@ -604,17 +604,17 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
       }
     }
 
-    $language = $this->getFieldLanguage($entity, $field_info, $arguments);
+    $langcode = $this->getFieldLanguage($entity, $field_info, $arguments);
     $result = array();
     $delta = 0;
     foreach ($tids as $tid) {
-      if (is_array($language)) {
-        $current_language = $language[$delta];
+      if (is_array($langcode)) {
+        $current_langcode = $langcode[$delta];
       }
       else {
-        $current_language = $language;
+        $current_langcode = $langcode;
       }
-      $result[$current_language][] = array('tid' => $tid);
+      $result[$current_langcode][] = array('tid' => $tid);
       $delta++;
     }
     return $result;
@@ -649,7 +649,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
 
     $field = field_info_field($instance['field_name']);
     if (field_is_translatable($instance['entity_type'], $field)) {
-      $fields['language'] = t('Subfield: Language for the field');
+      $fields['langcode'] = t('Subfield: Language for the field');
     }
 
     // If we can identify the file class mapped to this field, pick up the
@@ -686,7 +686,7 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
       $arguments = array();
     }
 
-    $default_language = $this->getFieldLanguage($entity, $field_info, $arguments);
+    $default_langcode = $this->getFieldLanguage($entity, $field_info, $arguments);
     $migration = Migration::currentMigration();
 
     // One can override the source class via CLI or drushrc.php (the
@@ -750,11 +750,11 @@ abstract class MigrateFileFieldBaseHandler extends MigrateFieldHandler {
         // MigrateFile class has saved a message indicating why.
         if ($file) {
           $field_array = array('fid' => $file->fid);
-          $language = isset($instance_arguments['language']) ? $instance_arguments['language'] : $default_language;
-          if (is_array($language)) {
-            $language = $language[$delta];
+          $langcode = isset($instance_arguments['langcode']) ? $instance_arguments['langcode'] : $default_langcode;
+          if (is_array($langcode)) {
+            $langcode = $langcode[$delta];
           }
-          $return[$language][] = $this->buildFieldArray($field_array, $instance_arguments, $delta);
+          $return[$langcode][] = $this->buildFieldArray($field_array, $instance_arguments, $delta);
         }
       }
     }

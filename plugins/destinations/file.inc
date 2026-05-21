@@ -6,7 +6,6 @@
  * own destination in fields.inc
  */
 
-
 /**
  * Interface for taking some value representing a file and returning
  * a Backdrop file entity (creating the entity if necessary).
@@ -23,18 +22,20 @@ interface MigrateFileInterface {
    * Create or link to a Backdrop file entity.
    *
    * @param $value
-   *  A class-specific value (URI, pre-existing file ID, file blob, ...)
-   *  representing file content.
+   *   A class-specific value (URI, pre-existing file ID, file blob, ...)
+   *   representing file content.
    *
    * @param $owner
-   *  uid of an account to be recorded as the file owner.
+   *   uid of an account to be recorded as the file owner.
    *
    * @return object
-   *  File entity being created or referenced.
+   *   File entity being created or referenced.
    */
   public function processFile($value, $owner);
 }
-
+/**
+ *
+ */
 abstract class MigrateFileBase implements MigrateFileInterface {
 
   /**
@@ -66,6 +67,9 @@ abstract class MigrateFileBase implements MigrateFileInterface {
    */
   protected $preserveFiles = FALSE;
 
+  /**
+ *
+ */
   public function __construct($arguments = array(), $default_file = NULL) {
     if (isset($arguments['preserve_files'])) {
       $this->preserveFiles = $arguments['preserve_files'];
@@ -97,37 +101,37 @@ abstract class MigrateFileBase implements MigrateFileInterface {
    * Setup a file entity object suitable for saving.
    *
    * @param $destination
-   *  Path to the Backdrop copy of the file.
+   *   Path to the Backdrop copy of the file.
    * @param $owner
-   *  Uid of the file owner.
+   *   Uid of the file owner.
    *
    * @return stdClass
-   *  A file object ready to be saved.
+   *   A file object ready to be saved.
    */
   protected function createFileEntity($destination, $owner) {
-    $file = clone $this->defaultFile;
-    $file = _migrate_cast_to_class($file, 'File');
-    $file->uri = $destination;
-    $file->uid = $owner;
-    if (!isset($file->filename)) {
-      $file->filename = backdrop_basename($destination);
+    // $file = _migrate_cast_to_class($stub_file, $old_file, 'File');
+    $stub_file = clone $this->defaultFile;
+    $stub_file->uri = $destination;
+    $stub_file->uid = $owner;
+    if (!isset($stub_file->filename)) {
+      $stub_file->filename = backdrop_basename($destination);
     }
-    if (!isset($file->filemime)) {
-      $file->filemime = file_get_mimetype(urldecode($destination));
+    if (!isset($stub_file->filemime)) {
+      $stub_file->filemime = file_get_mimetype(urldecode($destination));
     }
-    if (!isset($file->status)) {
-      $file->status = FILE_STATUS_PERMANENT;
+    if (!isset($stub_file->status)) {
+      $stub_file->status = FILE_STATUS_PERMANENT;
     }
 
-    if (empty($file->type) || $file->type == 'file') {
+    if (empty($stub_file->type) || $stub_file->type == 'file') {
       // Try to determine the file type.
       if (module_exists('file_entity')) {
-        $type = file_get_type($file);
+        $type = file_get_type($stub_file);
       }
-      elseif ($slash_pos = strpos($file->filemime, '/')) {
-        $type = substr($file->filemime, 0, $slash_pos);
+      elseif ($slash_pos = strpos($stub_file->filemime, '/')) {
+        $type = substr($stub_file->filemime, 0, $slash_pos);
       }
-      $file->type = isset($type) ? $type : 'file';
+      $stub_file->type = isset($type) ? $type : 'file';
     }
 
     // If we are replacing or reusing an existing filesystem entry,
@@ -137,11 +141,11 @@ abstract class MigrateFileBase implements MigrateFileInterface {
       $existing_files = file_load_multiple(array(), array('uri' => $destination));
       if (count($existing_files)) {
         $existing = reset($existing_files);
-        $file->fid = $existing->fid;
-        $file->filename = $existing->filename;
+        $stub_file->fid = $existing->fid;
+        $stub_file->filename = $existing->filename;
       }
     }
-    return $file;
+    return $stub_file;
   }
 
   /**
@@ -154,14 +158,14 @@ abstract class MigrateFileBase implements MigrateFileInterface {
     if (!empty($this->preserveFiles)) {
       // We do this directly instead of calling file_usage_add, to force the
       // count to 1 - otherwise, updates will increment the counter and the file
-      // will never be deletable
+      // will never be deletable.
       db_merge('file_usage')
         ->key(array(
-        'fid' => $fid,
-        'module' => 'migrate',
-        'type' => 'file',
-        'id' => $fid,
-      ))
+          'fid' => $fid,
+          'module' => 'migrate',
+          'type' => 'file',
+          'id' => $fid,
+        ))
         ->fields(array('count' => 1))
         ->execute();
     }
@@ -175,6 +179,9 @@ abstract class MigrateFileBase implements MigrateFileInterface {
  */
 class MigrateFileUriAsIs extends MigrateFileBase {
 
+  /**
+ *
+ */
   public function processFile($value, $owner) {
     $file = file_save($this->createFileEntity($value, $owner));
     return $file;
@@ -190,12 +197,12 @@ class MigrateFileFid extends MigrateFileBase {
    * Implementation of MigrateFileInterface::processFile().
    *
    * @param $value
-   *  An existing file entity ID (fid).
+   *   An existing file entity ID (fid).
    * @param $owner
-   *  User ID (uid) to be the owner of the file. Ignored in this case.
+   *   User ID (uid) to be the owner of the file. Ignored in this case.
    *
    * @return int
-   *  The file entity corresponding to the fid that was passed in.
+   *   The file entity corresponding to the fid that was passed in.
    */
   public function processFile($value, $owner) {
     $this->markForPreservation($value);
@@ -222,6 +229,9 @@ abstract class MigrateFile extends MigrateFileBase {
    */
   protected $destinationFile = '';
 
+  /**
+ *
+ */
   public function __construct($arguments = array(), $default_file = NULL) {
     parent::__construct($arguments, $default_file);
     if (isset($arguments['destination_dir'])) {
@@ -252,10 +262,10 @@ abstract class MigrateFile extends MigrateFileBase {
    * By whatever appropriate means, put the file in the right place.
    *
    * @param $destination
-   *  Destination path within Backdrop.
+   *   Destination path within Backdrop.
    *
    * @return bool
-   *  TRUE if the file is successfully saved, FALSE otherwise.
+   *   TRUE if the file is successfully saved, FALSE otherwise.
    */
   abstract protected function copyFile($destination);
 
@@ -263,12 +273,12 @@ abstract class MigrateFile extends MigrateFileBase {
    * Default implementation of MigrateFileInterface::processFiles().
    *
    * @param $value
-   *  The URI or local filespec of a file to be imported.
+   *   The URI or local filespec of a file to be imported.
    * @param $owner
-   *  User ID (uid) to be the owner of the file.
+   *   User ID (uid) to be the owner of the file.
    *
    * @return object
-   *  The file entity being created or referenced.
+   *   The file entity being created or referenced.
    */
   public function processFile($value, $owner) {
     $migration = Migration::currentMigration();
@@ -279,7 +289,7 @@ abstract class MigrateFile extends MigrateFileBase {
       ltrim($this->destinationFile, "/\\"));
 
     // Our own file_replace behavior - if the file exists, use it without
-    // replacing it
+    // replacing it.
     if ($this->fileReplace == self::FILE_EXISTS_REUSE) {
       // See if we this file already (we'll reuse and resave a file entity if it exists).
       if (file_exists($destination)) {
@@ -288,7 +298,7 @@ abstract class MigrateFile extends MigrateFileBase {
         $this->markForPreservation($file->fid);
         return $file;
       }
-      // No existing one to reuse, reset to REPLACE
+      // No existing one to reuse, reset to REPLACE.
       $this->fileReplace = FILE_EXISTS_REPLACE;
     }
 
@@ -360,6 +370,9 @@ class MigrateFileUri extends MigrateFile {
    */
   protected $urlEncode = TRUE;
 
+  /**
+ *
+ */
   public function __construct($arguments = array(), $default_file = NULL) {
     parent::__construct($arguments, $default_file);
     if (isset($arguments['source_dir'])) {
@@ -376,8 +389,7 @@ class MigrateFileUri extends MigrateFile {
    * @return array
    */
   static public function fields() {
-    return parent::fields() +
-      array(
+    return parent::fields() + array(
       'source_dir' => t('Subfield: <a href="@doc">Path to source file.</a>',
           array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-migratefileuri')),
       'urlencode' => t('Option: <a href="@doc">Encode all segments of the incoming path (defaults to TRUE).</a>',
@@ -389,10 +401,10 @@ class MigrateFileUri extends MigrateFile {
    * Implementation of MigrateFile::copyFile().
    *
    * @param $destination
-   *  Destination within Backdrop.
+   *   Destination within Backdrop.
    *
    * @return bool
-   *  TRUE if the copy succeeded, FALSE otherwise.
+   *   TRUE if the copy succeeded, FALSE otherwise.
    */
   protected function copyFile($destination) {
     if ($this->urlEncode) {
@@ -412,10 +424,10 @@ class MigrateFileUri extends MigrateFile {
       $migration = Migration::currentMigration();
       $migration->saveMessage(t('The specified file %file could not be copied to %destination: "%exception_msg"',
         array(
-        '%file' => $this->sourcePath,
-        '%destination' => $destination,
-        '%exception_msg' => $e->getMessage(),
-      )));
+          '%file' => $this->sourcePath,
+          '%destination' => $destination,
+          '%exception_msg' => $e->getMessage(),
+        )));
       return FALSE;
     }
   }
@@ -428,14 +440,14 @@ class MigrateFileUri extends MigrateFile {
    * @return string
    */
   static public function urlencode($filename) {
-    // Only apply to a full URL
+    // Only apply to a full URL.
     if (strpos($filename, '://')) {
       $components = explode('/', $filename);
       foreach ($components as $key => $component) {
         $components[$key] = rawurlencode($component);
       }
       $filename = implode('/', $components);
-      // Actually, we don't want certain characters encoded
+      // Actually, we don't want certain characters encoded.
       $filename = str_replace('%3A', ':', $filename);
       $filename = str_replace('%3F', '?', $filename);
       $filename = str_replace('%26', '&', $filename);
@@ -448,15 +460,15 @@ class MigrateFileUri extends MigrateFile {
    * Implementation of MigrateFileInterface::processFiles().
    *
    * @param $value
-   *  The URI or local filespec of a file to be imported.
+   *   The URI or local filespec of a file to be imported.
    * @param $owner
-   *  User ID (uid) to be the owner of the file.
+   *   User ID (uid) to be the owner of the file.
    *
    * @return object
-   *  The file entity being created or referenced.
+   *   The file entity being created or referenced.
    */
   public function processFile($value, $owner) {
-    // Identify the full path to the source file
+    // Identify the full path to the source file.
     if (!empty($this->sourceDir)) {
       $this->sourcePath = rtrim($this->sourceDir, "/\\") . '/' . ltrim($value, "/\\");
     }
@@ -494,10 +506,10 @@ class MigrateFileBlob extends MigrateFile {
    * Implementation of MigrateFile::copyFile().
    *
    * @param $destination
-   *  Backdrop destination path.
+   *   Backdrop destination path.
    *
    * @return bool
-   *  TRUE if the file contents were successfully written, FALSE otherwise.
+   *   TRUE if the file contents were successfully written, FALSE otherwise.
    */
   protected function copyFile($destination) {
     if (file_put_contents($destination, $this->fileContents)) {
@@ -515,12 +527,12 @@ class MigrateFileBlob extends MigrateFile {
    * Implementation of MigrateFileInterface::processFile().
    *
    * @param $value
-   *  The file contents to be saved as a file.
+   *   The file contents to be saved as a file.
    * @param $owner
-   *  User ID (uid) to be the owner of the file.
+   *   User ID (uid) to be the owner of the file.
    *
    * @return object
-   *  File entity being created or referenced.
+   *   File entity being created or referenced.
    */
   public function processFile($value, $owner) {
     $this->fileContents = $value;
@@ -541,6 +553,9 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    */
   protected $fileClass;
 
+  /**
+ *
+ */
   public function setFileClass($file_class) {
     $this->fileClass = $file_class;
   }
@@ -572,7 +587,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    * Basic initialization
    *
    * @param array $options
-   *  Options applied to files.
+   *   Options applied to files.
    */
   public function __construct($bundle = 'file', $file_class = 'MigrateFileUri',
                               $options = array()) {
@@ -585,25 +600,25 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    * (bundle)
    *
    * @param Migration $migration
-   *  Optionally, the migration containing this destination.
+   *   Optionally, the migration containing this destination.
    *
    * @return array
-   *  Keys: machine names of the fields (to be passed to addFieldMapping)
-   *  Values: Human-friendly descriptions of the fields.
+   *   Keys: machine names of the fields (to be passed to addFieldMapping)
+   *   Values: Human-friendly descriptions of the fields.
    */
   public function fields($migration = NULL) {
     $fields = array();
-    // First the core properties
+    // First the core properties.
     $fields['fid'] = t('Existing file ID');
     $fields['uid'] = t('Uid of user associated with file');
     $fields['value'] = t('Representation of the source file (usually a URI)');
     $fields['timestamp'] = t('UNIX timestamp for the date the file was added');
 
-    // Then add in anything provided by handlers
+    // Then add in anything provided by handlers.
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);
     $fields += migrate_handler_invoke_all('File', 'fields', $this->entityType, $this->bundle, $migration);
 
-    // Plus anything provided by the file class
+    // Plus anything provided by the file class.
     $fields += call_user_func(array($this->fileClass, 'fields'));
 
     return $fields;
@@ -613,7 +628,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    * Delete a file entry.
    *
    * @param array $fid
-   *  Fid to delete, arrayed.
+   *   Fid to delete, arrayed.
    */
   public function rollback(array $fid) {
     migrate_instrument_start('file_load');
@@ -626,7 +641,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
       $migration = Migration::currentMigration();
       $mappings = $migration->getFieldMappings();
       if (isset($mappings['preserve_files'])) {
-        // Assumes it's set using defaultValue
+        // Assumes it's set using defaultValue.
         $preserve_files = $mappings['preserve_files']->getDefaultValue();
       }
       else {
@@ -661,16 +676,16 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
    * Import a single file record.
    *
    * @param $file
-   *  File object to build. Prefilled with any fields mapped in the Migration.
+   *   File object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
-   *  Raw source data object - passed through to prepare/complete handlers.
+   *   Raw source data object - passed through to prepare/complete handlers.
    *
    * @return array
-   *  Array of key fields (fid only in this case) of the file that was saved if
-   *  successful. FALSE on failure.
+   *   Array of key fields (fid only in this case) of the file that was saved if
+   *   successful. FALSE on failure.
    */
   public function import(stdClass $file, stdClass $row) {
-    $file = _migrate_cast_to_class($file, 'File');
+    // $file = _migrate_cast_to_class($file, $old_file, 'File');
     // Updating previously-migrated content?
     $migration = Migration::currentMigration();
     if (isset($row->migrate_map_destid1)) {
@@ -678,9 +693,9 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
         if ($file->fid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming fid !fid and map destination fid !destid1 don't match",
             array(
-            '!fid' => $file->fid,
-            '!destid1' => $row->migrate_map_destid1,
-          )));
+              '!fid' => $file->fid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
@@ -709,7 +724,7 @@ class MigrateDestinationFile extends MigrateDestinationEntity {
       }
     }
 
-    // Invoke migration prepare handlers
+    // Invoke migration prepare handlers.
     $this->prepare($file, $row);
 
     if (isset($file->fid)) {

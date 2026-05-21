@@ -17,6 +17,9 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
 
   protected $bypassDestIdCheck = FALSE;
 
+  /**
+ *
+ */
   static public function getKeySchema() {
     return array(
       'nid' => array(
@@ -30,22 +33,22 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
   /**
    * Return an options array for node destinations.
    *
-   * @param string $language
-   *  Default language for nodes created via this destination class.
+   * @param string $langcode
+   *   Default langcode for nodes created via this destination class.
    * @param string $text_format
-   *  Default text format for nodes created via this destination class.
+   *   Default text format for nodes created via this destination class.
    */
-  static public function options($language, $text_format) {
-    return compact('language', 'text_format');
+  static public function options($langcode, $text_format) {
+    return compact('langcode', 'text_format');
   }
 
   /**
    * Basic initialization
    *
    * @param string $bundle
-   *  A.k.a. the content type (page, article, etc.) of the node.
+   *   A.k.a. the content type (page, article, etc.) of the node.
    * @param array $options
-   *  Options applied to nodes.
+   *   Options applied to nodes.
    */
   public function __construct($bundle, array $options = array()) {
     parent::__construct('node', $bundle, $options);
@@ -55,15 +58,15 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
    * Returns a list of fields available to be mapped for the node type (bundle)
    *
    * @param Migration $migration
-   *  Optionally, the migration containing this destination.
+   *   Optionally, the migration containing this destination.
    *
    * @return array
-   *  Keys: machine names of the fields (to be passed to addFieldMapping)
-   *  Values: Human-friendly descriptions of the fields.
+   *   Keys: machine names of the fields (to be passed to addFieldMapping)
+   *   Values: Human-friendly descriptions of the fields.
    */
   public function fields($migration = NULL) {
     $fields = array();
-    // First the core (node table) properties
+    // First the core (node table) properties.
     $fields['nid'] = t('Node: <a href="@doc">Existing node ID</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $node_type = node_type_load($this->bundle);
@@ -88,7 +91,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['log'] = t('<a href="@doc">Revision Log message</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
-    $fields['language'] = t('<a href="@doc">Language (fr, en, ...)</a>',
+    $fields['langcode'] = t('<a href="@doc">Language (fr, en, ...)</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
     $fields['tnid'] = t('<a href="@doc">The translation set id for this node</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
@@ -99,7 +102,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
     $fields['is_new'] = t('Option: <a href="@doc">Indicates a new node with the specified nid should be created</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-node-fields'));
 
-    // Then add in anything provided by handlers
+    // Then add in anything provided by handlers.
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);
     $fields += migrate_handler_invoke_all('Node', 'fields', $this->entityType, $this->bundle, $migration);
 
@@ -110,7 +113,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
    * Delete a batch of nodes at once.
    *
    * @param $nids
-   *  Array of node IDs to be deleted.
+   *   Array of node IDs to be deleted.
    */
   public function bulkRollback(array $nids) {
     migrate_instrument_start('node_delete_multiple');
@@ -124,83 +127,82 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
    * Import a single node.
    *
    * @param $node
-   *  Node object to build. Prefilled with any fields mapped in the Migration.
+   *   Node object to build. Prefilled with any fields mapped in the Migration.
    * @param $row
-   *  Raw source data object - passed through to prepare/complete handlers.
+   *   Raw source data object - passed through to prepare/complete handlers.
    *
    * @return array
-   *  Array of key fields (nid only in this case) of the node that was saved if
-   *  successful. FALSE on failure.
+   *   Array of key fields (nid only in this case) of the node that was saved if
+   *   successful. FALSE on failure.
    */
-  public function import(stdClass $node, stdClass $row) {
-    $node = _migrate_cast_to_class($node, 'Node');
+  public function import(stdClass $stub_node, stdClass $row) {
     // Updating previously-migrated content?
     $migration = Migration::currentMigration();
     if (isset($row->migrate_map_destid1) && !$this->bypassDestIdCheck) {
-      // Make sure is_new is off
-      $node->is_new = FALSE;
-      if (isset($node->nid)) {
-        if ($node->nid != $row->migrate_map_destid1) {
+      // Make sure is_new is off.
+      $stub_node->is_new = FALSE;
+      if (isset($stub_node->nid)) {
+        if ($stub_node->nid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming nid !nid and map destination nid !destid1 don't match",
             array(
-            '!nid' => $node->nid,
-            '!destid1' => $row->migrate_map_destid1,
-          )));
+              '!nid' => $stub_node->nid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
-        $node->nid = $row->migrate_map_destid1;
+        $stub_node->nid = $row->migrate_map_destid1;
       }
-      // Get the existing vid, tnid so updates don't generate notices
+      // Get the existing vid, tnid so updates don't generate notices.
       $values = db_select('node', 'n')
         ->fields('n', array('vid', 'tnid'))
-        ->condition('nid', $node->nid)
+        ->condition('nid', $stub_node->nid)
         ->execute()
         ->fetchAssoc();
       if (empty($values)) {
         throw new MigrateException(t("Incoming node ID !nid no longer exists",
-          array('!nid' => $node->nid)));
+          array('!nid' => $stub_node->nid)));
       }
-      $node->vid = $values['vid'];
-      if (empty($node->tnid)) {
-        $node->tnid = $values['tnid'];
+      $stub_node->vid = $values['vid'];
+      if (empty($stub_node->tnid)) {
+        $stub_node->tnid = $values['tnid'];
       }
     }
+    $old_node = (isset($stub_node->nid)) ? node_load($stub_node->nid) : NULL;
     if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
-      if (!isset($node->nid)) {
+      if (!isset($stub_node->nid)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but no destination nid provided'));
       }
-      $old_node = node_load($node->nid);
       if (empty($old_node)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but node !nid does not exist',
-          array('!nid' => $node->nid)));
+          array('!nid' => $stub_node->nid)));
       }
-      if (!isset($node->created)) {
-        $node->created = $old_node->created;
+      if (!isset($stub_node->created)) {
+        $stub_node->created = $old_node->created;
       }
-      if (!isset($node->vid)) {
-        $node->vid = $old_node->vid;
+      if (!isset($stub_node->vid)) {
+        $stub_node->vid = $old_node->vid;
       }
-      if (!isset($node->status)) {
-        $node->status = $old_node->status;
+      if (!isset($stub_node->status)) {
+        $stub_node->status = $old_node->status;
       }
-      if (!isset($node->uid)) {
-        $node->uid = $old_node->uid;
+      if (!isset($stub_node->uid)) {
+        $stub_node->uid = $old_node->uid;
       }
     }
 
-    if (!isset($node->type)) {
+    if (!isset($stub_node->type)) {
       // Default the type to our designated destination bundle (by doing this
       // conditionally, we permit some flexibility in terms of implementing
       // migrations which can affect more than one type).
-      $node->type = $this->bundle;
+      $stub_node->type = $this->bundle;
     }
 
+    $node = _migrate_cast_to_class($stub_node, $old_node, 'Node');
     // Set some required properties.
-
     if ($migration->getSystemOfRecord() == Migration::SOURCE) {
-      if (empty($node->language)) {
-        $node->language = $this->language;
+      if (empty($node->langcode)) {
+        $node->langcode = $this->langcode;
       }
 
       // Apply defaults, allow standard node prepare hooks to fire.
@@ -210,7 +212,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
         $created = MigrationBase::timestamp($node->created);
       }
       else {
-        // To keep node_object_prepare() from choking
+        // To keep node_object_prepare() from choking.
         $node->created = REQUEST_TIME;
       }
       if (isset($node->changed)) {
@@ -228,7 +230,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
       if (isset($created)) {
         $node->created = $created;
       }
-      // No point to resetting $node->changed here, node_save() will overwrite it
+      // No point to resetting $node->changed here, node_save() will overwrite it.
       if (isset($uid)) {
         $node->uid = $uid;
       }
@@ -237,27 +239,27 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
       }
     }
 
-    // Invoke migration prepare handlers
+    // Invoke migration prepare handlers.
     $this->prepare($node, $row);
 
     if (!isset($node->revision)) {
       $node->revision = 0; // Saves disk space and writes. Can be overridden.
     }
 
-    // Trying to update an existing node
-    if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
-      // Incoming data overrides existing data, so only copy non-existent fields
-      foreach ($old_node as $field => $value) {
-        // An explicit NULL in the source data means to wipe to old value (i.e.,
-        // don't copy it over from $old_node)
-        if (property_exists($node, $field) && $node->{$field} === NULL) {
-          // Ignore this field
-        }
-        elseif (!isset($node->{$field})) {
-          $node->{$field} = $old_node->{$field};
-        }
-      }
-    }
+    // // Trying to update an existing node.
+    // if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
+    //   // Incoming data overrides existing data, so only copy non-existent fields.
+    //   foreach ($old_node as $field => $value) {
+    //     // An explicit NULL in the source data means to wipe to old value (i.e.,
+    //     // don't copy it over from $old_node)
+    //     if (property_exists($node, $field) && $node->{$field} === NULL) {
+    //       // Ignore this field.
+    //     }
+    //     elseif (!isset($node->{$field})) {
+    //       $node->{$field} = $old_node->{$field};
+    //     }
+    //   }
+    // }
 
     if (isset($node->nid) && !(isset($node->is_new) && $node->is_new)) {
       $updating = TRUE;
@@ -287,7 +289,7 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
       }
 
       // Unfortunately, http://drupal.org/node/722688 was not accepted, so fix
-      // the changed timestamp
+      // the changed timestamp.
       if (isset($changed)) {
         db_update('node')
           ->fields(array('changed' => $changed))
@@ -376,7 +378,7 @@ class MigrateDestinationNodeRevision extends MigrateDestinationNode {
    * Returns additional fields on top of node destinations.
    *
    * @param string $migration
-   *   Active migration
+   *   Active migration.
    *
    * @return array
    *   Fields.
@@ -443,27 +445,26 @@ class MigrateDestinationNodeRevision extends MigrateDestinationNode {
    *
    * @throws MigrateException
    */
-  public function import(stdClass $node, stdClass $row) {
-    $node = _migrate_cast_to_class($node, 'Node');
+  public function import(stdClass $stub_node, stdClass $row) {
     // We're importing revisions, this should be set.
-    $node->revision = 1;
+    $stub_node->revision = 1;
 
-    if (empty($node->nid)) {
+    if (empty($stub_node->nid)) {
       throw new MigrateException(t('Missing incoming nid.'));
     }
 
     $original_updated = $this->numUpdated;
 
-    parent::import($node, $row);
+    parent::import($stub_node, $row);
 
     // Reset num updated and increment created since new revision is always an update.
     $this->numUpdated = $original_updated;
     $this->numCreated++;
 
-    if (empty($node->vid)) {
+    if (empty($stub_node->vid)) {
       return FALSE;
     }
 
-    return array($node->vid);
+    return array($stub_node->vid);
   }
 }

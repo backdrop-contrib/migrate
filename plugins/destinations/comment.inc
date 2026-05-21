@@ -15,6 +15,9 @@
  */
 class MigrateDestinationComment extends MigrateDestinationEntity {
 
+  /**
+ *
+ */
   static public function getKeySchema() {
     return array(
       'cid' => array(
@@ -35,22 +38,22 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
   /**
    * Return an options array for comment destinations.
    *
-   * @param string $language
-   *  Default language for comments created via this destination class.
+   * @param string $langcode
+   *   Default langcode for comments created via this destination class.
    * @param string $text_format
-   *  Default text format for comments created via this destination class.
+   *   Default text format for comments created via this destination class.
    */
-  static public function options($language, $text_format) {
-    return compact('language', 'text_format');
+  static public function options($langcode, $text_format) {
+    return compact('langcode', 'text_format');
   }
 
   /**
    * Basic initialization
    *
    * @param string $bundle
-   *  A.k.a. the content type (page, article, etc.) of the ... comment?.
+   *   A.k.a. the content type (page, article, etc.) of the ... comment?.
    * @param array $options
-   *  Options applied to comments.
+   *   Options applied to comments.
    */
   public function __construct($bundle, array $options = array()) {
     parent::__construct('comment', $bundle, $options);
@@ -61,15 +64,15 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    * a particular bundle (node type)
    *
    * @param Migration $migration
-   *  Optionally, the migration containing this destination.
+   *   Optionally, the migration containing this destination.
    *
    * @return array
-   *  Keys: machine names of the fields (to be passed to addFieldMapping)
-   *  Values: Human-friendly descriptions of the fields.
+   *   Keys: machine names of the fields (to be passed to addFieldMapping)
+   *   Values: Human-friendly descriptions of the fields.
    */
   public function fields($migration = NULL) {
     $fields = array();
-    // First the core (comment table) properties
+    // First the core (comment table) properties.
     $fields['cid'] = t('<a href="@doc">Existing comment ID</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['nid'] = t('<a href="@doc">Node (by Backdrop ID)</a>',
@@ -94,12 +97,12 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['homepage'] = t('<a href="@doc">Homepage</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
-    $fields['language'] = t('<a href="@doc">Language</a>',
+    $fields['langcode'] = t('<a href="@doc">Language</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
     $fields['thread'] = t('<a href="@doc">Thread</a>',
       array('@doc' => 'https://github.com/backdrop-contrib/migrate/wiki/Destination-classes#user-content-comment-fields'));
 
-    // Then add in anything provided by handlers
+    // Then add in anything provided by handlers.
     $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle, $migration);
     $fields += migrate_handler_invoke_all('Comment', 'fields', $this->entityType, $this->bundle, $migration);
 
@@ -110,7 +113,7 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    * Delete a batch of comments at once.
    *
    * @param $cids
-   *  Array of comment IDs to be deleted.
+   *   Array of comment IDs to be deleted.
    */
   public function bulkRollback(array $cids) {
     migrate_instrument_start('comment_delete_multiple');
@@ -125,74 +128,75 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    * Import a single comment.
    *
    * @param $comment
-   *  Comment object to build. Prefilled with any fields mapped in the
+   *   Comment object to build. Prefilled with any fields mapped in the
    *   Migration.
    * @param $row
-   *  Raw source data object - passed through to prepare/complete handlers.
+   *   Raw source data object - passed through to prepare/complete handlers.
    *
    * @return array
-   *  Array of key fields (cid only in this case) of the comment that was saved
+   *   Array of key fields (cid only in this case) of the comment that was saved
    *   if successful. FALSE on failure.
    */
-  public function import(stdClass $comment, stdClass $row) {
-    $comment = _migrate_cast_to_class($comment, 'Comment');
+  public function import(stdClass $stub_comment, stdClass $row) {
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {
-      if (isset($comment->cid)) {
-        if ($comment->cid != $row->migrate_map_destid1) {
+      if (isset($stub_comment->cid)) {
+        if ($stub_comment->cid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming cid !cid and map destination nid !destid1 don't match",
             array(
-            '!cid' => $comment->cid,
-            '!destid1' => $row->migrate_map_destid1,
-          )));
+              '!cid' => $stub_comment->cid,
+              '!destid1' => $row->migrate_map_destid1,
+            )));
         }
       }
       else {
-        $comment->cid = $row->migrate_map_destid1;
+        $stub_comment->cid = $row->migrate_map_destid1;
       }
     }
-    // Fix up timestamps
-    if (isset($comment->created)) {
-      $comment->created = MigrationBase::timestamp($comment->created);
+    // Fix up timestamps.
+    if (isset($stub_comment->created)) {
+      $stub_comment->created = MigrationBase::timestamp($stub_comment->created);
     }
-    if (isset($comment->changed)) {
-      $comment->changed = MigrationBase::timestamp($comment->changed);
-    }
-
-    if (!isset($comment->node_type)) {
-      $comment->node_type = $this->bundle;
+    if (isset($stub_comment->changed)) {
+      $stub_comment->changed = MigrationBase::timestamp($stub_comment->changed);
     }
 
+    if (!isset($stub_comment->node_type)) {
+      $stub_comment->node_type = $this->bundle;
+    }
+
+    $old_comment = (isset($stub_comment->cid)) ? comment_load($stub_comment->cid) : NULL;
     if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
-      if (!isset($comment->cid)) {
+      if (!isset($stub_comment->cid)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but no destination cid provided'));
       }
-      $rawcomment = $comment;
-      $old_comment = comment_load($comment->cid);
+      $rawcomment = $stub_comment;
       if (empty($old_comment)) {
         throw new MigrateException(t('System-of-record is DESTINATION, but commend !cid does not exist',
-          array('!cid' => $comment->cid)));
+          array('!cid' => $stub_comment->cid)));
       }
-      if (!isset($comment->nid)) {
-        $comment->nid = $old_comment->nid;
+      if (!isset($stub_comment->nid)) {
+        $stub_comment->nid = $old_comment->nid;
       }
-      if (!isset($comment->created)) {
-        $comment->created = $old_comment->created;
+      if (!isset($stub_comment->created)) {
+        $stub_comment->created = $old_comment->created;
       }
-      if (!isset($comment->changed)) {
-        $comment->changed = $old_comment->changed;
+      if (!isset($stub_comment->changed)) {
+        $stub_comment->changed = $old_comment->changed;
       }
-      $this->prepare($comment, $row);
+      $this->prepare($stub_comment, $row);
       foreach ($rawcomment as $field => $value) {
-        $old_comment->{$field} = $comment->{$field};
+        if (isset($stub_comment->{$field})) {
+          $old_comment->{$field} = $stub_comment->{$field};
+        }
       }
-      $comment = $old_comment;
+      $stub_comment = $old_comment;
     }
     else {
       // Set some default properties.
       $defaults = array(
-        'language' => $this->language,
+        'langcode' => $this->langcode,
         'node_type' => $this->bundle,
         'subject' => '',
         'status' => COMMENT_PUBLISHED,
@@ -201,25 +205,25 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
         'pid' => 0,
       );
       foreach ($defaults as $field => $value) {
-        if (!isset($comment->{$field})) {
-          $comment->{$field} = $value;
+        if (!isset($stub_comment->{$field})) {
+          $stub_comment->{$field} = $value;
         }
       }
 
-      $this->prepare($comment, $row);
-      // Make sure we have a nid
-      if (!isset($comment->nid) || !$comment->nid) {
+      $this->prepare($stub_comment, $row);
+      // Make sure we have a nid.
+      if (!isset($stub_comment->nid) || !$stub_comment->nid) {
         throw new MigrateException(t('No node ID provided for comment'));
       }
 
       // comment_save() hardcodes hostname, so if we're trying to set it we
-      // need to save it and apply it after
-      if (isset($comment->hostname)) {
-        $hostname = $comment->hostname;
+      // need to save it and apply it after.
+      if (isset($stub_comment->hostname)) {
+        $hostname = $stub_comment->hostname;
       }
     }
 
-    if (isset($comment->cid) && $comment->cid) {
+    if (isset($stub_comment->cid) && $stub_comment->cid) {
       $updating = TRUE;
     }
     else {
@@ -227,8 +231,9 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
     }
 
     // Validate field data prior to saving.
-    MigrateDestinationEntity::fieldAttachValidate('comment', $comment);
+    MigrateDestinationEntity::fieldAttachValidate('comment', $stub_comment);
 
+    $comment = _migrate_cast_to_class($stub_comment, $old_comment, 'Comment');
     migrate_instrument_start('comment_save');
     comment_save($comment);
     migrate_instrument_stop('comment_save');
@@ -288,9 +293,8 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    * rollbacks, then re-enable and compute them in bulk when done.
    */
   protected function disableStatistics() {
-    // If maintaining node statistics is enabled, temporarily disable it
-    $this->maintainNodeStatistics =
-      state_get('comment_maintain_node_statistics', TRUE);
+    // If maintaining node statistics is enabled, temporarily disable it.
+    $this->maintainNodeStatistics = state_get('comment_maintain_node_statistics', TRUE);
     if ($this->maintainNodeStatistics) {
       $GLOBALS['conf']['comment_maintain_node_statistics'] = FALSE;
     }
@@ -301,13 +305,12 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
    * operation.
    */
   protected function enableStatistics() {
-    // If originally enabled, re-enable and rebuild the stats
+    // If originally enabled, re-enable and rebuild the stats.
     if ($this->maintainNodeStatistics) {
       $GLOBALS['conf']['comment_maintain_node_statistics'] = TRUE;
 
-      // Copied from devel_rebuild_node_comment_statistics
-
-      // Empty table
+      // Copied from devel_rebuild_node_comment_statistics.
+      // Empty table.
       db_truncate('node_comment_statistics')->execute();
 
       // DBTNG. IGNORE keyword is not compatible with Postgres. SQLite?
@@ -369,9 +372,14 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
     }
   }
 }
-
+/**
+ *
+ */
 class MigrateCommentNodeHandler extends MigrateDestinationHandler {
 
+  /**
+ *
+ */
   public function __construct() {
     $this->registerTypes(array('node'));
   }
