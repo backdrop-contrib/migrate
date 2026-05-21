@@ -22,6 +22,7 @@ function migrate_migrate_api() {
       'MigrateTextFieldHandler',
       'MigrateValueFieldHandler',
       'MigrateNodeReferenceFieldHandler',
+      'MigrateEntityReferenceFieldHandler',
       'MigrateUserReferenceFieldHandler',
       'MigrateTaxonomyTermReferenceFieldHandler',
       'MigrateFileFieldHandler',
