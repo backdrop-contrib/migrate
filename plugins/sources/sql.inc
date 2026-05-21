@@ -99,10 +99,10 @@ class MigrateSourceSQL extends MigrateSource {
    * Return an options array for PDO sources.
    *
    * @param boolean $map_joinable
-   *  Indicates whether the map table can be joined directly to the source
+   *   Indicates whether the map table can be joined directly to the source
    *   query.
    * @param boolean $cache_counts
-   *  Indicates whether to cache counts of source records.
+   *   Indicates whether to cache counts of source records.
    */
   static public function options($map_joinable, $cache_counts) {
     return compact('map_joinable', 'cache_counts');
@@ -112,16 +112,16 @@ class MigrateSourceSQL extends MigrateSource {
    * Simple initialization.
    *
    * @param SelectQueryInterface $query
-   *  The query we are iterating over.
+   *   The query we are iterating over.
    * @param array $fields
-   *  Optional - keys are field names, values are descriptions. Use to override
-   *  the default descriptions, or to add additional source fields which the
-   *  migration will add via other means (e.g., prepareRow()).
+   *   Optional - keys are field names, values are descriptions. Use to override
+   *   the default descriptions, or to add additional source fields which the
+   *   migration will add via other means (e.g., prepareRow()).
    * @param ?SelectQueryInterface $count_query
-   *  Optional - an explicit count query, primarily used when counting the
-   *  primary query is slow.
+   *   Optional - an explicit count query, primarily used when counting the
+   *   primary query is slow.
    * @param boolean $options
-   *  Options applied to this source.
+   *   Options applied to this source.
    */
   public function __construct(SelectQueryInterface $query, array $fields = array(),
                               ?SelectQueryInterface $count_query = NULL, array $options = array()) {
@@ -198,8 +198,8 @@ class MigrateSourceSQL extends MigrateSource {
    * Returns a list of fields available to be mapped from the source query.
    *
    * @return array
-   *  Keys: machine names of the fields (to be passed to addFieldMapping)
-   *  Values: Human-friendly descriptions of the fields.
+   *   Keys: machine names of the fields (to be passed to addFieldMapping)
+   *   Values: Human-friendly descriptions of the fields.
    */
   public function fields() {
     $fields = array();
@@ -250,7 +250,7 @@ class MigrateSourceSQL extends MigrateSource {
     }
 
     // Any caller-specified fields with the same names as extracted fields will
-    // override them; any others will be added
+    // override them; any others will be added.
     if ($this->fields) {
       $fields = $this->fields + $fields;
     }
@@ -353,7 +353,7 @@ class MigrateSourceSQL extends MigrateSource {
           $map_joins[] = "$field_name = map.$map_key";
         }
         $map_join = implode(' AND ', $map_joins);
-        $qualified_map_table = $this->activeMap->getQualifiedMapTable();
+        $qualified_map_table = $this->activeMap->getQualifiedMapTable(FALSE, FALSE);
         $alias = $this->query->leftJoin($qualified_map_table, 'map', $map_join);
         $conditions->isNull($alias . '.sourceid1');
         $conditions->condition($alias . '.needs_update', MigrateMap::STATUS_NEEDS_UPDATE);
@@ -381,8 +381,8 @@ class MigrateSourceSQL extends MigrateSource {
         // optimization to the query.
         $add_highwater_condition = TRUE;
         if (!$this->mapJoinable) {
-          $count_needs_update = db_query('SELECT COUNT(*) FROM {' .
-            $this->activeMap->getQualifiedMapTable() . '} WHERE needs_update = 1')
+          $count_needs_update = db_query('SELECT COUNT(*) FROM ' .
+            $this->activeMap->getQualifiedMapTable(TRUE) . ' WHERE needs_update = 1')
             ->fetchField();
           if ($count_needs_update > 0) {
             $add_highwater_condition = FALSE;
@@ -463,6 +463,9 @@ class MigrateSourceSQL extends MigrateSource {
  */
 class MigrateConnectionQuery extends SelectQueryExtender {
 
+  /**
+ *
+ */
   public function __construct(SelectQueryInterface $query, DatabaseConnection $connection) {
     parent::__construct($query, $connection);
     // Add the connection as metadata if anything else wants to access it.

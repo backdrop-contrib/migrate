@@ -1301,15 +1301,12 @@ abstract class MigrationBase {
    * @return string The encrypted value.
    */
   static public function encrypt($value) {
-    MigrationBase::displayMessage(t('Encryption of secure migration information is not currently supported.'), 'warning');
-    return $value;
-
     if (module_exists('encrypt')) {
       $value = encrypt($value);
     }
     else {
       if (self::$showEncryptionWarning) {
-        $replacements = array('@encrypt' => 'http://drupal.org/project/encrypt');
+        $replacements = array('@encrypt' => 'https://backdropcms.org/project/encrypt');
         MigrationBase::displayMessage(t('Encryption of secure migration information is not supported. Ensure the <a href="@encrypt">Encrypt module</a> is installed for this functionality.', $replacements), 'warning');
         self::$showEncryptionWarning = FALSE;
       }
@@ -1325,15 +1322,12 @@ abstract class MigrationBase {
    * @return string The encrypted value
    */
   static public function decrypt($value) {
-    MigrationBase::displayMessage(t('Encryption of secure migration information is not currently supported.'), 'warning');
-    return $value;
-
     if (module_exists('encrypt')) {
       $value = decrypt($value);
     }
     else {
       if (self::$showEncryptionWarning) {
-        $replacements = array('@encrypt' => 'http://drupal.org/project/encrypt');
+        $replacements = array('@encrypt' => 'https://backdropcms.org/project/encrypt');
         MigrationBase::displayMessage(t('Encryption of secure migration information is not supported. Ensure the <a href="@encrypt">Encrypt module</a> is installed for this functionality.', $replacements), 'warning');
         self::$showEncryptionWarning = FALSE;
       }

@@ -5,6 +5,9 @@
  * Defines a Backdrop db-based implementation of MigrateMap.
  */
 
+/**
+ *
+ */
 class MigrateSQLMap extends MigrateMap {
 
   /**
@@ -14,10 +17,16 @@ class MigrateSQLMap extends MigrateMap {
    */
   protected $mapTable, $messageTable;
 
+  /**
+ *
+ */
   public function getMapTable() {
     return $this->mapTable;
   }
 
+  /**
+ *
+ */
   public function getMessageTable() {
     return $this->messageTable;
   }
@@ -30,26 +39,33 @@ class MigrateSQLMap extends MigrateMap {
    * (prefixed) database (in particular, for simpletest), but not if the primary
    * query is in an external database.
    *
+   * @param bool (optional) $add_braces
+   *   Whether to surround the table name with braces for prefixing.
+   * @param bool (optional) $add_dbname
+   *   Whether to prepend the database to the table.
+   *
    * @return string
    */
-  public function getQualifiedMapTable() {
+  public function getQualifiedMapTable($add_braces = FALSE, $add_dbname = TRUE) {
     $options = $this->connection->getConnectionOptions();
     $prefix = $this->connection->tablePrefix($this->mapTable);
-    if ($prefix) {
-      return $this->mapTable;
+
+    $table_name = $this->mapTable;
+    if ($add_braces) {
+      $table_name = '{' . $table_name . '}';
+    }
+
+    if ($prefix || !$add_dbname) {
+      return $table_name;
     }
     else {
-      // This has been commented out until a real solution for cross database
-      // joins in Backdrop can be found, because the way it is nowm, it causes
-      // an exception when trying to access a joined table with a map of
-      // $database.$database.$table.
-//      $dbname = $options['database'];
-//      if (!empty($options['driver']) && $options['driver'] == 'mysql') {
-//        // Backtick the db name on mysql to ensure dbs with hyphens work.
-//        $dbname = "`{$dbname}`";
-//      }
-//      return $dbname . '.' . $this->mapTable;
-      return $this->mapTable;
+      $dbname = $options['database'];
+
+      if (!empty($options['driver']) && $options['driver'] == 'mysql') {
+        // Backtick the db name on mysql to ensure dbs with hyphens work.
+        $dbname = "`{$dbname}`";
+      }
+      return $dbname . '.' . $table_name;
     }
   }
 
@@ -63,6 +79,9 @@ class MigrateSQLMap extends MigrateMap {
     return $this->sourceKey;
   }
 
+  /**
+ *
+ */
   public function getDestinationKey() {
     return $this->destinationKey;
   }
@@ -74,6 +93,9 @@ class MigrateSQLMap extends MigrateMap {
    */
   protected $connection;
 
+  /**
+ *
+ */
   public function getConnection() {
     return $this->connection;
   }
@@ -211,7 +233,7 @@ class MigrateSQLMap extends MigrateMap {
         );
         $this->connection->schema()->createTable($this->mapTable, $schema);
 
-        // Now for the message table
+        // Now for the message table.
         $fields = array();
         $fields['msgid'] = array(
           'type' => 'serial',
@@ -245,13 +267,13 @@ class MigrateSQLMap extends MigrateMap {
           'rollback_action')) {
           $this->connection->schema()->addField($this->mapTable,
             'rollback_action', array(
-            'type' => 'int',
-            'size' => 'tiny',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-            'description' => 'Flag indicating what to do for this item on rollback',
-          ));
+              'type' => 'int',
+              'size' => 'tiny',
+              'unsigned' => TRUE,
+              'not null' => TRUE,
+              'default' => 0,
+              'description' => 'Flag indicating what to do for this item on rollback',
+            ));
         }
         if (!$this->connection->schema()
           ->fieldExists($this->mapTable, 'hash')) {
@@ -305,10 +327,10 @@ class MigrateSQLMap extends MigrateMap {
    * Retrieve an array of map rows marked as needing update.
    *
    * @param int $count
-   *  Maximum rows to return; defaults to 10,000.
+   *   Maximum rows to return; defaults to 10,000.
    *
    * @return array
-   *  Array of map row objects with needs_update==1.
+   *   Array of map row objects with needs_update==1.
    */
   public function getRowsNeedingUpdate($count) {
     $rows = array();
@@ -328,10 +350,10 @@ class MigrateSQLMap extends MigrateMap {
    * multi-field) source key mapped to it.
    *
    * @param array $destination_id
-   *  Array of destination key values.
+   *   Array of destination key values.
    *
    * @return array
-   *  Array of source key values, or NULL on failure.
+   *   Array of source key values, or NULL on failure.
    */
   public function lookupSourceID(array $destination_id) {
     migrate_instrument_start('lookupSourceID');
@@ -367,10 +389,10 @@ class MigrateSQLMap extends MigrateMap {
    * multi-field) destination key it is mapped to.
    *
    * @param array $source_id
-   *  Array of source key values.
+   *   Array of source key values.
    *
    * @return array
-   *  Array of destination key values, or NULL on failure.
+   *   Array of destination key values, or NULL on failure.
    */
   public function lookupDestinationID(array $source_id) {
     migrate_instrument_start('lookupDestinationID');
@@ -407,17 +429,17 @@ class MigrateSQLMap extends MigrateMap {
    * NEEDS_UPDATE, to signal an existing record should be remigrated.
    *
    * @param stdClass $source_row
-   *  The raw source data. We use the key map derived from the source object
-   *  to get the source key values.
+   *   The raw source data. We use the key map derived from the source object
+   *   to get the source key values.
    * @param array $dest_ids
-   *  The destination key values.
+   *   The destination key values.
    * @param int $needs_update
-   *  Status of the source row in the map. Defaults to STATUS_IMPORTED.
+   *   Status of the source row in the map. Defaults to STATUS_IMPORTED.
    * @param int $rollback_action
-   *  How to handle the destination object on rollback. Defaults to
-   *  ROLLBACK_DELETE.
-   * $param string $hash
-   *  If hashing is enabled, the hash of the raw source row.
+   *   How to handle the destination object on rollback. Defaults to
+   *   ROLLBACK_DELETE.
+   *   $param string $hash
+   *   If hashing is enabled, the hash of the raw source row.
    */
   public function saveIDMapping(stdClass $source_row, array $dest_ids,
                                 $needs_update = MigrateMap::STATUS_IMPORTED,
@@ -462,11 +484,11 @@ class MigrateSQLMap extends MigrateMap {
    * Record a message in the migration's message table.
    *
    * @param array $source_key
-   *  Source ID of the record in error.
+   *   Source ID of the record in error.
    * @param string $message
-   *  The message to record.
+   *   The message to record.
    * @param int $level
-   *  Optional message severity (defaults to MESSAGE_ERROR).
+   *   Optional message severity (defaults to MESSAGE_ERROR).
    */
   public function saveMessage($source_key, $message, $level = Migration::MESSAGE_ERROR) {
     // Source IDs as arguments.
@@ -550,7 +572,7 @@ class MigrateSQLMap extends MigrateMap {
    * Get the number of source records which failed to import.
    *
    * @return int
-   *  Number of records errored out.
+   *   Number of records errored out.
    */
   public function errorCount() {
     $query = $this->connection->select($this->mapTable);
@@ -564,7 +586,7 @@ class MigrateSQLMap extends MigrateMap {
    * Get the number of messages saved.
    *
    * @return int
-   *  Number of messages.
+   *   Number of messages.
    */
   public function messageCount() {
     $query = $this->connection->select($this->messageTable);
@@ -642,7 +664,7 @@ class MigrateSQLMap extends MigrateMap {
    * Delete all map and message table entries specified.
    *
    * @param array $source_keys
-   *  Each array member is an array of key fields for one source row.
+   *   Each array member is an array of key fields for one source row.
    */
   public function deleteBulk(array $source_keys) {
     // If we have a single-column key, we can shortcut it.
@@ -695,6 +717,9 @@ class MigrateSQLMap extends MigrateMap {
 
   protected $currentKey = array();
 
+  /**
+ *
+ */
   public function getCurrentKey() {
     return $this->currentKey;
   }
