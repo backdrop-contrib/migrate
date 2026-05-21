@@ -38,15 +38,10 @@ class MigrateUserUnitTest extends BackdropWebTestCase {
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Role import returned RESULT_COMPLETED'));
     // Confirm both roles were successfully imported
-    $result = db_select('role', 'r')
-      ->fields('r', array('rid', 'name'))
-      ->condition('name', array('Taster', 'Vintner'), 'IN')
-      ->execute();
-    $roles = array();
-    foreach ($result as $row) {
-      $roles[$row->name] = $row->rid;
+    $role_names = ['taster', 'vintner'];
+    foreach ($role_names as $role_name) {
+      $this->assertTrue((user_role_load($role_name)), t('Role !name imported', array('!name' => $role_name)));
     }
-    $this->assertEqual(count($roles), 2, t('Both roles imported'));
 
     // Make sure update does not fail (regression test of
     // http://drupal.org/node/1872446)
@@ -72,6 +67,7 @@ class MigrateUserUnitTest extends BackdropWebTestCase {
       'last_login',
       'sig',
       'original_mail',
+      'positions',
     ))
       ->execute();
     $uids = db_select('users', 'u')
@@ -102,9 +98,9 @@ class MigrateUserUnitTest extends BackdropWebTestCase {
       t('Email addresses match'));
     $this->assertEqual($users['darren']->status, $rows['darren']->status,
       t('Statuses match'));
-    $this->assertNotNull($users['darren']->roles[2], t('Authenticated role'));
-    $this->assertNotNull($users['darren']->roles[$roles['Taster']], t('Taster role'));
-    $this->assertFalse(isset($users['darren']->roles[$roles['Vintner']]), t('No Vintner role'));
+    $this->assertTrue(in_array('authenticated', $users['darren']->roles), t('Authenticated role'));
+    $this->assertTrue(in_array('taster', $users['darren']->roles), t('Taster role'));
+    $this->assertFalse(in_array('vintner', $users['darren']->roles), t('No Vintner role'));
     $this->assertEqual($users['darren']->created, strtotime($rows['darren']->posted),
       t('Created times match'));
     $this->assertEqual($users['darren']->access, strtotime($rows['darren']->last_access),
@@ -125,14 +121,14 @@ class MigrateUserUnitTest extends BackdropWebTestCase {
       1, t('Female gender migrated'));
     $this->assert(!isset($users['fonzie']->field_migrate_example_gender[LANGUAGE_NONE][0]['value']),
       t('Missing gender left unmigrated'));
-    /* For some reason, this fails on d.o but not in local environments
-     $this->assert(is_object($users['fonzie']->picture) &&
+    /* For some reason, this fails on d.o but not in local environments */
+    $this->assert(is_object($users['fonzie']->picture) &&
      $users['fonzie']->picture->filename == '200',
-     t('Picture migrated'));*/
-    $this->assertNotNull($users['fonzie']->roles[$roles['Taster']], t('Taster role'));
-    $this->assertNotNull($users['fonzie']->roles[$roles['Vintner']], t('Vintner role'));
+     t('Picture migrated'));
+    $this->assertTrue(in_array('taster', $users['fonzie']->roles), t('Taster role'));
+    $this->assertTrue(in_array('vintner', $users['fonzie']->roles), t('Vintner role'));
 
-    // @todo Theme, timezone, language
+    // @todo Theme, timezone, langcode
 
     // Test updates
     // Capture original users

@@ -49,10 +49,10 @@ function migrate_example_beer_install() {
  * Implements hook_uninstall().
  */
 function migrate_example_beer_uninstall() {
-  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_beer_styles'));
-  if (!empty($vids['migrate_example_beer_styles'])) {
+  $vocabularies = taxonomy_vocabulary_load_multiple(array('migrate_example_beer_styles'));
+  if (!empty($vocabularies['migrate_example_beer_styles'])) {
     // Grab key of the first returned vocabulary.
-    taxonomy_vocabulary_delete(key($vids));
+    taxonomy_vocabulary_delete(key($vocabularies));
   }
   migrate_example_beer_content_type_delete();
 }

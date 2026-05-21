@@ -26,7 +26,7 @@ class MigratePathEntityHandler extends MigrateDestinationHandler {
       // Make sure the alias doesn't already exist
       $query = db_select('url_alias')
         ->condition('alias', $entity->path)
-        ->condition('language', $entity->language);
+        ->condition('langcode', $entity->langcode);
       $query->addExpression('1');
       $query->range(0, 1);
       if (!$query->execute()->fetchField()) {
@@ -48,7 +48,7 @@ class MigratePathEntityHandler extends MigrateDestinationHandler {
         $term_pid = db_select('url_alias', 'url_alias')
           ->fields('url_alias', array('pid'))
           ->condition('source', 'taxonomy/term/' . $entity->tid)
-          ->condition('language', $entity->language)
+          ->condition('langcode', $entity->langcode)
           ->execute()
           ->fetchField();
 
@@ -56,7 +56,7 @@ class MigratePathEntityHandler extends MigrateDestinationHandler {
         $forum_term_pid = db_select('url_alias', 'url_alias')
           ->fields('url_alias', array('pid'))
           ->condition('source', 'forum/' . $entity->tid)
-          ->condition('language', $entity->language)
+          ->condition('langcode', $entity->langcode)
           ->execute()
           ->fetchField();
 

@@ -744,7 +744,7 @@ function migrate_autoload_info() {
 /**
  * Helper to cast stdClass objects to specific classes.
  */
-function _migrate_cast_to_class($instance, $class) {
+function _migrate_cast_to_class($instance, $old_instance, $class) {
   if (!class_exists($class)) {
     throw new MigrateException(t('Class !class does not exist.',
       array('!class' => $class)));
@@ -756,5 +756,9 @@ function _migrate_cast_to_class($instance, $class) {
   if (is_a($instance, $class)) {
     return $instance;
   }
-  return new $class(get_object_vars($instance));
+  $instance_properties = get_object_vars($instance);
+  $old_instance_properties = (!empty($old_instance)) ? get_object_vars($old_instance) : array();
+  $properties = array_merge($instance_properties, $old_instance_properties);
+  $migrated_instance = new $class($properties);
+  return $migrated_instance;
 }

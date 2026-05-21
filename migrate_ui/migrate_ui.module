@@ -137,9 +137,9 @@ function migrate_ui_theme() {
  * Implements hook_mail().
  */
 function migrate_ui_mail($key, &$message, $params) {
-  $options['language'] = $message['language'];
+  $options['langcode'] = $message['langcode'];
   user_mail_tokens($variables, array(), $options);
-  $langcode = $message['language']->language;
+  $langcode = $message['langcode']->langcode;
   $config = config('migrate.settings');
   $subject = $config->get('drush_mail_subject');
   $message['subject'] = t($subject, array(), array('langcode' => $langcode));

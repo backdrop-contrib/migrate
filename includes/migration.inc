@@ -22,6 +22,34 @@ abstract class Migration extends MigrationBase {
    */
   protected $source;
 
+  /**
+   * Last feedback message for the migration.
+   *
+   * @var string
+   */
+  protected $lastfeedback;
+
+  /**
+   * Number of successful operations since the last feedback message.
+   *
+   * @var int
+   */
+  protected $successes_since_feedback = 0;
+
+  /**
+   * Number of processed operations since the last feedback message.
+   *
+   * @var int
+   */
+  protected $processed_since_feedback = 0;
+
+  /**
+   * Total number of successful operations.
+   *
+   * @var int
+   */
+  protected $total_successes = 0;
+
   public function getSource() {
     return $this->source;
   }

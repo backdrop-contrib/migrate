@@ -27,7 +27,7 @@ abstract class MigrateDestination {
    * Derived classes must implement __toString().
    *
    * @return string
-   *  Description of the destination being migrated into
+   *   Description of the destination being migrated into.
    */
   abstract public function __toString();
 

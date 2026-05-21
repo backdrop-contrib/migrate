@@ -34,14 +34,14 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
   }
 
   /**
-   * Default language for text fields in this destination.
+   * Default langcode for text fields in this destination.
    *
    * @var string
    */
-  protected $language;
+  protected $langcode;
 
   public function getLanguage() {
-    return $this->language;
+    return $this->langcode;
   }
 
   /**
@@ -63,14 +63,14 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
    * @param string $bundle
    *   The type of bundle being constructed.
    * @param array $options
-   *   Any options to pass into the entity. Currently, the only supported 
-   *   options are 'language' and 'text_format'.
+   *   Any options to pass into the entity. Currently, the only supported
+   *   options are 'langcode' and 'text_format'.
    */
   public function __construct($entity_type, $bundle, array $options = array()) {
     parent::__construct();
     $this->entityType = $entity_type;
     $this->bundle = $bundle;
-    $this->language = isset($options['language']) ? $options['language'] : LANGUAGE_NONE;
+    $this->langcode = isset($options['langcode']) ? $options['langcode'] : LANGUAGE_NONE;
     $this->textFormat = isset($options['text_format']) ? $options['text_format'] : filter_fallback_format();
   }
 
@@ -86,7 +86,7 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
       $output = t('%type (%bundle)',
         array('%type' => $this->entityType, '%bundle' => $this->bundle));
     }
-    // @todo Non-default language, input format
+    // @todo Non-default langcode, input format
     return $output;
   }
 

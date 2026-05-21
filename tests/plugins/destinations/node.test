@@ -451,13 +451,14 @@ class MigrateNodeUnitTest extends BackdropWebTestCase {
     // Test proper disableMailSystem()/restoreMailSystem() behavior.
     // @see https://www.drupal.org/node/2499861
     // This is not necessarily node-related, but it was shoved in the node test.
+    global $conf;
     $migration->saveMailSystem();
     $migration->disableMailSystem();
-    $ms = $config->get('mail_system');
+    $ms = $conf['mail_system'];
     $this->assertTrue(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration has disabled mail system'));
     $migration->restoreMailSystem();
-    $ms = $config->get('mail_system');
+    $ms = $conf['mail_system'];
     $this->assertFalse(is_array($ms) && in_array('MigrateMailIgnore', $ms),
       t('Migration::restoreMailSystem restored mail system'));
   }

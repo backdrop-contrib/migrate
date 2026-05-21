@@ -87,7 +87,7 @@ class MigrateExampleOracleNode extends Migration {
       'status',
       'promote',
       'revision',
-      'language',
+      'langcode',
       'sticky',
       'revision_uid',
       'path',

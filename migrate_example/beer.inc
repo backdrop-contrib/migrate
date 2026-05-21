@@ -114,12 +114,12 @@ class BeerTermMigration extends BasicExampleMigration {
     // parent_name mapping below will find that the parent exists.
     $query = db_select('migrate_example_beer_topic', 'met')
       ->fields('met', array(
-      'style',
-      'details',
-      'style_parent',
-      'region',
-      'hoppiness',
-    ))
+        'style',
+        'details',
+        'style_parent',
+        'region',
+        'hoppiness',
+      ))
       // This sort assures that parents are saved before children.
       ->orderBy('style_parent', 'ASC');
 
@@ -232,16 +232,16 @@ class BeerUserMigration extends BasicExampleMigration {
     $this->description = t('Beer Drinkers of the world.');
     $query = db_select('migrate_example_beer_account', 'mea')
       ->fields('mea', array(
-      'aid',
-      'status',
-      'posted',
-      'name',
-      'nickname',
-      'password',
-      'mail',
-      'sex',
-      'beers',
-    ));
+        'aid',
+        'status',
+        'posted',
+        'name',
+        'nickname',
+        'password',
+        'mail',
+        'sex',
+        'beers',
+      ));
     $this->source = new MigrateSourceSQL($query);
     $this->destination = new MigrateDestinationUser();
     $source_key = array(
@@ -256,9 +256,8 @@ class BeerUserMigration extends BasicExampleMigration {
     // One good way to organize your mappings in the constructor is in three
     // groups - mapped fields, unmapped source fields, and unmapped destination
     // fields.
-
+    //
     // Mapped fields.
-
     // This is a shortcut you can use when the source and destination field
     // names are identical (e.g., the email address field is named 'mail' in
     // both the source table and in Backdrop).
@@ -307,14 +306,13 @@ class BeerUserMigration extends BasicExampleMigration {
       ->issueGroup(t('DNM'));
 
     // Unmapped destination fields.
-
     // This is a shortcut you can use to mark several destination fields as DNM
     // at once.
     $this->addUnmigratedDestinations(array(
       'access',
       'data',
       'is_new',
-      'language',
+      'langcode',
       'login',
       'picture',
       'roles',
@@ -367,17 +365,17 @@ class BeerNodeMigration extends BasicExampleMigration {
     // comma-separated list.
     $query = db_select('migrate_example_beer_node', 'b')
       ->fields('b', array(
-      'bid',
-      'name',
-      'body',
-      'excerpt',
-      'aid',
-      'countries',
-      'image',
-      'image_alt',
-      'image_title',
-      'image_description',
-    ));
+        'bid',
+        'name',
+        'body',
+        'excerpt',
+        'aid',
+        'countries',
+        'image',
+        'image_alt',
+        'image_title',
+        'image_description',
+      ));
     $query->leftJoin('migrate_example_beer_topic_node', 'tb', 'b.bid = tb.bid');
     // Gives a single comma-separated list of related terms.
     $query->groupBy('tb.bid');
@@ -394,7 +392,7 @@ class BeerNodeMigration extends BasicExampleMigration {
     $this->source = new MigrateSourceSQL($query, array(), $count_query,
       array('cache_counts' => TRUE));
 
-    // Set up our destination - nodes of type migrate_example_beer
+    // Set up our destination - nodes of type migrate_example_beer.
     $this->destination = new MigrateDestinationNode('migrate_example_beer');
 
     $source_key = array(
@@ -446,7 +444,6 @@ class BeerNodeMigration extends BasicExampleMigration {
     // There are several different options involved. It's usually best to do
     // migrate the files themselves in their own migration (see wine.inc for an
     // example), but they can also be brought over through the field mapping.
-
     // We map the filename (relative to the source_dir below) to the field
     // itself.
     $this->addFieldMapping('field_migrate_example_image', 'image');
@@ -483,7 +480,7 @@ class BeerNodeMigration extends BasicExampleMigration {
       'field_migrate_example_image:preserve_files',
       'field_migrate_example_image:urlencode',
       'is_new',
-      'language',
+      'langcode',
       'log',
       'migrate_example_beer_styles:source_type',
       'migrate_example_beer_styles:create_term',
@@ -528,15 +525,15 @@ class BeerCommentMigration extends BasicExampleMigration {
 
     $query = db_select('migrate_example_beer_comment', 'mec')
       ->fields('mec', array(
-      'cid',
-      'cid_parent',
-      'name',
-      'mail',
-      'aid',
-      'body',
-      'bid',
-      'subject',
-    ))
+        'cid',
+        'cid_parent',
+        'name',
+        'mail',
+        'aid',
+        'body',
+        'bid',
+        'subject',
+      ))
       ->orderBy('cid_parent', 'ASC');
     $this->source = new MigrateSourceSQL($query);
     // Note that the machine name passed for comment migrations is
@@ -568,18 +565,17 @@ class BeerCommentMigration extends BasicExampleMigration {
       ->sourceMigration('BeerComment')
       ->description('Parent comment.');
 
-    $this->addFieldMapping('comment_body', 'body');
+    $this->addFieldMapping('field_comment_body', 'body');
 
     // No unmapped source fields.
-
     // Unmapped destination fields.
     $this->addUnmigratedDestinations(array(
       'changed',
-      'comment_body:format',
+      'field_comment_body:format',
       'created',
       'homepage',
       'hostname',
-      'language',
+      'langcode',
       'thread',
     ));
 

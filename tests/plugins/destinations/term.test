@@ -30,8 +30,13 @@ class MigrateTaxonomyUnitTest extends BackdropWebTestCase {
     $result = $migration->processImport();
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Variety term import returned RESULT_COMPLETED'));
-    $vocab = taxonomy_vocabulary_machine_name_load('migrate_example_wine_varieties');
-    $rawterms = taxonomy_term_load_multiple(array(), array('vid' => $vocab->vid));
+    $vocab = taxonomy_vocabulary_load('migrate_example_wine_varieties');
+    $term_ids = db_select('taxonomy_term_data', 't')
+      ->fields('t', array('tid'))
+      ->condition('vocabulary', $vocab->machine_name)
+      ->execute()
+      ->fetchCol();
+    $rawterms = taxonomy_term_load_multiple($term_ids);
     $terms = array();
     foreach ($rawterms as $term) {
       $terms[$term->name] = $term;
@@ -73,7 +78,12 @@ class MigrateTaxonomyUnitTest extends BackdropWebTestCase {
 
     // Test updates
     // Capture original terms
-    $tempterms = taxonomy_term_load_multiple(array(), array('vid' => $vocab->vid));
+    $tempterm_ids = db_select('taxonomy_term_data', 't')
+      ->fields('t', array('tid'))
+      ->condition('vocabulary', $vocab->machine_name)
+      ->execute()
+      ->fetchCol();
+    $tempterms = taxonomy_term_load_multiple($tempterm_ids);
     foreach ($tempterms as $tid => $term) {
       $original_terms[$tid] = clone $term;
     }
@@ -82,7 +92,14 @@ class MigrateTaxonomyUnitTest extends BackdropWebTestCase {
     $result = $update_migration->processImport();
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Wine variety term updates import returned RESULT_COMPLETED'));
-    $final_terms = taxonomy_term_load_multiple(array(), array('vid' => $vocab->vid));
+    // Clear caches to ensure we are loading updated data.
+    $final_term_ids = db_select('taxonomy_term_data', 't')
+      ->fields('t', array('tid'))
+      ->condition('vocabulary', $vocab->machine_name)
+      ->execute()
+      ->fetchCol();
+    entity_get_controller('taxonomy_term')->resetCache($final_term_ids);
+    $final_terms = taxonomy_term_load_multiple($final_term_ids);
     foreach ($original_terms as $tid => $original_term) {
       foreach ($original_term as $field => $value) {
         if ($field == 'description') {
@@ -108,7 +125,12 @@ class MigrateTaxonomyUnitTest extends BackdropWebTestCase {
     $result = $migration->processRollback(array('force' => TRUE));
     $this->assertEqual($result, Migration::RESULT_COMPLETED,
       t('Variety term rollback returned RESULT_COMPLETED'));
-    $rawterms = taxonomy_term_load_multiple(array(), array('vid' => $vocab->vid));
+    $rawterm_ids = db_select('taxonomy_term_data', 't')
+      ->fields('t', array('tid'))
+      ->condition('vocabulary', $vocab->machine_name)
+      ->execute()
+      ->fetchCol();
+    $rawterms = taxonomy_term_load_multiple($rawterm_ids);
     $this->assertEqual(count($rawterms), 0, t('All terms deleted'));
     $count = db_select('migrate_map_winevariety', 'map')
       ->fields('map', array('sourceid1'))

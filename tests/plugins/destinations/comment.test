@@ -9,15 +9,6 @@
  * Test comment migration.
  */
 class MigrateCommentUnitTest extends BackdropWebTestCase {
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Comment migration',
-      'description' => 'Test migration of comment data',
-      'group' => 'Migrate',
-    );
-  }
-
   function setUp() {
     parent::setUp('taxonomy', 'image', 'comment', 'migrate', 'migrate_example');
 

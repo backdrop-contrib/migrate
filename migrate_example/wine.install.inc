@@ -60,20 +60,19 @@ function migrate_example_wine_install() {
  */
 function migrate_example_wine_uninstall() {
   migrate_example_wine_content_type_delete();
-  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_wine_varieties'));
-  if (!empty($vids['migrate_example_wine_varieties'])) {
-    // Grab key of the first returned vocabulary.
-    taxonomy_vocabulary_delete(key($vids));
+  $vocabularies = taxonomy_vocabulary_load_multiple(array(
+    'migrate_example_wine_varieties',
+    'migrate_example_wine_regions',
+    'migrate_example_wine_best_with',
+  ));
+  if (!empty($vocabularies['migrate_example_wine_varieties'])) {
+    taxonomy_vocabulary_delete('migrate_example_wine_varieties');
   }
-  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_wine_regions'));
-  if (!empty($vids['migrate_example_wine_regions'])) {
-    // Grab key of the first returned vocabulary.
-    taxonomy_vocabulary_delete(key($vids));
+  if (!empty($vocabularies['migrate_example_wine_regions'])) {
+    taxonomy_vocabulary_delete('migrate_example_wine_regions');
   }
-  $vids = taxonomy_vocabulary_load_multiple(array('machine_name' => 'migrate_example_wine_best_with'));
-  if (!empty($vids['migrate_example_wine_best_with'])) {
-    // Grab key of the first returned vocabulary.
-    taxonomy_vocabulary_delete(key($vids));
+  if (!empty($vocabularies['migrate_example_wine_best_with'])) {
+    taxonomy_vocabulary_delete('migrate_example_wine_best_with');
   }
 }
 
@@ -1211,7 +1210,7 @@ function migrate_example_wine_data_account() {
       'darren@example.com',
       'All about the Australians',
       NULL,
-      '5',
+      'taster',
     ),
     array(
       3,
@@ -1226,7 +1225,7 @@ function migrate_example_wine_data_account() {
       'emily@example.com',
       'Sommelier to the stars',
       NULL,
-      '18',
+      'vintner',
     ),
     array(
       9,
@@ -1241,7 +1240,7 @@ function migrate_example_wine_data_account() {
       'arthur@example.com',
       'Aaay!',
       1,
-      '5,18',
+      'vintner,taster',
     ),
   );
   foreach ($data as $row) {
@@ -1475,7 +1474,7 @@ function migrate_example_wine_data_variety_updates() {
     array(3, 'Red wines are generally more complex and dry than white'),
     array(8, 'Usually associated with Germany'),
     array(9, NULL),
-    array(13, 'Common, very drinakable'),
+    array(13, 'Common, very drinkable'),
     array(14, 'AKA Shiraz'),
     array(25, 'Basic'),
     array(26, 'A specialty of Sicily'),
